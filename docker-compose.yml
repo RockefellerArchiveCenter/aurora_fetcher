@@ -2,14 +2,14 @@ version: '3'
 
 services:
   db:
-    image: mysql:5.7
+    image: postgres
     environment:
       MYSQL_ROOT_PASSWORD: example
   web:
     build: .
     environment:
       - TRAVIS=${TRAVIS} # This imports the TRAVIS environment variable into the container so we can use it for testing, ex: if os.getenv('TRAVIS') == 'true'.
-    # entrypoint: /code/entrypoint.sh
+    entrypoint: /code/entrypoint.sh
     volumes:
       - .:/code
     ports:
