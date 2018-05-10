@@ -1,4 +1,4 @@
-# nebula
+# Aurora Fetcher
 
 A microservice to fetch data from Aurora.
 
