@@ -22,12 +22,11 @@ class FetcherViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = SourceObject.objects.all()
-        updated_since = datetime.fromtimestamp(int(self.request.GET.get('updated_since', None)))
-        print(updated_since)
-        type = self.request.GET.get('type', None)
-        if updated_since is not None:
-            queryset = queryset.filter(last_modified__gte=updated_since)
-        if type is not None:
+        updated_since = self.request.GET.get('updated_since', "")
+        type = self.request.GET.get('type', "")
+        if updated_since != "":
+            queryset = queryset.filter(last_modified__gte=datetime.fromtimestamp(int(updated_since)))
+        if type != "":
             queryset = queryset.filter(type=type)
         return queryset
 
