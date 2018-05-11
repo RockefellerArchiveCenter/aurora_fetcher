@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render
 from django.views.generic import View
 from rest_framework import viewsets, generics
@@ -20,10 +22,11 @@ class FetcherViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = SourceObject.objects.all()
-        updated_since = self.request.GET.get('updated_since', None)
+        updated_since = datetime.fromtimestamp(int(self.request.GET.get('updated_since', None)))
+        print(updated_since)
         type = self.request.GET.get('type', None)
         if updated_since is not None:
-            queryset = queryset.filter(last_modified__lt=updated_since)
+            queryset = queryset.filter(last_modified__gte=updated_since)
         if type is not None:
             queryset = queryset.filter(type=type)
         return queryset

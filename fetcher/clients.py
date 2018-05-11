@@ -23,12 +23,3 @@ class AuroraClient(object):
         )
         if not self.client.authorize():
             self.log.error("Couldn't authenticate user credentials for Aurora")
-
-    def get_object(self, url):
-        self.log.bind(request_id=str(uuid4()), object=identifier)
-        resp = self.client.get(url)
-        if resp.status_code != 200:
-            self.log.error("Error retrieving object from Aurora: {msg}".format(msg=resp.json()['detail']))
-            return False
-        self.log.debug("Object retrieved from Aurora")
-        return resp.json()

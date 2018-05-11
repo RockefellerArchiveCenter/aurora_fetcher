@@ -36,7 +36,7 @@ By default a new superuser is created. See `entrypoint.sh` for those users and a
 
 | Method | URL | Parameters | Response  | Behavior  |
 |--------|-----|---|---|---|
-|GET|/objects|`type` `last_modified` |200|Returns a list of Aurora objects|
+|GET|/objects|`type` - object type (for example component, accession) <br/> `last_modified` - unix timestamp |200|Returns a list of Aurora objects|
 |GET|/objects/{id}| |200|Returns data about an individual Aurora object|
 |POST|/objects||200|Creates an Aurora object|
 |GET|/status||200|Return the status of the microservice
