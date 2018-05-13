@@ -16,13 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url
 from django.urls import include, re_path
-from fetcher.views import FetcherViewSet, HomeView
-from fetcher.models import SourceObject
+from client.views import HomeView
+from transformer.models import SourceObject
+from transformer.views import SourceObjectViewSet, ConsumerObjectViewSet
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 
 router = routers.DefaultRouter()
-router.register(r'^objects', FetcherViewSet, 'object')
+router.register(r'^source_objects', SourceObjectViewSet, 'source_object')
+router.register(r'^consumer_objects', ConsumerObjectViewSet, 'consumer_object')
 
 urlpatterns = [
     re_path(r'^$', HomeView.as_view(), name='home'),

@@ -1,3 +1,4 @@
+from asnake.client import ASnakeClient
 from electronbonder.client import ElectronBond
 import json
 import logging
@@ -23,3 +24,20 @@ class AuroraClient(object):
         )
         if not self.client.authorize():
             self.log.error("Couldn't authenticate user credentials for Aurora")
+
+
+class ArchivesSpaceClient(object):
+
+    def __init__(self):
+        self.log = logger.bind(transaction_id=str(uuid4()))
+        self.client = ASnakeClient(
+            baseurl=settings.ARCHIVESSPACE['baseurl'],
+            username=settings.ARCHIVESSPACE['username'],
+            password=settings.ARCHIVESSPACE['password'],
+        )
+        if not self.client.authorize():
+            self.log.error(
+                "Couldn't authenticate user credentials for ArchivesSpace",
+                object=settings.ARCHIVESSPACE['username'])
+            return False
+        self.repo_id = settings.ARCHIVESSPACE['repo_id']

@@ -1,0 +1,14 @@
+{% extends 'client/base.html' %}
+
+{% block content %}
+<div class="jumbotron col-md-6 offset-md-3 col-sm-10 offset-sm-1">
+  <a class="btn btn-secondary btn-sm float-right" href="status/">Service Status</a>
+  <h1 class="display-4">Aurora Fetcher/Transformer/Deliverer</h1>
+  <p class="lead">A proof-of-concept microservice to fetch, transform and deliver data from Aurora.</p>
+  <hr class="my-4">
+  <div>
+    <a class="btn btn-primary btn-lg mb-2 mr-2" href="source_objects/">Source Objects</a>
+    <a class="btn btn-primary btn-lg mb-2 mr-2" href="consumer_objects/">Consumer Objects</a>
+  </div>
+</div>
+{% endblock %}

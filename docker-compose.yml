@@ -3,8 +3,6 @@ version: '3'
 services:
   db:
     image: postgres
-    environment:
-      MYSQL_ROOT_PASSWORD: example
   web:
     build: .
     environment:

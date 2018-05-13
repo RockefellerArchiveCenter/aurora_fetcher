@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django_cron',
     'rest_framework',
     'health_check',
-    'fetcher',
+    'client',
+    'transformer',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +61,7 @@ ROOT_URLCONF = 'aurora_fetcher.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR, os.path.join(BASE_DIR, 'fetcher', 'templates')],
+        'DIRS': [BASE_DIR, os.path.join(BASE_DIR, 'client', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
