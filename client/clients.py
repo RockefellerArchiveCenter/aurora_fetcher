@@ -41,3 +41,17 @@ class ArchivesSpaceClient(object):
                 object=settings.ARCHIVESSPACE['username'])
             return False
         self.repo_id = settings.ARCHIVESSPACE['repo_id']
+
+    def save_data(self, data, type):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        ENDPOINTS = {
+            'component': 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id),
+            'accession': 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id),
+            'agent': 'agents'
+        }
+        resp = self.client.post(ENDPOINTS[type], data=json.dumps(data))
+        if resp.status_code != 200:
+            self.log.error('Error creating Component in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
+            return False
+        self.log.debug("Component created in Archivesspace", object=resp.json()['uri'])
+        return resp.json()['uri']

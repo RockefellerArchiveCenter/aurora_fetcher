@@ -3,6 +3,7 @@ import json
 
 from aurora_fetcher import settings
 from transformer.models import ConsumerObject
+from client.clients import ArchivesSpaceClient
 
 
 class ArchivesSpaceDataTransformer(object):
@@ -13,14 +14,20 @@ class ArchivesSpaceDataTransformer(object):
         self.source_object = source_object
 
     def run(self):
-        archivesspace_data = getattr(self, 'transform_{}_data'.format(self.type))()
+        if not getattr(self, 'transform_{}_data'.format(self.type))():
+            print("Error transforming data")
+            return False
+
         consumer_object = ConsumerObject.objects.create(
             consumer='archivesspace',
             type=self.type,
             source_object=self.source_object,
-            data=archivesspace_data,
+            data=self.consumer_data,
         )
-        # deliver = ArchivesSpaceClient().post(archivesspace_data)
+
+        if not ArchivesSpaceClient().save_data(self.consumer_data, self.type):
+            print("Error delivering data")
+            return False
 
     def resolve_parent_ref(self, data):
         # parse identifier from data
@@ -32,12 +39,12 @@ class ArchivesSpaceDataTransformer(object):
         # parse identifier from data
         # look for this in existing SourceObjects
         # if it's not there, try ArchivesSpace
-        return '/repositories/2/resources/12144'
+        return '/repositories/2/resources/1'
 
     def resolve_agent_ref(self, agent_name):
         # look for this in existing SourceObjects
         # if it's not there, try ArchivesSpace
-        return '/agents/corporate_entities/27'
+        return '/agents/corporate_entities/1'
 
     def transform_rights(self, rights_statement):
         return None
@@ -103,7 +110,8 @@ class ArchivesSpaceDataTransformer(object):
                 parent_ref = {"ref": self.resolve_parent_ref(self.data)}
                 consumer_data = {**consumer_data, "parent_ref": parent_ref}
 
-            return consumer_data
+            self.consumer_data = consumer_data
+            return True
         except Exception as e:
             print(e)
-            return e
+            return False
