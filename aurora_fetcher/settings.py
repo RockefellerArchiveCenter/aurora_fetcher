@@ -137,6 +137,7 @@ REST_FRAMEWORK = {
 }
 
 AURORA = CF.AURORA
+ARCHIVESSPACE = CF.ARCHIVESSPACE
 
 structlog.configure(
     processors=[

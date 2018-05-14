@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from client.clients import ArchivesSpaceClient
 from transformer.models import SourceObject, ConsumerObject
 from transformer.serializers import SourceObjectSerializer, ConsumerObjectSerializer
-from transformer.transformers import DataTransformer
+from transformer.transformers import ArchivesSpaceDataTransformer
 
 
 class SourceObjectViewSet(viewsets.ModelViewSet):
@@ -39,18 +39,16 @@ class SourceObjectViewSet(viewsets.ModelViewSet):
             data=request.data
         )
         try:
-            archivesspace_data = DataTransformer().to_archivesspace(request.data)
-            consumer_object = ConsumerObject.objects.create(
-                consumer='archivesspace',
+            transformer = ArchivesSpaceDataTransformer(
+                data=request.data,
                 type=type,
                 source_object=source_object,
-                data=archivesspace_data,
             )
-            deliver = ArchivesSpaceClient().post(archivesspace_data)
+            transformer.run()
             serializer = SourceObjectSerializer(source_object, context={'request': request})
             return Response(serializer.data)
         except Exception as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None):
         type = self.get_type(request.data['url'])

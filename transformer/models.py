@@ -18,7 +18,7 @@ class DataObject(models.Model):
     data = JSONField()
 
 
-class SourceObject(models.Model):
+class SourceObject(DataObject):
     SOURCE_CHOICES = (
         ('aurora', 'Aurora'),
     )
