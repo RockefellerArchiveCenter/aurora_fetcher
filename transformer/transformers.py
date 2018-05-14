@@ -1,4 +1,4 @@
-from jq import jq
+import iso8601
 import json
 
 from aurora_fetcher import settings
@@ -10,11 +10,12 @@ class ArchivesSpaceDataTransformer(object):
 
     def __init__(self, data, type, source_object):
         self.data = data
+        self.metadata = data['metadata']
         self.type = type
         self.source_object = source_object
 
     def run(self):
-        if not getattr(self, 'transform_{}_data'.format(self.type))():
+        if not getattr(self, 'transform_{}'.format(self.type))():
             print("Error transforming data")
             return False
 
@@ -29,78 +30,102 @@ class ArchivesSpaceDataTransformer(object):
             print("Error delivering data")
             return False
 
-    def resolve_parent_ref(self, data):
-        # parse identifier from data
-        # look for this in existing SourceObjects
-        # if it's not there, check AS
-        return None
-
-    def resolve_collection_ref(self, data):
-        # parse identifier from data
-        # look for this in existing SourceObjects
-        # if it's not there, try ArchivesSpace
-        return '/repositories/2/resources/1'
+    ####################################
+    # Helper functions
+    ####################################
 
     def resolve_agent_ref(self, agent_name):
-        # look for this in existing SourceObjects
-        # if it's not there, try ArchivesSpace
-        return '/agents/corporate_entities/1'
+        return "/agents/corporate_entities/1"
 
-    def transform_rights(self, rights_statement):
-        return None
+    def transform_dates(self, start, end):
+        date_start = iso8601.parse_date(start)
+        date_end = iso8601.parse_date(end)
+        if date_end > date_start:
+            expression = '{} - {}'.format(
+                date_start.strftime("%Y %B %e"),
+                date_end.strftime("%Y %B %e"))
+            return [{"expression": expression, "begin": date_start.strftime("%Y-%m-%d"), "end": date_end.strftime("%Y-%m-%d"), "date_type": "inclusive",
+                    "label": "creation"}]
+        else:
+            expression = date_start.strftime("%Y %B %e")
+            return [{"expression": expression, "begin": date_start.strftime("%Y-%m-%d"), "date_type": "single",
+                    "label": "creation"}]
 
-    def transform_component_data(self):
+    def transform_extents(self, extent_values):
+        extents = []
+        for k, v in extent_values.items():
+            extent = {"number": v, "portion": "whole", "extent_type": k}
+            extents.append(extent)
+        return extents
+
+    def transform_external_ids(self, identifier):
+        return [{"external_id": identifier, "source": "aurora", "jsonmodel_type": "external_id"}]
+
+    def transform_langcode(self, languages):
+        langcode = "mul"
+        if len(languages) == 1:
+            langcode = languages[0]
+        return langcode
+
+    def transform_langnote(self, languages):
+        language = "multiple languages"
+        if len(languages) == 1:
+            language = "English"
+        return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
+                "publish": False, "content": ["Materials are in {}".format(language)]}
+
+    def transform_linked_agents(self):
+        linked_agents = []
+        if 'source_organization' in self.data['metadata']:
+            agent_ref = self.resolve_agent_ref(self.data['metadata']['source_organization'])
+            linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
+        if 'record_creators' in self.data['metadata']:
+            for agent in self.data['metadata']['record_creators']:
+                agent_ref = self.resolve_agent_ref(agent)
+                linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
+        return linked_agents
+
+    def transform_rights(self):
+        rights_statements = []
+        for r in self.data['rights_statements']:
+            statement = None
+            rights_statements.append(statement)
+        return rights_statements
+
+    def transform_scopecontent(self, note_text):
+        note = ""
+        if len(note_text) > 0:
+            note = {"jsonmodel_type": "note_multipart", "type": "scopecontent",
+                    "publish": False, "subnotes": [
+                        {"content": note_text, "publish": True,
+                         "jsonmodel_type": "note_text"}]}
+        return note
+
+    ##################################
+    # Main object transformations
+    #################################
+
+    def transform_component(self):
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
             "external_documents": [], "instances": [], "subjects": []
             }
         try:
-            title = jq(".metadata.title").transform(self.data)
-            language = jq(
-                '(if .metadata.language|length == 1 then\
-                    .metadata.language[0] else "mul" end)').transform(self.data)
-            external_ids = jq(
-                '[{external_id: .url, source: "aurora",\
-                    jsonmodel_type: "external_id"}]').transform(self.data)
-            extents = jq(
-                '[{number: .metadata.payload_oxum | split(".")[0],\
-                    portion: "whole", extent_type: "bytes"},\
-                  {number: .metadata.payload_oxum | split(".")[1],\
-                    portion: "whole", extent_type: "files"}]').transform(self.data)
-            dates = jq(
-                '[{expression: "", begin: .metadata.date_start,\
-                    "end": .metadata.date_end, date_type: "inclusive",\
-                    label: "creation"}]').transform(self.data)
-            scopecontent = jq(
-                'if .metadata.internal_sender_description|length > 0 then\
-                    {jsonmodel_type: "note_multipart", type: "scopecontent", publish: false,\
-                        subnotes: [\
-                            {content: .metadata.internal_sender_description,\
-                            publish: true, jsonmodel_type: "note_text"}]}\
-                else "" end').transform(self.data)
-            langmaterial = jq(
-                '{jsonmodel_type: "note_singlepart", type: "langmaterial", publish: false,\
-                    content: [(if .metadata.language|length == 1 then\
-                        "Materials are in English" else\
-                        "Materials are in multiple languages" end)]}').transform(self.data)
+            title = self.metadata['title']
+            language = self.transform_langcode(self.metadata['language'])
+            external_ids = self.transform_external_ids(self.data['url'])
+            extents = self.transform_extents(
+                {"bytes": self.metadata['payload_oxum'].split(".")[0],
+                 "files": self.metadata['payload_oxum'].split(".")[1]})
+            dates = self.transform_dates(self.metadata['date_start'], self.metadata['date_end'])
+            scopecontent = self.transform_scopecontent(self.metadata['internal_sender_description'])
+            langmaterial = self.transform_langnote(self.metadata['language'])
             repository_ref = {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])}
-            resource_ref = {'ref': self.resolve_collection_ref(self.data)}
+            resource_ref = {'ref': self.data['collection']}
+            rights_statements = self.transform_rights()
+            linked_agents = self.transform_linked_agents()
 
-            rights_statements = []
-            for r in self.data['rights_statements']:
-                rights_statement = self.transform_rights(r)
-                rights_statements.append(r)
-
-            linked_agents = []
-            if 'source_organization' in self.data['metadata']:
-                agent_ref = self.resolve_agent_ref(self.data['metadata']['source_organization'])
-                linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
-            if 'record_creators' in self.data['metadata']:
-                for agent in self.data['metadata']['record_creators']:
-                    agent_ref = self.resolve_agent_ref(agent)
-                    linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
-
-            consumer_data = {**defaults, "title": title, "language": language,
+            self.consumer_data = {**defaults, "title": title, "language": language,
                 "external_ids": external_ids, "extents": extents,
                 "dates": dates, "rights_statements": rights_statements,
                 "linked_agents": linked_agents, "resource": resource_ref,
@@ -108,9 +133,8 @@ class ArchivesSpaceDataTransformer(object):
 
             if 'parent' in self.data:
                 parent_ref = {"ref": self.data['parent']}
-                consumer_data = {**consumer_data, "parent": parent_ref}
+                self.consumer_data = {**self.consumer_data, "parent": parent_ref}
 
-            self.consumer_data = consumer_data
             return True
         except Exception as e:
             print(e)
