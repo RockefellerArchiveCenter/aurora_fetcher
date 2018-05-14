@@ -107,8 +107,8 @@ class ArchivesSpaceDataTransformer(object):
                 "repository": repository_ref, "notes": [scopecontent, langmaterial]}
 
             if 'parent' in self.data:
-                parent_ref = {"ref": self.resolve_parent_ref(self.data)}
-                consumer_data = {**consumer_data, "parent_ref": parent_ref}
+                parent_ref = {"ref": self.data['parent']}
+                consumer_data = {**consumer_data, "parent": parent_ref}
 
             self.consumer_data = consumer_data
             return True

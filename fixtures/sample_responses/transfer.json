@@ -1,5 +1,6 @@
 {
     "url": "http://pprd.aurora.marist.cloud/api/transfers/687/",
+    "parent": "/repositories/2/archival_objects/101",
     "identifier": "AdminFordorg32018-05-1012:49:13.719336",
     "organization": "http://pprd.aurora.marist.cloud/api/orgs/3/",
     "bag_it_name": "AdminFord",
