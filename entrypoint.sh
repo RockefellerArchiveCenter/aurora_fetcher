@@ -9,6 +9,10 @@ echo "Create users"
 python manage.py shell -c "from django.contrib.auth.models import User; \
   User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')"
 
+  if [ ! -f aurora_fetcher/config.py ]; then
+      echo "Creating config file"
+      cp aurora_fetcher/config.py.example aurora_fetcher/config.py
+  fi
 
 #Start server
 echo "Starting server"
