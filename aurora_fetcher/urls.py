@@ -18,11 +18,12 @@ from django.conf.urls import url
 from django.urls import include, re_path
 from client.views import HomeView
 from transformer.models import SourceObject
-from transformer.views import SourceObjectViewSet, ConsumerObjectViewSet
+from transformer.views import SourceObjectViewSet, ConsumerObjectViewSet, TransformViewSet
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 
 router = routers.DefaultRouter()
+router.register(r'^transform', TransformViewSet, 'transform')
 router.register(r'^source_objects', SourceObjectViewSet, 'source_object')
 router.register(r'^consumer_objects', ConsumerObjectViewSet, 'consumer_object')
 

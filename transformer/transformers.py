@@ -1,8 +1,9 @@
-from jq import jq
+import iso8601
 import json
 
 from aurora_fetcher import settings
-from transformer.models import ConsumerObject
+from transformer.models import ConsumerObject, Identifier
+from client.clients import ArchivesSpaceClient
 
 
 class ArchivesSpaceDataTransformer(object):
@@ -13,97 +14,239 @@ class ArchivesSpaceDataTransformer(object):
         self.source_object = source_object
 
     def run(self):
-        archivesspace_data = getattr(self, 'transform_{}_data'.format(self.type))()
-        consumer_object = ConsumerObject.objects.create(
-            consumer='archivesspace',
-            type=self.type,
-            source_object=self.source_object,
-            data=archivesspace_data,
-        )
-        # deliver = ArchivesSpaceClient().post(archivesspace_data)
+        try:
+            getattr(self, 'transform_{}'.format(self.type))()
+            as_identifier = ArchivesSpaceClient().save_data(self.consumer_data, self.type)
+            consumer_object = ConsumerObject.objects.create(
+                consumer='archivesspace',
+                type=self.type,
+                source_object=self.source_object,
+                data=self.consumer_data,
+            )
+            identifier = Identifier.objects.create(
+                source='archivesspace',
+                identifier=as_identifier,
+                consumer_object=consumer_object,
+            )
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
-    def resolve_parent_ref(self, data):
-        # parse identifier from data
-        # look for this in existing SourceObjects
-        # if it's not there, check AS
-        return None
+    ####################################
+    # Helper functions
+    ####################################
 
-    def resolve_collection_ref(self, data):
-        # parse identifier from data
-        # look for this in existing SourceObjects
-        # if it's not there, try ArchivesSpace
-        return '/repositories/2/resources/12144'
+    def resolve_agent_ref(self, agent):
+        if ArchivesSpaceClient().find_agent(agent):
+            return ArchivesSpaceClient().find_agent(agent)
+        else:
+            consumer_agent = self.transform_agent(agent)
+            return ArchivesSpaceClient().save_data(consumer_agent, agent['type'])
 
-    def resolve_agent_ref(self, agent_name):
-        # look for this in existing SourceObjects
-        # if it's not there, try ArchivesSpace
-        return '/agents/corporate_entities/27'
+    def transform_accession_number(self, number):
+        return number.split(".")
 
-    def transform_rights(self, rights_statement):
-        return None
+    def transform_dates(self, start, end):
+        date_start = iso8601.parse_date(start)
+        date_end = iso8601.parse_date(end)
+        if date_end > date_start:
+            expression = '{} - {}'.format(
+                date_start.strftime("%Y %B %e"),
+                date_end.strftime("%Y %B %e"))
+            return [{"expression": expression, "begin": date_start.strftime("%Y-%m-%d"), "end": date_end.strftime("%Y-%m-%d"), "date_type": "inclusive",
+                    "label": "creation"}]
+        else:
+            expression = date_start.strftime("%Y %B %e")
+            return [{"expression": expression, "begin": date_start.strftime("%Y-%m-%d"), "date_type": "single",
+                    "label": "creation"}]
 
-    def transform_component_data(self):
+    def transform_extents(self, extent_values):
+        extents = []
+        for k, v in extent_values.items():
+            extent = {"number": v, "portion": "whole", "extent_type": k}
+            extents.append(extent)
+        return extents
+
+    def transform_external_ids(self, identifier):
+        return [{"external_id": identifier, "source": "aurora", "jsonmodel_type": "external_id"}]
+
+    def transform_langcode(self, languages):
+        langcode = "mul"
+        if len(languages) == 1:
+            langcode = languages[0]
+        return langcode
+
+    def transform_langnote(self, languages):
+        language = "multiple languages"
+        if len(languages) == 1:
+            language = "English"
+        return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
+                "publish": False, "content": ["Materials are in {}".format(language)]}
+
+    def transform_linked_agents(self, agents):
+        linked_agents = []
+        for agent in agents:
+            agent_ref = self.resolve_agent_ref(agent)
+            linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
+        return linked_agents
+
+    def transform_note_multipart(self, text, type):
+        note = ""
+        if len(text) > 0:
+            note = {"jsonmodel_type": "note_multipart", "type": type,
+                    "publish": False, "subnotes": [
+                        {"content": text, "publish": True,
+                         "jsonmodel_type": "note_text"}]}
+        return note
+
+    def transform_rights_acts(self, rights_granted):
+        acts = []
+        for granted in rights_granted:
+            act = {
+                "notes": [
+                    {"jsonmodel_type": "note_rights_statement_act",
+                     "type": "additional_information", "content": [granted['note']]}],
+                "act_type": granted['act'],
+                "restriction": granted['restriction'],
+                "start_date": granted['start_date'],
+                "end_date": granted['end_date'],
+            }
+            acts.append(act)
+        return acts
+
+    def transform_rights(self):
+        rights_statements = []
+        for r in self.data['rights_statements']:
+            statement = {
+                "rights_type": r['rights_basis'].lower(),
+                "start_date": r['start_date'],
+                "end_date": r['end_date'],
+                "notes": [
+                    {"jsonmodel_type": "note_rights_statement",
+                     "type": "type_note", "content": [r['note']]}],
+                "acts": self.transform_rights_acts(r['rights_granted']),
+                "external_documents": [],
+                "linked_agents": [],
+            }
+            if 'status' in r:
+                statement = {**statement, "status": r['status']}
+            if 'determination_date' in r:
+                statement = {**statement, "determination_date": r['determination_date']}
+            if 'terms' in r:
+                statement = {**statement, "license_terms": r['terms']}
+            if 'citation' in r:
+                statement = {**statement, "statute_citation": r['citation']}
+            if 'jurisdiction' in r:
+                statement = {**statement, "jurisdiction": r['jurisdiction'].upper()}
+            if 'other_rights_basis' in r:
+                statement = {**statement, "other_rights_basis": r['other_rights_basis'].lower()}
+            rights_statements.append(statement)
+        return rights_statements
+
+    ##################################
+    # Main object transformations
+    #################################
+
+    def transform_component(self):
+        metadata = self.data['metadata']
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
             "external_documents": [], "instances": [], "subjects": []
             }
         try:
-            title = jq(".metadata.title").transform(self.data)
-            language = jq(
-                '(if .metadata.language|length == 1 then\
-                    .metadata.language[0] else "mul" end)').transform(self.data)
-            external_ids = jq(
-                '[{external_id: .url, source: "aurora",\
-                    jsonmodel_type: "external_id"}]').transform(self.data)
-            extents = jq(
-                '[{number: .metadata.payload_oxum | split(".")[0],\
-                    portion: "whole", extent_type: "bytes"},\
-                  {number: .metadata.payload_oxum | split(".")[1],\
-                    portion: "whole", extent_type: "files"}]').transform(self.data)
-            dates = jq(
-                '[{expression: "", begin: .metadata.date_start,\
-                    "end": .metadata.date_end, date_type: "inclusive",\
-                    label: "creation"}]').transform(self.data)
-            scopecontent = jq(
-                'if .metadata.internal_sender_description|length > 0 then\
-                    {jsonmodel_type: "note_multipart", type: "scopecontent", publish: false,\
-                        subnotes: [\
-                            {content: .metadata.internal_sender_description,\
-                            publish: true, jsonmodel_type: "note_text"}]}\
-                else "" end').transform(self.data)
-            langmaterial = jq(
-                '{jsonmodel_type: "note_singlepart", type: "langmaterial", publish: false,\
-                    content: [(if .metadata.language|length == 1 then\
-                        "Materials are in English" else\
-                        "Materials are in multiple languages" end)]}').transform(self.data)
-            repository_ref = {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])}
-            resource_ref = {'ref': self.resolve_collection_ref(self.data)}
-
-            rights_statements = []
-            for r in self.data['rights_statements']:
-                rights_statement = self.transform_rights(r)
-                rights_statements.append(r)
-
-            linked_agents = []
-            if 'source_organization' in self.data['metadata']:
-                agent_ref = self.resolve_agent_ref(self.data['metadata']['source_organization'])
-                linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
-            if 'record_creators' in self.data['metadata']:
-                for agent in self.data['metadata']['record_creators']:
-                    agent_ref = self.resolve_agent_ref(agent)
-                    linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
-
-            consumer_data = {**defaults, "title": title, "language": language,
-                "external_ids": external_ids, "extents": extents,
-                "dates": dates, "rights_statements": rights_statements,
-                "linked_agents": linked_agents, "resource": resource_ref,
-                "repository": repository_ref, "notes": [scopecontent, langmaterial]}
-
+            self.consumer_data = {
+                **defaults,
+                "title": metadata['title'],
+                "language": self.transform_langcode(metadata['language']),
+                "external_ids": self.transform_external_ids(self.data['url']),
+                "extents": self.transform_extents(
+                    {"bytes": metadata['payload_oxum'].split(".")[0],
+                     "files": metadata['payload_oxum'].split(".")[1]}),
+                "dates": self.transform_dates(metadata['date_start'], metadata['date_end']),
+                "rights_statements": self.transform_rights(),
+                "linked_agents": self.transform_linked_agents(
+                    metadata['record_creators'] + [{"name": metadata['source_organization'], "type": "organization"}]),
+                "resource": {'ref': self.data['collection']},
+                "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
+                "notes": [
+                    self.transform_note_multipart(metadata['internal_sender_description'], "scopecontent"),
+                    self.transform_langnote(metadata['language'])]}
             if 'parent' in self.data:
-                parent_ref = {"ref": self.resolve_parent_ref(self.data)}
-                consumer_data = {**consumer_data, "parent_ref": parent_ref}
+                self.consumer_data = {**self.consumer_data, "parent": {"ref": self.data['parent']}}
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
+    def transform_accession(self):
+        accession_number = self.transform_accession_number(self.data['accession_number'])
+        defaults = {
+            "publish": False, "linked_events": [], "jsonmodel_type": "accession",
+            "external_documents": [], "instances": [], "subjects": [],
+            "classifications": [], "related_accessions": [], "deaccessions": [],
+            }
+        try:
+            self.consumer_data = {
+                **defaults,
+                "title": self.data['title'],
+                "external_ids": self.transform_external_ids(self.data['url']),
+                "extents": self.transform_extents(
+                    {"bytes": self.data['extent_size'],
+                     "files": self.data['extent_files']}),
+                "dates": self.transform_dates(self.data['start_date'], self.data['end_date']),
+                "rights_statements": self.transform_rights(),
+                "linked_agents": self.transform_linked_agents(self.data['creators']),
+                "related_resources": [{'ref': self.data['resource']}],
+                "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
+                "accession_date": self.data['accession_date'],
+                "access_restrictions_note": self.data['access_restrictions'],
+                "use_restrictions_note": self.data['use_restrictions'],
+                "acquisition_type": self.data['acquisition_type'],
+                "content_description": self.data['description']}
+
+            for n, segment in enumerate(accession_number):
+                self.consumer_data = {
+                    **self.consumer_data,
+                    "id_{}".format(n): accession_number.get(n)}
+            if 'appraisal_note' in self.data:
+                self.consumer_data = {**self.consumer_data, "general_note": self.data['appraisal_note']}
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def transform_agent(self, agent):
+        try:
+            if agent['type'] == 'person':
+                # Name in inverted order
+                if ', ' in agent['name']:
+                    name = agent['name'].rsplit(', ', 1)
+                # Name in direct order
+                else:
+                    name = agent['name'].rsplit(' ', 1).reverse()
+                consumer_data = {
+                    "agent_type": "agent_person",
+                    "names": [
+                        {"primary_name": name[0], "rest_of_name": name[1],
+                         "name_order": "inverted", "sort_name_auto_generate": True,
+                         "source": "local", "rules": "dacs"}]
+                }
+            elif agent['type'] == 'organization':
+                consumer_data = {
+                    "agent_type": "agent_corporate_entity",
+                    "names": [
+                        {"primary_name": agent["name"], "sort_name_auto_generate": True,
+                         "source": "local", "rules": "dacs"}]
+                }
+            elif agent['type'] == 'family':
+                consumer_data = {
+                    "agent_type": "agent_family",
+                    "names": [
+                        {"family_name": agent["name"], "sort_name_auto_generate": True,
+                         "source": "local", "rules": "dacs"}]
+                }
             return consumer_data
         except Exception as e:
             print(e)
-            return e
+            return False

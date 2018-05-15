@@ -10,9 +10,7 @@ class DataObject(models.Model):
     TYPE_CHOICES = (
         ('accession', 'Accession'),
         ('agent', 'Agent'),
-        ('collection', 'Collection'),
         ('component', 'Component'),
-        ('term', 'Term'),
     )
     type = models.CharField(max_length=50, choices=TYPE_CHOICES)
     data = JSONField()
@@ -38,3 +36,16 @@ class ConsumerObject(DataObject):
         ('fedora', 'Fedora')
     )
     consumer = models.CharField(max_length=50, choices=CONSUMER_CHOICES)
+
+
+class Identifier(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+    SOURCE_CHOICES = (
+        ('aurora', 'Aurora'),
+        ('archivesspace', 'ArchivesSpace'),
+        ('fedora', 'Fedora'),
+    )
+    source = models.CharField(max_length=50, choices=SOURCE_CHOICES)
+    identifier = models.CharField(max_length=200)
+    consumer_object = models.ForeignKey(ConsumerObject, on_delete=models.CASCADE, related_name='source_identifier')

@@ -41,3 +41,35 @@ class ArchivesSpaceClient(object):
                 object=settings.ARCHIVESSPACE['username'])
             return False
         self.repo_id = settings.ARCHIVESSPACE['repo_id']
+
+    def save_data(self, data, type):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        ENDPOINTS = {
+            'component': 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id),
+            'accession': 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id),
+            'person': 'agents/people',
+            'organization': 'agents/corporate_entities',
+            'family': 'agents/families',
+        }
+        resp = self.client.post(ENDPOINTS[type], data=json.dumps(data))
+        if resp.status_code != 200:
+            self.log.error('Error creating object in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
+            return False
+        self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
+        return resp.json()['uri']
+
+    def find_agent(self, agent):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        agent_type = 'agent_corporate_entity'
+        if agent['type'] == 'person':
+            agent_type = 'agent_person'
+        if agent['type'] == 'family':
+            agent_type = 'agent_family'
+        query = json.dumps({"query": {"field": "title", "value": agent['name'], "jsonmodel_type": "field_query"}})
+        resp = self.client.get('search', params={"page": 1, "type[]": agent_type, "aq": query})
+        if resp.status_code != 200:
+            self.log.error('Error searching for agent: {msg}'.format(msg=resp.json()['error']))
+            return False
+        if len(resp.json()['results']) > 0:
+            return resp.json()['results'][0]['uri']
+        return False
