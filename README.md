@@ -1,6 +1,6 @@
 # Aurora Fetcher
 
-A microservice to fetch data from Aurora.
+A microservice to fetch, transform and deliver data from Aurora.
 
 ## Setup
 
@@ -38,9 +38,9 @@ By default a new superuser is created. See `entrypoint.sh` for those users and a
 |--------|-----|---|---|---|
 |GET|/source_objects|`type` - object type (for example component, accession) <br/> `last_modified` - unix timestamp |200|Returns a list of Aurora objects|
 |GET|/source_objects/{id}| |200|Returns data about an individual Aurora object|
-|POST|/source_objects||200|Creates an Aurora object|
 |GET|/consumer_objects|`type` - object type (for example component, accession) <br/> `last_modified` - unix timestamp |200|Returns a list of consumer objects|
 |GET|/consumer_objects/{id}| |200|Returns data about an individual consumer object|
+|POST|/transform| |200|Transforms data from source to consumer format|
 |GET|/status||200|Return the status of the microservice
 
 

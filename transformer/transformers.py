@@ -2,7 +2,7 @@ import iso8601
 import json
 
 from aurora_fetcher import settings
-from transformer.models import ConsumerObject
+from transformer.models import ConsumerObject, Identifier
 from client.clients import ArchivesSpaceClient
 
 
@@ -10,24 +10,27 @@ class ArchivesSpaceDataTransformer(object):
 
     def __init__(self, data, type, source_object):
         self.data = data
-        self.metadata = data['metadata']
         self.type = type
         self.source_object = source_object
 
     def run(self):
-        if not getattr(self, 'transform_{}'.format(self.type))():
-            print("Error transforming data")
-            return False
-
-        consumer_object = ConsumerObject.objects.create(
-            consumer='archivesspace',
-            type=self.type,
-            source_object=self.source_object,
-            data=self.consumer_data,
-        )
-
-        if not ArchivesSpaceClient().save_data(self.consumer_data, self.type):
-            print("Error delivering data")
+        try:
+            getattr(self, 'transform_{}'.format(self.type))()
+            as_identifier = ArchivesSpaceClient().save_data(self.consumer_data, self.type)
+            consumer_object = ConsumerObject.objects.create(
+                consumer='archivesspace',
+                type=self.type,
+                source_object=self.source_object,
+                data=self.consumer_data,
+            )
+            identifier = Identifier.objects.create(
+                source='archivesspace',
+                identifier=as_identifier,
+                consumer_object=consumer_object,
+            )
+            return True
+        except Exception as e:
+            print(e)
             return False
 
     ####################################
@@ -36,6 +39,9 @@ class ArchivesSpaceDataTransformer(object):
 
     def resolve_agent_ref(self, agent_name):
         return "/agents/corporate_entities/1"
+
+    def transform_accession_number(self, number):
+        return number.split(".")
 
     def transform_dates(self, start, end):
         date_start = iso8601.parse_date(start)
@@ -74,16 +80,21 @@ class ArchivesSpaceDataTransformer(object):
         return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
                 "publish": False, "content": ["Materials are in {}".format(language)]}
 
-    def transform_linked_agents(self):
+    def transform_linked_agents(self, agent_names):
         linked_agents = []
-        if 'source_organization' in self.data['metadata']:
-            agent_ref = self.resolve_agent_ref(self.data['metadata']['source_organization'])
+        for agent in agent_names:
+            agent_ref = self.resolve_agent_ref(agent)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
-        if 'record_creators' in self.data['metadata']:
-            for agent in self.data['metadata']['record_creators']:
-                agent_ref = self.resolve_agent_ref(agent)
-                linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
+
+    def transform_note_multipart(self, text, type):
+        note = ""
+        if len(text) > 0:
+            note = {"jsonmodel_type": "note_multipart", "type": type,
+                    "publish": False, "subnotes": [
+                        {"content": text, "publish": True,
+                         "jsonmodel_type": "note_text"}]}
+        return note
 
     def transform_rights_acts(self, rights_granted):
         acts = []
@@ -129,20 +140,12 @@ class ArchivesSpaceDataTransformer(object):
             rights_statements.append(statement)
         return rights_statements
 
-    def transform_scopecontent(self, note_text):
-        note = ""
-        if len(note_text) > 0:
-            note = {"jsonmodel_type": "note_multipart", "type": "scopecontent",
-                    "publish": False, "subnotes": [
-                        {"content": note_text, "publish": True,
-                         "jsonmodel_type": "note_text"}]}
-        return note
-
     ##################################
     # Main object transformations
     #################################
 
     def transform_component(self):
+        metadata = self.data['metadata']
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
             "external_documents": [], "instances": [], "subjects": []
@@ -150,23 +153,61 @@ class ArchivesSpaceDataTransformer(object):
         try:
             self.consumer_data = {
                 **defaults,
-                "title": self.metadata['title'],
-                "language": self.transform_langcode(self.metadata['language']),
+                "title": metadata['title'],
+                "language": self.transform_langcode(metadata['language']),
                 "external_ids": self.transform_external_ids(self.data['url']),
                 "extents": self.transform_extents(
-                    {"bytes": self.metadata['payload_oxum'].split(".")[0],
-                     "files": self.metadata['payload_oxum'].split(".")[1]}),
-                "dates": self.transform_dates(self.metadata['date_start'], self.metadata['date_end']),
+                    {"bytes": metadata['payload_oxum'].split(".")[0],
+                     "files": metadata['payload_oxum'].split(".")[1]}),
+                "dates": self.transform_dates(metadata['date_start'], metadata['date_end']),
                 "rights_statements": self.transform_rights(),
-                "linked_agents": self.transform_linked_agents(),
+                "linked_agents": self.transform_linked_agents(
+                    metadata['record_creators'] + [metadata['source_organization']]),
                 "resource": {'ref': self.data['collection']},
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "notes": [
-                    self.transform_scopecontent(self.metadata['internal_sender_description']),
-                    self.transform_langnote(self.metadata['language'])]}
+                    self.transform_note_multipart(metadata['internal_sender_description'], "scopecontent"),
+                    self.transform_langnote(metadata['language'])]}
             if 'parent' in self.data:
                 self.consumer_data = {**self.consumer_data, "parent": {"ref": self.data['parent']}}
             return True
         except Exception as e:
             print(e)
             return False
+
+        def transform_accession(self):
+            accession_number = self.transform_accession_number(self.data['accession_number'])
+            defaults = {
+                "publish": False, "linked_events": [], "jsonmodel_type": "accession",
+                "external_documents": [], "instances": [], "subjects": [],
+                "classifications": [], "related_accessions": [], "deaccessions": [],
+                }
+            try:
+                self.consumer_data = {
+                    **defaults,
+                    "title": self.data['title'],
+                    "external_ids": self.transform_external_ids(self.data['url']),
+                    "extents": self.transform_extents(
+                        {"bytes": self.data['extent_size'],
+                         "files": self.data['extent_files']}),
+                    "dates": self.transform_dates(self.data['start_date'], self.data['end_date']),
+                    "rights_statements": self.transform_rights(),
+                    "linked_agents": self.transform_linked_agents(self.data['creators']),
+                    "related_resources": [{'ref': self.data['resource']}],
+                    "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
+                    "accession_date": self.data['accession_date'],
+                    "access_restrictions_note": self.data['access_restrictions'],
+                    "use_restrictions_note": self.data['use_restrictions'],
+                    "acquisition_type": self.data['acquisition_type'],
+                    "content_description": self.data['description']}
+
+                for n, segment in enumerate(accession_number):
+                    self.consumer_data = {
+                        **self.consumer_data,
+                        "id_{}".format(n): accession_number.get(n)}
+                if 'appraisal_note' in self.data:
+                    self.consumer_data = {**self.consumer_data, "general_note": self.data['appraisal_note']}
+                return True
+            except Exception as e:
+                print(e)
+                return False

@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.views.generic import View
 
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
@@ -10,7 +11,37 @@ from transformer.serializers import SourceObjectSerializer, ConsumerObjectSerial
 from transformer.transformers import ArchivesSpaceDataTransformer
 
 
-class SourceObjectViewSet(viewsets.ModelViewSet):
+class TransformViewSet(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    def get_type(self, url):
+        if 'transfers' in url:
+            return 'component'
+        if 'accession' in url:
+            return 'accession'
+
+    def create(self, request):
+        type = self.get_type(request.data['url'])
+        try:
+            source_object = SourceObject.objects.create(
+                source='aurora',
+                type=type,
+                data=request.data
+            )
+            transformer = ArchivesSpaceDataTransformer(
+                data=request.data,
+                type=type,
+                source_object=source_object,
+            )
+            transformer.run()
+            consumer_object = ConsumerObject.objects.get(source_object=source_object)
+            serializer = ConsumerObjectSerializer(consumer_object, context={'request': request})
+            return Response(serializer.data)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+
+class SourceObjectViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     model = SourceObject
     serializer_class = SourceObjectSerializer
@@ -25,43 +56,8 @@ class SourceObjectViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(type=type)
         return queryset
 
-    def get_type(self, url):
-        if 'transfers' in url:
-            return 'component'
-        if 'accession' in url:
-            return 'accession'
 
-    def create(self, request):
-        type = self.get_type(request.data['url'])
-        source_object = SourceObject.objects.create(
-            source='aurora',
-            type=type,
-            data=request.data
-        )
-        try:
-            transformer = ArchivesSpaceDataTransformer(
-                data=request.data,
-                type=type,
-                source_object=source_object,
-            )
-            transformer.run()
-            serializer = SourceObjectSerializer(source_object, context={'request': request})
-            return Response(serializer.data)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, pk=None):
-        type = self.get_type(request.data['url'])
-        source_object = Component.objects.update(
-            pk=pk,
-            type=type,
-            data=request.data
-        )
-        serializer = SourceObjectSerializer(source_object, context={'request': request})
-        return Response(serializer.data)
-
-
-class ConsumerObjectViewSet(viewsets.ModelViewSet):
+class ConsumerObjectViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     model = ConsumerObject
     serializer_class = ConsumerObjectSerializer
