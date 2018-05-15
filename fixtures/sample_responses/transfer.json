@@ -15,7 +15,22 @@
         "external_identifier": "records-2017-12-11T20:19:40.210341",
         "title": "Annual Reports",
         "record_creators": [
-            "Office of Important Affairs"
+            {
+              "name": "Office of Important Affairs",
+              "type": "organization"
+            },
+            {
+              "name": "Ford, Henry",
+              "type": "person"
+            },
+            {
+              "name": "Rockefeller, Jr., John D.",
+              "type": "person"
+            },
+            {
+              "name": "The Kinks",
+              "type": "family"
+            }
         ],
         "internal_sender_description": "Annual Reports detailing the activities of the foundation.",
         "date_start": "2008-07-01T00:00:00-04:00",

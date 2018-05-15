@@ -37,8 +37,12 @@ class ArchivesSpaceDataTransformer(object):
     # Helper functions
     ####################################
 
-    def resolve_agent_ref(self, agent_name):
-        return "/agents/corporate_entities/1"
+    def resolve_agent_ref(self, agent):
+        if ArchivesSpaceClient().find_agent(agent):
+            return ArchivesSpaceClient().find_agent(agent)
+        else:
+            consumer_agent = self.transform_agent(agent)
+            return ArchivesSpaceClient().save_data(consumer_agent, agent['type'])
 
     def transform_accession_number(self, number):
         return number.split(".")
@@ -80,9 +84,9 @@ class ArchivesSpaceDataTransformer(object):
         return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
                 "publish": False, "content": ["Materials are in {}".format(language)]}
 
-    def transform_linked_agents(self, agent_names):
+    def transform_linked_agents(self, agents):
         linked_agents = []
-        for agent in agent_names:
+        for agent in agents:
             agent_ref = self.resolve_agent_ref(agent)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
@@ -162,7 +166,7 @@ class ArchivesSpaceDataTransformer(object):
                 "dates": self.transform_dates(metadata['date_start'], metadata['date_end']),
                 "rights_statements": self.transform_rights(),
                 "linked_agents": self.transform_linked_agents(
-                    metadata['record_creators'] + [metadata['source_organization']]),
+                    metadata['record_creators'] + [{"name": metadata['source_organization'], "type": "organization"}]),
                 "resource": {'ref': self.data['collection']},
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "notes": [
@@ -175,39 +179,74 @@ class ArchivesSpaceDataTransformer(object):
             print(e)
             return False
 
-        def transform_accession(self):
-            accession_number = self.transform_accession_number(self.data['accession_number'])
-            defaults = {
-                "publish": False, "linked_events": [], "jsonmodel_type": "accession",
-                "external_documents": [], "instances": [], "subjects": [],
-                "classifications": [], "related_accessions": [], "deaccessions": [],
-                }
-            try:
-                self.consumer_data = {
-                    **defaults,
-                    "title": self.data['title'],
-                    "external_ids": self.transform_external_ids(self.data['url']),
-                    "extents": self.transform_extents(
-                        {"bytes": self.data['extent_size'],
-                         "files": self.data['extent_files']}),
-                    "dates": self.transform_dates(self.data['start_date'], self.data['end_date']),
-                    "rights_statements": self.transform_rights(),
-                    "linked_agents": self.transform_linked_agents(self.data['creators']),
-                    "related_resources": [{'ref': self.data['resource']}],
-                    "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
-                    "accession_date": self.data['accession_date'],
-                    "access_restrictions_note": self.data['access_restrictions'],
-                    "use_restrictions_note": self.data['use_restrictions'],
-                    "acquisition_type": self.data['acquisition_type'],
-                    "content_description": self.data['description']}
+    def transform_accession(self):
+        accession_number = self.transform_accession_number(self.data['accession_number'])
+        defaults = {
+            "publish": False, "linked_events": [], "jsonmodel_type": "accession",
+            "external_documents": [], "instances": [], "subjects": [],
+            "classifications": [], "related_accessions": [], "deaccessions": [],
+            }
+        try:
+            self.consumer_data = {
+                **defaults,
+                "title": self.data['title'],
+                "external_ids": self.transform_external_ids(self.data['url']),
+                "extents": self.transform_extents(
+                    {"bytes": self.data['extent_size'],
+                     "files": self.data['extent_files']}),
+                "dates": self.transform_dates(self.data['start_date'], self.data['end_date']),
+                "rights_statements": self.transform_rights(),
+                "linked_agents": self.transform_linked_agents(self.data['creators']),
+                "related_resources": [{'ref': self.data['resource']}],
+                "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
+                "accession_date": self.data['accession_date'],
+                "access_restrictions_note": self.data['access_restrictions'],
+                "use_restrictions_note": self.data['use_restrictions'],
+                "acquisition_type": self.data['acquisition_type'],
+                "content_description": self.data['description']}
 
-                for n, segment in enumerate(accession_number):
-                    self.consumer_data = {
-                        **self.consumer_data,
-                        "id_{}".format(n): accession_number.get(n)}
-                if 'appraisal_note' in self.data:
-                    self.consumer_data = {**self.consumer_data, "general_note": self.data['appraisal_note']}
-                return True
-            except Exception as e:
-                print(e)
-                return False
+            for n, segment in enumerate(accession_number):
+                self.consumer_data = {
+                    **self.consumer_data,
+                    "id_{}".format(n): accession_number.get(n)}
+            if 'appraisal_note' in self.data:
+                self.consumer_data = {**self.consumer_data, "general_note": self.data['appraisal_note']}
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def transform_agent(self, agent):
+        try:
+            if agent['type'] == 'person':
+                # Name in inverted order
+                if ', ' in agent['name']:
+                    name = agent['name'].rsplit(', ', 1)
+                # Name in direct order
+                else:
+                    name = agent['name'].rsplit(' ', 1).reverse()
+                consumer_data = {
+                    "agent_type": "agent_person",
+                    "names": [
+                        {"primary_name": name[0], "rest_of_name": name[1],
+                         "name_order": "inverted", "sort_name_auto_generate": True,
+                         "source": "local", "rules": "dacs"}]
+                }
+            elif agent['type'] == 'organization':
+                consumer_data = {
+                    "agent_type": "agent_corporate_entity",
+                    "names": [
+                        {"primary_name": agent["name"], "sort_name_auto_generate": True,
+                         "source": "local", "rules": "dacs"}]
+                }
+            elif agent['type'] == 'family':
+                consumer_data = {
+                    "agent_type": "agent_family",
+                    "names": [
+                        {"family_name": agent["name"], "sort_name_auto_generate": True,
+                         "source": "local", "rules": "dacs"}]
+                }
+            return consumer_data
+        except Exception as e:
+            print(e)
+            return False
