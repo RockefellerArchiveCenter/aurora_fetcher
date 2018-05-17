@@ -58,18 +58,23 @@ class ArchivesSpaceClient(object):
         self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
         return resp.json()['uri']
 
-    def find_agent(self, agent):
+    def get_or_create(self, type, field, value, consumer_data):
         self.log = self.log.bind(request_id=str(uuid4()))
-        agent_type = 'agent_corporate_entity'
-        if agent['type'] == 'person':
-            agent_type = 'agent_person'
-        if agent['type'] == 'family':
-            agent_type = 'agent_family'
-        query = json.dumps({"query": {"field": "title", "value": agent['name'], "jsonmodel_type": "field_query"}})
-        resp = self.client.get('search', params={"page": 1, "type[]": agent_type, "aq": query})
+        TYPE_LIST = (
+            ('family', 'agent_family'),
+            ('organization', 'agent_corporate_entity'),
+            ('person', 'agent_person'),
+            ('component', 'archival_object'),
+            ('grouping_component', 'archival_object'),
+            ('accession', 'accession')
+        )
+        model_type = [t[1] for t in TYPE_LIST if t[0] == type][0]
+        query = json.dumps({"query": {"field": field, "value": value, "jsonmodel_type": "field_query"}})
+        resp = self.client.get('search', params={"page": 1, "type[]": model_type, "aq": query})
         if resp.status_code != 200:
             self.log.error('Error searching for agent: {msg}'.format(msg=resp.json()['error']))
             return False
-        if len(resp.json()['results']) > 0:
-            return resp.json()['results'][0]['uri']
-        return False
+        if len(resp.json()['results']) == 0:
+            self.log.debug("No match for object found in ArchivesSpace", object=value)
+            return self.save_data(consumer_data, type)
+        return resp.json()['results'][0]['uri']

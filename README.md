@@ -34,6 +34,15 @@ By default a new superuser is created. See `entrypoint.sh` for those users and a
 
 ## Usage
 
+The heart of this microservice is a routine that accepts a POST request containing accession data from Aurora, and then saves an accession record as well as components for each transfer in that accession in ArchivesSpace. Since a picture is worth a thousand words, this diagram will explain:
+
+![Accession Routine diagram](accession_routine.png)
+
+For an example of the data aurora_fetcher expects from Aurora, see `fixtures/data/accession.json`.
+
+
+### Routes
+
 | Method | URL | Parameters | Response  | Behavior  |
 |--------|-----|---|---|---|
 |GET|/source_objects|`type` - object type (for example component, accession) <br/> `last_modified` - unix timestamp |200|Returns a list of Aurora objects|
@@ -59,7 +68,7 @@ This token key should be included in the `Authorization` header of your requests
     Authorization: JWT 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 
 
-## Logging
+### Logging
 
 aurora_fetcher uses `structlog` to output structured JSON logs. Logging can be configured in `aurora_fetcher/settings.py`.
 
