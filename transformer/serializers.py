@@ -6,14 +6,14 @@ class IdentifierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Identifier
-        exclude = ('id',)
+        exclude = ('id', 'consumer_object')
 
 
 class SourceObjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SourceObject
-        fields = ('id', 'type', 'source', 'data', 'created', 'last_modified')
+        fields = ('id', 'type', 'source', 'process_status', 'data', 'created', 'last_modified')
 
 
 class ConsumerObjectSerializer(serializers.ModelSerializer):

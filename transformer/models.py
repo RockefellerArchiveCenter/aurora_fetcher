@@ -21,6 +21,15 @@ class SourceObject(DataObject):
         ('aurora', 'Aurora'),
     )
     source = models.CharField(max_length=50, choices=SOURCE_CHOICES)
+    STATUS_CHOICES = (
+        ('10', 'Object saved in ArchivesSpace'),
+        ('30', 'Associated grouping component saved in ArchivesSpace'),
+        ('50', 'Associated transfers saved in ArchivesSpace'),
+    )
+    process_status = models.CharField(max_length=50, choices=STATUS_CHOICES)
+
+    def __str__(self):
+        return '{} {} {}'.format(self.source, self.type, self.id)
 
     def update_data(self):
         client = AuroraClient().client
@@ -37,6 +46,9 @@ class ConsumerObject(DataObject):
     )
     consumer = models.CharField(max_length=50, choices=CONSUMER_CHOICES)
 
+    def __str__(self):
+        return '{} {} {}'.format(self.consumer, self.type, self.id)
+
 
 class Identifier(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -49,3 +61,6 @@ class Identifier(models.Model):
     source = models.CharField(max_length=50, choices=SOURCE_CHOICES)
     identifier = models.CharField(max_length=200)
     consumer_object = models.ForeignKey(ConsumerObject, on_delete=models.CASCADE, related_name='source_identifier')
+
+    def __str__(self):
+        return self.identifier

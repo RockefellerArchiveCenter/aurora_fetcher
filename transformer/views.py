@@ -29,7 +29,8 @@ class TransformViewSet(viewsets.ViewSet):
         source_object = SourceObject.objects.create(
             source='aurora',
             type='accession',
-            data=request.data
+            data=request.data,
+            process_status=10
         )
         consumer_object = ConsumerObject.objects.create(
             consumer='archivesspace',

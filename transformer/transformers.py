@@ -7,7 +7,7 @@ from client.clients import ArchivesSpaceClient
 
 
 class ArchivesSpaceDataTransformer(object):
-    client = ArchivesSpaceClient
+    client = ArchivesSpaceClient()
 
     ####################################
     # Helper functions
@@ -57,7 +57,7 @@ class ArchivesSpaceDataTransformer(object):
         linked_agents = []
         for agent in agents:
             consumer_data = self.transform_agent(agent)
-            agent_ref = self.client().get_or_create(agent['type'], 'title', agent['name'], consumer_data)
+            agent_ref = self.client.get_or_create(agent['type'], 'title', agent['name'], consumer_data)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
 
@@ -160,12 +160,12 @@ class ArchivesSpaceDataTransformer(object):
                 "title": data['title'],
                 "external_ids": self.transform_external_ids(data['url']),
                 "extents": self.transform_extents(
-                    {"bytes": data['extent_size'],
-                     "files": data['extent_files']}),
+                    {"bytes": str(data['extent_size']),
+                     "files": str(data['extent_files'])}),
                 "dates": self.transform_dates(data['start_date'], data['end_date']),
                 "rights_statements": self.transform_rights(data['rights_statements']),
                 "linked_agents": self.transform_linked_agents(
-                    data['creators']+[{"name": metadata['source_organization'], "type": "organization"}]),
+                    data['creators']+[{"name": data['organization'], "type": "organization"}]),
                 "resource": {'ref': data['resource']},
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "notes": [

@@ -25,6 +25,19 @@ class AuroraClient(object):
         if not self.client.authorize():
             self.log.error("Couldn't authenticate user credentials for Aurora")
 
+    def get_data(self, url):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        resp = self.client.get(url)
+        if resp.status_code != 200:
+            self.log.error("Error retrieving data from Aurora: {msg}".format(msg=resp.json()['detail']))
+            return False
+        self.log.debug("Object retrieved from Aurora", object=url)
+        return resp.json()
+
+    def update_data(self, url, data):
+        self.log.debug("Object saved in Aurora", object=url)
+        return True
+
 
 class ArchivesSpaceClient(object):
 
@@ -76,5 +89,6 @@ class ArchivesSpaceClient(object):
             return False
         if len(resp.json()['results']) == 0:
             self.log.debug("No match for object found in ArchivesSpace", object=value)
-            return self.save_data(consumer_data, type)
+            if self.save_data(consumer_data, type):
+                return self.save_data(consumer_data, type)
         return resp.json()['results'][0]['uri']
