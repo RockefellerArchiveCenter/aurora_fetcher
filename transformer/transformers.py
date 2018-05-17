@@ -1,13 +1,12 @@
 import iso8601
 import json
 
-from aurora_fetcher import settings
+from aquarius import settings
 from transformer.models import ConsumerObject, Identifier
 from client.clients import ArchivesSpaceClient
 
 
 class ArchivesSpaceDataTransformer(object):
-    client = ArchivesSpaceClient()
 
     ####################################
     # Helper functions
@@ -57,7 +56,7 @@ class ArchivesSpaceDataTransformer(object):
         linked_agents = []
         for agent in agents:
             consumer_data = self.transform_agent(agent)
-            agent_ref = self.client.get_or_create(agent['type'], 'title', agent['name'], consumer_data)
+            agent_ref = ArchivesSpaceClient().get_or_create(agent['type'], 'title', agent['name'], consumer_data)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
 

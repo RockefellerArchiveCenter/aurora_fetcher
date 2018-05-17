@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.shortcuts import render
 from django.views.generic import View
 
 from rest_framework import viewsets, generics, status
@@ -7,8 +8,13 @@ from rest_framework.permissions import IsAuthenticated
 
 from client.clients import ArchivesSpaceClient
 from transformer.models import SourceObject, ConsumerObject, Identifier
-from transformer.serializers import SourceObjectSerializer, ConsumerObjectSerializer
+from transformer.serializers import SourceObjectSerializer, SourceObjectListSerializer, ConsumerObjectSerializer, ConsumerObjectListSerializer
 from transformer.transformers import ArchivesSpaceDataTransformer
+
+
+class HomeView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'transformer/main.html')
 
 
 class TransformViewSet(viewsets.ViewSet):
@@ -47,7 +53,6 @@ class TransformViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-
 class SourceObjectViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     model = SourceObject
@@ -62,6 +67,11 @@ class SourceObjectViewSet(viewsets.ReadOnlyModelViewSet):
         if type != "":
             queryset = queryset.filter(type=type)
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return SourceObjectListSerializer
+        return SourceObjectSerializer
 
 
 class ConsumerObjectViewSet(viewsets.ReadOnlyModelViewSet):
@@ -78,3 +88,8 @@ class ConsumerObjectViewSet(viewsets.ReadOnlyModelViewSet):
         if type != "":
             queryset = queryset.filter(type=type)
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ConsumerObjectListSerializer
+        return ConsumerObjectSerializer
