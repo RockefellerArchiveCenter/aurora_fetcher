@@ -6,7 +6,7 @@ from os.path import join
 from structlog import wrap_logger
 from uuid import uuid4
 
-from aurora_fetcher import settings
+from aquarius import settings
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

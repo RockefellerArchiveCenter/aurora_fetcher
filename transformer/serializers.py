@@ -9,16 +9,31 @@ class IdentifierSerializer(serializers.ModelSerializer):
         exclude = ('id', 'consumer_object')
 
 
-class SourceObjectSerializer(serializers.ModelSerializer):
+class SourceObjectSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = SourceObject
-        fields = ('id', 'type', 'source', 'process_status', 'data', 'created', 'last_modified')
+        fields = ('url', 'type', 'source', 'process_status', 'data', 'created', 'last_modified')
 
 
-class ConsumerObjectSerializer(serializers.ModelSerializer):
+class SourceObjectListSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = SourceObject
+        exclude = ('data',)
+
+
+class ConsumerObjectSerializer(serializers.HyperlinkedModelSerializer):
     identifiers = IdentifierSerializer(source='source_identifier', many=True)
 
     class Meta:
         model = ConsumerObject
-        fields = ('id', 'type', 'source_object', 'consumer', 'identifiers', 'data', 'created', 'last_modified')
+        fields = ('url', 'type', 'source_object', 'consumer', 'identifiers', 'data', 'created', 'last_modified')
+
+
+class ConsumerObjectListSerializer(serializers.HyperlinkedModelSerializer):
+    identifiers = IdentifierSerializer(source='source_identifier', many=True)
+
+    class Meta:
+        model = ConsumerObject
+        exclude = ('data',)

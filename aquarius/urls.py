@@ -1,4 +1,4 @@
-"""aurora_fetcher URL Configuration
+"""aquarius URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -16,20 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url
 from django.urls import include, re_path
-from client.views import HomeView
 from transformer.models import SourceObject
-from transformer.views import SourceObjectViewSet, ConsumerObjectViewSet, TransformViewSet
+from transformer.views import HomeView, SourceObjectViewSet, ConsumerObjectViewSet, TransformViewSet
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 
 router = routers.DefaultRouter()
-router.register(r'^transform', TransformViewSet, 'transform')
-router.register(r'^source_objects', SourceObjectViewSet, 'source_object')
-router.register(r'^consumer_objects', ConsumerObjectViewSet, 'consumer_object')
+router.register(r'transform', TransformViewSet, 'transform')
+router.register(r'source_objects', SourceObjectViewSet, 'sourceobject')
+router.register(r'consumer_objects', ConsumerObjectViewSet, 'consumerobject')
 
 urlpatterns = [
     re_path(r'^$', HomeView.as_view(), name='home'),
-    url(r'', include(router.urls)),
+    url(r'^', include(router.urls)),
     url(r'^get-token/', obtain_jwt_token),
     url(r'^', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^status/', include('health_check.api.urls')),
