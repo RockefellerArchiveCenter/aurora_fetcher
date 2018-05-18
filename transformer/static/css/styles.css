@@ -3,8 +3,8 @@ html {
 }
 
 body.bg-image {
-    background-image: url(/static/img/pleiades.jpg);
-    background-position: center;
+    background-image: url(/static/img/aquarius.png);
+    background-position: top;
     background-size: cover;
     background-repeat: no-repeat;
 }

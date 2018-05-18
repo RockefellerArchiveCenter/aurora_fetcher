@@ -37,5 +37,40 @@
     "appraisal_note": "",
     "created": "2018-05-16T16:30:48.136666-04:00",
     "last_modified": "2018-05-16T16:30:48.136680-04:00",
-    "rights_statements": []
+    "rights_statements": [
+      {
+          "status": "copyrighted",
+          "end_date": "2050-06-29",
+          "rights_basis": "Copyright",
+          "jurisdiction": "us",
+          "note": "Work for hire. Materials are copyrighted until 40 years after publication.",
+          "rights_granted": [
+              {
+                  "act": "publish",
+                  "start_date": "2008-07-01",
+                  "end_date": "2050-06-29",
+                  "note": "Materials are copyrighted until 40 years after publication",
+                  "restriction": "disallow"
+              }
+          ],
+          "determination_date": "2018-04-26",
+          "start_date": "2008-07-01"
+      },
+      {
+          "note": "Materials closed to research for a period of 10 years from date of creation.",
+          "other_rights_basis": "Donor",
+          "end_date": "2020-06-30",
+          "rights_granted": [
+              {
+                  "act": "disseminate",
+                  "start_date": "2008-07-01",
+                  "end_date": "2020-06-30",
+                  "note": "Materials closed to research for a period of 10 years from date of creation.",
+                  "restriction": "disallow"
+              }
+          ],
+          "rights_basis": "Other",
+          "start_date": "2008-07-01"
+      }
+    ]
 }

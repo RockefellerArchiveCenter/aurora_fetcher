@@ -25,5 +25,8 @@ class ProcessAccessions(CronJobBase):
         self.log.debug("Found {} accessions to process".format(len(accessions)))
         for accession in accessions:
             self.log.debug("Running accession routine", object=accession)
-            routine = AccessionRoutine(accession)
-            routine.run()
+            try:
+                routine = AccessionRoutine(accession)
+                routine.run()
+            except Exception as e:
+                print(e)
