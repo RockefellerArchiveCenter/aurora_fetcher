@@ -23,6 +23,7 @@ itypes==1.1.0
 Jinja2==2.10
 MarkupSafe==1.0
 psycopg2-binary==2.7.4
+pycountry==18.2.23
 PyJWT==1.6.1
 pytz==2018.4
 PyYAML==3.12

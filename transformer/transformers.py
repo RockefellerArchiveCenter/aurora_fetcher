@@ -1,5 +1,6 @@
 import iso8601
 import json
+from pycountry import languages as langz
 
 from aquarius import settings
 from transformer.models import ConsumerObject, Identifier
@@ -48,7 +49,8 @@ class ArchivesSpaceDataTransformer(object):
     def transform_langnote(self, languages):
         language = "multiple languages"
         if len(languages) == 1:
-            language = "English"
+            obj = langz.get(alpha_3=languages[0])
+            language = obj.name
         return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
                 "publish": False, "content": ["Materials are in {}".format(language)]}
 
@@ -157,6 +159,7 @@ class ArchivesSpaceDataTransformer(object):
             consumer_data = {
                 **defaults,
                 "title": data['title'],
+                "language": data['language'],
                 "external_ids": self.transform_external_ids(data['url']),
                 "extents": self.transform_extents(
                     {"bytes": str(data['extent_size']),
@@ -170,6 +173,7 @@ class ArchivesSpaceDataTransformer(object):
                 "notes": [
                     self.transform_note_multipart(data['access_restrictions'], "accessrestrict"),
                     self.transform_note_multipart(data['use_restrictions'], "userestrict"),
+                    self.transform_langnote([data['language']])
                     ]}
             if 'description' in data:
                 consumer_data['notes'].append(self.transform_note_multipart(data['description'], "scopecontent"))
