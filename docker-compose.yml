@@ -5,8 +5,6 @@ services:
     image: postgres
   web:
     build: .
-    environment:
-      - TRAVIS=${TRAVIS} # This imports the TRAVIS environment variable into the container so we can use it for testing, ex: if os.getenv('TRAVIS') == 'true'.
     entrypoint: /code/entrypoint.sh
     volumes:
       - .:/code
