@@ -39,16 +39,17 @@ class TransformTest(TestCase):
 
     def transform_accessions(self):
         print('*** Transforming accessions ***')
-        for accession in self.accession_data:
-            request = self.factory.post(reverse('transform-list'), accession, format='json')
-            force_authenticate(request, user=self.user)
-            response = TransformViewSet.as_view(actions={"post": "create"})(request)
-            print('Updated source {name}'.format(name=response.data['url']))
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-            # correct number of SourceObject
-            # correct number of ConsumerObject
-            # correct type in SourceObject
-            # correct type in ConsumerObject
+        with transformer_vcr.use_cassette('trasnform_accessions.json'):
+            for accession in self.accession_data:
+                request = self.factory.post(reverse('transform-list'), accession, format='json')
+                force_authenticate(request, user=self.user)
+                response = TransformViewSet.as_view(actions={"post": "create"})(request)
+                print('Updated source {name}'.format(name=response.data['url']))
+                self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+                # correct number of SourceObject
+                # correct number of ConsumerObject
+                # correct type in SourceObject
+                # correct type in ConsumerObject
 
     def transform_components(self):
         print('*** Transforming components ***')
