@@ -49,6 +49,28 @@ class ConsumerObject(DataObject):
     def __str__(self):
         return '{} {} {}'.format(self.consumer, self.type, self.id)
 
+    def initial_save(self, consumer_data, identifier, type, source_object=None, source_data=None):
+        if not source_object:
+            source_object = SourceObject.objects.create(
+                source='aurora',
+                type=type,
+                data=source_data,
+                process_status=10,
+            )
+        consumer_object = ConsumerObject.objects.create(
+            consumer='archivesspace',
+            type=type,
+            source_object=source_object,
+            data=consumer_data,
+        )
+        identifier = Identifier.objects.create(
+            source='archivesspace',
+            identifier=identifier,
+            consumer_object=consumer_object,
+        )
+        return consumer_object
+
+
 
 class Identifier(models.Model):
     created = models.DateTimeField(auto_now_add=True)

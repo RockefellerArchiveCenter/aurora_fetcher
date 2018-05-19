@@ -1,4 +1,8 @@
 from datetime import datetime
+import logging
+from structlog import wrap_logger
+from uuid import uuid4
+
 from django.shortcuts import render
 from django.views.generic import View
 
@@ -11,6 +15,10 @@ from transformer.models import SourceObject, ConsumerObject, Identifier
 from transformer.serializers import SourceObjectSerializer, SourceObjectListSerializer, ConsumerObjectSerializer, ConsumerObjectListSerializer
 from transformer.transformers import ArchivesSpaceDataTransformer
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger = wrap_logger(logger)
+
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -20,35 +28,24 @@ class HomeView(View):
 class TransformViewSet(viewsets.ViewSet):
     """Accepts Accession records from Aurora, transforms and saves data to ArchivesSpace"""
     permission_classes = (IsAuthenticated,)
-    transformer = ArchivesSpaceDataTransformer
-    client = ArchivesSpaceClient
+    log = logger
 
     def create(self, request):
+        self.log.bind(request_id=str(uuid4()))
+        transformer = ArchivesSpaceDataTransformer()
+        client = ArchivesSpaceClient()
         if 'accession' not in request.data['url']:
-            Response("Incorrect object type", status=status.HTTP_400_BAD_REQUEST)
-        consumer_data = self.transformer().transform_accession(request.data)
-        as_identifier = self.client().save_data(consumer_data, 'accession')
+            self.log.error("Incorrect object type, must be an accession", object=request.data['url'])
+            return Response({"detail": "Incorrect object type, must be an accession"}, status=status.HTTP_400_BAD_REQUEST)
+        consumer_data = transformer.transform_accession(request.data)
+        aspace_identifier = client.create(consumer_data, 'accession')
         if not consumer_data:
-            return Response("Error transforming data.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        if not as_identifier:
-            return Response("Error saving data in ArchivesSpace.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        source_object = SourceObject.objects.create(
-            source='aurora',
-            type='accession',
-            data=request.data,
-            process_status=10
-        )
-        consumer_object = ConsumerObject.objects.create(
-            consumer='archivesspace',
-            type='accession',
-            source_object=source_object,
-            data=consumer_data,
-        )
-        identifier = Identifier.objects.create(
-            source='archivesspace',
-            identifier=as_identifier,
-            consumer_object=consumer_object,
-        )
+            self.log.error("Error transforming data", object=request.data['url'])
+            return Response({"detail": "Error transforming data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if not aspace_identifier:
+            self.log.error("Error saving data in ArchivesSpace", object=request.data['url'])
+            return Response({"detail": "Error saving data in ArchivesSpace"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        consumer_object = ConsumerObject().initial_save(consumer_data=consumer_data, identifier=aspace_identifier, type='accession', source_data=request.data)
         serializer = ConsumerObjectSerializer(consumer_object, context={'request': request})
         return Response(serializer.data)
 

@@ -55,7 +55,7 @@ class ArchivesSpaceClient(object):
             return False
         self.repo_id = settings.ARCHIVESSPACE['repo_id']
 
-    def save_data(self, data, type):
+    def create(self, data, type):
         self.log = self.log.bind(request_id=str(uuid4()))
         ENDPOINTS = {
             'component': 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id),
@@ -89,6 +89,5 @@ class ArchivesSpaceClient(object):
             return False
         if len(resp.json()['results']) == 0:
             self.log.debug("No match for object found in ArchivesSpace", object=value)
-            if self.save_data(consumer_data, type):
-                return self.save_data(consumer_data, type)
+            return self.create(consumer_data, type)
         return resp.json()['results'][0]['uri']
