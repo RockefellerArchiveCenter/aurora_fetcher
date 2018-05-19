@@ -39,21 +39,28 @@ class TransformTest(TestCase):
 
     def transform_accessions(self):
         print('*** Transforming accessions ***')
-        with transformer_vcr.use_cassette('trasnform_accessions.json'):
+        with transformer_vcr.use_cassette('transform_accessions.json'):
             for accession in self.accession_data:
                 request = self.factory.post(reverse('transform-list'), accession, format='json')
                 force_authenticate(request, user=self.user)
                 response = TransformViewSet.as_view(actions={"post": "create"})(request)
-                print('Updated source {name}'.format(name=response.data['url']))
-                self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-                # correct number of SourceObject
-                # correct number of ConsumerObject
-                # correct type in SourceObject
-                # correct type in ConsumerObject
+                print('Created accession {url}'.format(url=response.data['url']))
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+            self.assertEqual(len(self.accession_data), len(SourceObject.objects.all()))
+            self.assertEqual(len(self.accession_data), len(ConsumerObject.objects.all()))
+            self.assertEqual(len(self.accession_data), len(Identifier.objects.all()))
+            for object in SourceObject.objects.all():
+                self.assertEqual(object.type, 'accession')
+            for object in ConsumerObject.objects.all():
+                self.assertEqual(object.type, 'accession')
 
     def transform_components(self):
         print('*** Transforming components ***')
-        pass
+        with transformer_vcr.use_cassette('transform_components.json'):
+            cron = ProcessAccessions().do()
+            self.assertEqual(len(ConsumerObject.objects.filter(type='component')), 7) # account for grouping components
+            self.assertEqual(len(SourceObject.objects.filter(type='component')), 4)
+            self.assertEqual(len(Identifier.objects.all()), len(ConsumerObject.objects.all()))
 
     def search_objects(self):
         print('*** Searching for objects ***')
@@ -65,7 +72,7 @@ class TransformTest(TestCase):
                 force_authenticate(request, user=self.user)
                 response = getattr(object_type[1], 'as_view')(actions={"get": "list"})(request)
                 self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-                # self.assertTrue(len(response.data) >= 1, "No search results")
+                self.assertTrue(len(response.data) >= 1, "No search results")
 
     def home_view(self):
         print('*** Getting home page ***')
