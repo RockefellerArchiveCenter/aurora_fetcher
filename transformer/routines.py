@@ -3,7 +3,7 @@ from structlog import wrap_logger
 from uuid import uuid4
 
 from client.clients import ArchivesSpaceClient, AuroraClient
-from transformer.models import SourceObject, ConsumerObject, Identifier
+from transformer.models import ConsumerObject, Identifier
 from transformer.transformers import ArchivesSpaceDataTransformer
 
 logger = logging.getLogger(__name__)
@@ -43,22 +43,9 @@ class AccessionRoutine:
         transformer = ArchivesSpaceDataTransformer()
         aspace_client = ArchivesSpaceClient()
         consumer_data = transformer.transform_grouping_component(self.data)
-        aspace_identifier = aspace_client.save_data(consumer_data, 'component')
+        aspace_identifier = aspace_client.create(consumer_data, 'component')
         if (consumer_data and aspace_identifier):
-            consumer_object = ConsumerObject.objects.create(
-                consumer='archivesspace',
-                type='component',
-                source_object=self.source_object,
-                data=consumer_data,
-            )
-            self.log.debug("Created ConsumerObject", object=consumer_object)
-            print(consumer_object)
-            identifier = Identifier.objects.create(
-                source='archivesspace',
-                identifier=aspace_identifier,
-                consumer_object=consumer_object,
-            )
-            self.log.debug("Created Identifier", object=identifier)
+            ConsumerObject().initial_save(consumer_data=consumer_data, identifier=aspace_identifier, type='component', source_object=self.source_object)
             return True
         return False
 
@@ -71,28 +58,9 @@ class AccessionRoutine:
         source_data['parent'] = self.parent
         source_data['collection'] = self.collection
         consumer_data = transformer.transform_component(source_data)
-        aspace_identifier = aspace_client.save_data(consumer_data, 'component')
+        aspace_identifier = aspace_client.create(consumer_data, 'component')
         # TODO: create external identifier object for component and add to data
         if aurora_client.update_data(data['url'], data=source_data):
-            source_object = SourceObject.objects.create(
-                source='aurora',
-                type='component',
-                data=source_data,
-                process_status=10,
-            )
-            self.log.debug("Created SourceObject", object=source_object)
-            consumer_object = ConsumerObject.objects.create(
-                consumer='archivesspace',
-                type='component',
-                source_object=source_object,
-                data=consumer_data,
-            )
-            self.log.debug("Created ConsumerObject", object=consumer_object)
-            identifier = Identifier.objects.create(
-                source='archivesspace',
-                identifier=aspace_identifier,
-                consumer_object=consumer_object,
-            )
-            self.log.debug("Created Identifier", object=identifier)
+            ConsumerObject().initial_save(consumer_data=consumer_data, identifier=aspace_identifier, type='component', source_data=source_data)
             return True
         return False
