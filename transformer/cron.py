@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django_cron import CronJobBase, Schedule
 
-from client.clients import ArchivesSpaceClient
+from client.clients import ArchivesSpaceClient, AuroraClient
 from transformer.models import SourceObject
 from transformer.routines import AccessionRoutine
 
@@ -21,12 +21,15 @@ class ProcessAccessions(CronJobBase):
 
     def do(self):
         self.log = logger.new(transaction_id=str(uuid4()))
+        routine = AccessionRoutine(
+            aspace_client=ArchivesSpaceClient(),
+            aurora_client=AuroraClient()
+        )
         accessions = SourceObject.objects.filter(type='accession', process_status__lte=30)
         self.log.debug("Found {} accessions to process".format(len(accessions)))
         for accession in accessions:
             self.log.debug("Running accession routine", object=accession)
             try:
-                routine = AccessionRoutine(accession)
-                routine.run()
+                routine.run(accession)
             except Exception as e:
                 print(e)

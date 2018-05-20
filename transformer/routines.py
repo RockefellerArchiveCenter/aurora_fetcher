@@ -12,16 +12,16 @@ logger = wrap_logger(logger)
 
 
 class AccessionRoutine:
-    def __init__(self, source_object):
-        self.source_object = source_object
-        self.data = source_object.data
-        self.aspace_client = ArchivesSpaceClient()
-        self.aurora_client = AuroraClient()
+    def __init__(self, aspace_client, aurora_client):
+        self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
+        self.aurora_client = aurora_client if aurora_client else AuroraClient()
         self.transformer = ArchivesSpaceDataTransformer(aspace_client=self.aspace_client)
         self.log = logger
 
-    def run(self):
+    def run(self, source_object):
         self.log.bind(request_id=str(uuid4()))
+        self.source_object = source_object
+        self.data = source_object.data
         if int(self.source_object.process_status) <= 10:
             if not self.create_grouping_component():
                 self.log.error("Error creating grouping component", object=self.data['url'])
