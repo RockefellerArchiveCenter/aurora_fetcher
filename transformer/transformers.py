@@ -8,6 +8,8 @@ from client.clients import ArchivesSpaceClient
 
 
 class ArchivesSpaceDataTransformer(object):
+    def __init__(self, aspace_client=None):
+        self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
 
     ####################################
     # Helper functions
@@ -58,7 +60,7 @@ class ArchivesSpaceDataTransformer(object):
         linked_agents = []
         for agent in agents:
             consumer_data = self.transform_agent(agent)
-            agent_ref = ArchivesSpaceClient().get_or_create(agent['type'], 'title', agent['name'], consumer_data)
+            agent_ref = self.aspace_client.get_or_create(agent['type'], 'title', agent['name'], consumer_data)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
 
@@ -201,7 +203,8 @@ class ArchivesSpaceDataTransformer(object):
                      "files": str(data['extent_files'])}),
                 "dates": self.transform_dates(data['start_date'], data['end_date']),
                 "rights_statements": self.transform_rights(data['rights_statements']),
-                "linked_agents": self.transform_linked_agents(data['creators']),
+                "linked_agents": self.transform_linked_agents(
+                    data['creators']+[{"name": data['organization'], "type": "organization"}]),
                 "related_resources": [{'ref': data['resource']}],
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "accession_date": data['accession_date'],

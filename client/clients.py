@@ -89,5 +89,10 @@ class ArchivesSpaceClient(object):
             return False
         if len(resp.json()['results']) == 0:
             self.log.debug("No match for object found in ArchivesSpace", object=value)
-            return self.create(consumer_data, type)
+            try:
+                ref = self.create(consumer_data, type)
+                return ref
+            except Exception as e:
+                print(e)
+                return False
         return resp.json()['results'][0]['uri']
