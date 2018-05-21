@@ -1,6 +1,7 @@
 import iso8601
 import json
 from pycountry import languages as langz
+import time
 
 from aquarius import settings
 from transformer.models import ConsumerObject, Identifier
@@ -19,6 +20,7 @@ class AgentTransformError(Exception): pass
 class ArchivesSpaceDataTransformer(object):
     def __init__(self, aspace_client=None):
         self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
+        self.transform_start_time = int(time.time())
 
     ####################################
     # Helper functions
@@ -69,7 +71,7 @@ class ArchivesSpaceDataTransformer(object):
         linked_agents = []
         for agent in agents:
             consumer_data = self.transform_agent(agent)
-            agent_ref = self.aspace_client.get_or_create(agent['type'], 'title', agent['name'], consumer_data)
+            agent_ref = self.aspace_client.get_or_create(agent['type'], 'title', agent['name'], self.transform_start_time, consumer_data)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
 
