@@ -114,7 +114,7 @@ class ArchivesSpaceClient(object):
             for ref in resp.json():
                 resp = self.client.get('{}/{}'.format(endpoint, ref))
                 if resp.json()[field] == str(value):
-                    return resp
+                    return resp.json()['uri']
             self.log.debug("No match for object found in ArchivesSpace", object=value)
             return self.create(consumer_data, type)
         return resp.json()['results'][0]['uri']
