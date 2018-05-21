@@ -1,8 +1,6 @@
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
-from client.clients import AuroraClient
-
 
 class DataObject(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -30,12 +28,6 @@ class SourceObject(DataObject):
 
     def __str__(self):
         return '{} {} {}'.format(self.source, self.type, self.id)
-
-    def update_data(self):
-        client = AuroraClient().client
-        data = client.get(self.data['url'])
-        self.data = data
-        self.save()
 
 
 class ConsumerObject(DataObject):

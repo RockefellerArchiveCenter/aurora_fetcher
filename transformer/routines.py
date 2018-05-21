@@ -12,13 +12,16 @@ logger = wrap_logger(logger)
 
 
 class AccessionRoutine:
-    def __init__(self, source_object):
-        self.source_object = source_object
-        self.data = source_object.data
+    def __init__(self, aspace_client, aurora_client):
+        self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
+        self.aurora_client = aurora_client if aurora_client else AuroraClient()
+        self.transformer = ArchivesSpaceDataTransformer(aspace_client=self.aspace_client)
         self.log = logger
 
-    def run(self):
+    def run(self, source_object):
         self.log.bind(request_id=str(uuid4()))
+        self.source_object = source_object
+        self.data = source_object.data
         if int(self.source_object.process_status) <= 10:
             if not self.create_grouping_component():
                 self.log.error("Error creating grouping component", object=self.data['url'])
@@ -40,10 +43,8 @@ class AccessionRoutine:
 
     def create_grouping_component(self):
         self.log.bind(request_id=str(uuid4()))
-        transformer = ArchivesSpaceDataTransformer()
-        aspace_client = ArchivesSpaceClient()
-        consumer_data = transformer.transform_grouping_component(self.data)
-        aspace_identifier = aspace_client.create(consumer_data, 'component')
+        consumer_data = self.transformer.transform_grouping_component(self.data)
+        aspace_identifier = self.aspace_client.create(consumer_data, 'component')
         if (consumer_data and aspace_identifier):
             ConsumerObject().initial_save(consumer_data=consumer_data, identifier=aspace_identifier, type='component', source_object=self.source_object)
             return True
@@ -51,16 +52,13 @@ class AccessionRoutine:
 
     def create_component(self, data):
         self.log.bind(request_id=str(uuid4()))
-        transformer = ArchivesSpaceDataTransformer()
-        aspace_client = ArchivesSpaceClient()
-        aurora_client = AuroraClient()
-        source_data = aurora_client.get_data(data['url'])
+        source_data = self.aurora_client.get(data['url'])
         source_data['parent'] = self.parent
         source_data['collection'] = self.collection
-        consumer_data = transformer.transform_component(source_data)
-        aspace_identifier = aspace_client.create(consumer_data, 'component')
-        # TODO: create external identifier object for component and add to data
-        if aurora_client.update_data(data['url'], data=source_data):
+        consumer_data = self.transformer.transform_component(source_data)
+        aspace_identifier = self.aspace_client.create(consumer_data, 'component')
+        # TODO: create external identifier object for component and add to source_data
+        if self.aurora_client.update(data['url'], data=source_data):
             ConsumerObject().initial_save(consumer_data=consumer_data, identifier=aspace_identifier, type='component', source_data=source_data)
             return True
         return False

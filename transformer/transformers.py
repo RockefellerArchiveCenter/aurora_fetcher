@@ -7,7 +7,18 @@ from transformer.models import ConsumerObject, Identifier
 from client.clients import ArchivesSpaceClient
 
 
+class AccessionTransformError(Exception): pass
+
+
+class ComponentTransformError(Exception): pass
+
+
+class AgentTransformError(Exception): pass
+
+
 class ArchivesSpaceDataTransformer(object):
+    def __init__(self, aspace_client=None):
+        self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
 
     ####################################
     # Helper functions
@@ -58,7 +69,7 @@ class ArchivesSpaceDataTransformer(object):
         linked_agents = []
         for agent in agents:
             consumer_data = self.transform_agent(agent)
-            agent_ref = ArchivesSpaceClient().get_or_create(agent['type'], 'title', agent['name'], consumer_data)
+            agent_ref = self.aspace_client.get_or_create(agent['type'], 'title', agent['name'], consumer_data)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
 
@@ -147,8 +158,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data = {**consumer_data, "parent": {"ref": data['parent']}}
             return consumer_data
         except Exception as e:
-            print(e)
-            return False
+            raise ComponentTransformError('Error transforming component: {}'.format(e))
 
     def transform_grouping_component(self, data):
         defaults = {
@@ -181,8 +191,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data['notes'].append(self.transform_note_multipart(data['appraisal_note'], "appraisal"))
             return consumer_data
         except Exception as e:
-            print(e)
-            return False
+            raise ComponentTransformError('Error transforming grouping component: {}'.format(e))
 
     def transform_accession(self, data):
         accession_number = self.transform_accession_number(data['accession_number'])
@@ -201,7 +210,8 @@ class ArchivesSpaceDataTransformer(object):
                      "files": str(data['extent_files'])}),
                 "dates": self.transform_dates(data['start_date'], data['end_date']),
                 "rights_statements": self.transform_rights(data['rights_statements']),
-                "linked_agents": self.transform_linked_agents(data['creators']),
+                "linked_agents": self.transform_linked_agents(
+                    data['creators']+[{"name": data['organization'], "type": "organization"}]),
                 "related_resources": [{'ref': data['resource']}],
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "accession_date": data['accession_date'],
@@ -218,8 +228,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data = {**consumer_data, "general_note": data['appraisal_note']}
             return consumer_data
         except Exception as e:
-            print(e)
-            return False
+            raise AccessionTransformError('Error transforming accession: {}'.format(e))
 
     def transform_agent(self, data):
         try:
@@ -247,5 +256,4 @@ class ArchivesSpaceDataTransformer(object):
                                "source": "local", "rules": "dacs"}]}
             return consumer_data
         except Exception as e:
-            print(e)
-            return False
+            raise AgentTransformError('Error transforming agent: {}'.format(e))
