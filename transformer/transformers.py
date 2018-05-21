@@ -7,6 +7,15 @@ from transformer.models import ConsumerObject, Identifier
 from client.clients import ArchivesSpaceClient
 
 
+class AccessionTransformError(Exception): pass
+
+
+class ComponentTransformError(Exception): pass
+
+
+class AgentTransformError(Exception): pass
+
+
 class ArchivesSpaceDataTransformer(object):
     def __init__(self, aspace_client=None):
         self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
@@ -149,8 +158,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data = {**consumer_data, "parent": {"ref": data['parent']}}
             return consumer_data
         except Exception as e:
-            print(e)
-            return False
+            raise ComponentTransformError('Error transforming component: {}'.format(e))
 
     def transform_grouping_component(self, data):
         defaults = {
@@ -183,8 +191,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data['notes'].append(self.transform_note_multipart(data['appraisal_note'], "appraisal"))
             return consumer_data
         except Exception as e:
-            print(e)
-            return False
+            raise ComponentTransformError('Error transforming grouping component: {}'.format(e))
 
     def transform_accession(self, data):
         accession_number = self.transform_accession_number(data['accession_number'])
@@ -221,8 +228,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data = {**consumer_data, "general_note": data['appraisal_note']}
             return consumer_data
         except Exception as e:
-            print(e)
-            return False
+            raise AccessionTransformError('Error transforming accession: {}'.format(e))
 
     def transform_agent(self, data):
         try:
@@ -250,5 +256,4 @@ class ArchivesSpaceDataTransformer(object):
                                "source": "local", "rules": "dacs"}]}
             return consumer_data
         except Exception as e:
-            print(e)
-            return False
+            raise AgentTransformError('Error transforming agent: {}'.format(e))

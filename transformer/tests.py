@@ -19,7 +19,7 @@ from client import clients
 transformer_vcr = vcr.VCR(
     serializer='json',
     cassette_library_dir='fixtures/cassettes',
-    record_mode='new_episodes',
+    record_mode='once',
     match_on=['path', 'method'],
     filter_query_parameters=['username', 'password'],
     filter_headers=['Authorization', 'X-ArchivesSpace-Session'],

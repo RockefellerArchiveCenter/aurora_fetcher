@@ -1,5 +1,5 @@
-from asnake.client import ASnakeClient
-from electronbonder.client import ElectronBond
+from asnake.client import *
+from electronbonder.client import *
 import json
 import logging
 from os.path import join
@@ -13,6 +13,18 @@ logger.setLevel(logging.DEBUG)
 logger = wrap_logger(logger)
 
 
+class ArchivesSpaceClientAuthError(Exception): pass
+
+
+class ArchivesSpaceClientDataError(Exception): pass
+
+
+class AuroraClientAuthError(Exception): pass
+
+
+class AuroraClientDataError(Exception): pass
+
+
 class AuroraClient(object):
 
     def __init__(self):
@@ -22,19 +34,22 @@ class AuroraClient(object):
             username=settings.AURORA['username'],
             password=settings.AURORA['password'],
         )
-        if not self.client.authorize():
+        try:
+            self.client.authorize()
+        except ElectronBondAuthError:
             self.log.error("Couldn't authenticate user credentials for Aurora")
+            raise AuroraClientAuthError("Couldn't authenticate user credentials for Aurora")
 
-    def get_data(self, url):
+    def get(self, url):
         self.log = self.log.bind(request_id=str(uuid4()))
         resp = self.client.get(url)
         if resp.status_code != 200:
             self.log.error("Error retrieving data from Aurora: {msg}".format(msg=resp.json()['detail']))
-            return False
+            raise AuroraClientDataError("Error retrieving data from Aurora: {msg}".format(msg=resp.json()['detail']))
         self.log.debug("Object retrieved from Aurora", object=url)
         return resp.json()
 
-    def update_data(self, url, data):
+    def update(self, url, data):
         self.log.debug("Object saved in Aurora", object=url)
         return True
 
@@ -52,7 +67,9 @@ class ArchivesSpaceClient(object):
             self.log.error(
                 "Couldn't authenticate user credentials for ArchivesSpace",
                 object=settings.ARCHIVESSPACE['username'])
-            return False
+            raise ArchivesSpaceClientAuthError(
+                "Couldn't authenticate user credentials for ArchivesSpace",
+                object=settings.ARCHIVESSPACE['username'])
         self.repo_id = settings.ARCHIVESSPACE['repo_id']
 
     def create(self, data, type):
@@ -67,7 +84,7 @@ class ArchivesSpaceClient(object):
         resp = self.client.post(ENDPOINTS[type], data=json.dumps(data))
         if resp.status_code != 200:
             self.log.error('Error creating object in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
-            return False
+            raise ArchivesSpaceClientDataError('Error creating object in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
         self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
         return resp.json()['uri']
 
@@ -86,13 +103,8 @@ class ArchivesSpaceClient(object):
         resp = self.client.get('search', params={"page": 1, "type[]": model_type, "aq": query})
         if resp.status_code != 200:
             self.log.error('Error searching for agent: {msg}'.format(msg=resp.json()['error']))
-            return False
+            raise ArchivesSpaceClientDataError('Error searching for agent: {msg}'.format(msg=resp.json()['error']))
         if len(resp.json()['results']) == 0:
             self.log.debug("No match for object found in ArchivesSpace", object=value)
-            try:
-                ref = self.create(consumer_data, type)
-                return ref
-            except Exception as e:
-                print(e)
-                return False
+            return self.create(consumer_data, type)
         return resp.json()['results'][0]['uri']
