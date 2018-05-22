@@ -2,6 +2,8 @@
 
 A microservice to fetch data from Aurora, then transform and deliver it to ArchivesSpace.
 
+[![Build Status](https://travis-ci.org/RockefellerArchiveCenter/aquarius.svg?branch=master)](https://travis-ci.org/RockefellerArchiveCenter/aquarius)
+
 ## Setup
 
 Clone the repository
