@@ -3,6 +3,7 @@ from electronbonder.client import *
 import json
 import logging
 from os.path import join
+import requests
 from structlog import wrap_logger
 from uuid import uuid4
 
@@ -50,8 +51,13 @@ class AuroraClient(object):
         return resp.json()
 
     def update(self, url, data):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"})
+        if resp.status_code != 200:
+            self.log.error("Error saving data in Aurora: {msg}".format(msg=resp.json()['detail']))
+            raise AuroraClientDataError("Error saving data in Aurora: {msg}".format(msg=resp.json()['detail']))
         self.log.debug("Object saved in Aurora", object=url)
-        return True
+        return resp.json()
 
 
 class ArchivesSpaceClient(object):
@@ -89,7 +95,6 @@ class ArchivesSpaceClient(object):
         return resp.json()['uri']
 
     def get_or_create(self, type, field, value, last_updated, consumer_data):
-        print(last_updated)
         self.log = self.log.bind(request_id=str(uuid4()))
         TYPE_LIST = (
             ('family', 'agent_family', 'agents/families'),
