@@ -32,9 +32,12 @@ class TransformTest(TestCase):
         self.client = Client()
         self.user = User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')
         self.accession_data = []
+        self.transfer_count = 0
         for file in listdir(join(settings.BASE_DIR, 'fixtures/data/')):
             with open(join(settings.BASE_DIR, 'fixtures/data/{}'.format(file)), 'r') as json_file:
-                self.accession_data.append(json.load(json_file))
+                data = json.load(json_file)
+                self.accession_data.append(data)
+                self.transfer_count += len(data['transfers'])
         self.updated_time = int(time.time())-(24*3600) # this is the current time minus 24 hours
 
     def transform_accessions(self):
@@ -58,8 +61,8 @@ class TransformTest(TestCase):
         print('*** Transforming components ***')
         with transformer_vcr.use_cassette('transform_components.json'):
             cron = ProcessAccessions().do()
-            self.assertEqual(len(ConsumerObject.objects.filter(type='component')), 7) # account for grouping components
-            self.assertEqual(len(SourceObject.objects.filter(type='component')), 4)
+            self.assertEqual(len(ConsumerObject.objects.filter(type='component')), self.transfer_count+len(self.accession_data)) # account for grouping components
+            self.assertEqual(len(SourceObject.objects.filter(type='component')), self.transfer_count)
             self.assertEqual(len(Identifier.objects.all()), len(ConsumerObject.objects.all()))
 
     def search_objects(self):

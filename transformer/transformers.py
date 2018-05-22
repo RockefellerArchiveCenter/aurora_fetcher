@@ -53,6 +53,11 @@ class ArchivesSpaceDataTransformer(object):
     def transform_external_ids(self, identifier):
         return [{"external_id": identifier, "source": "aurora", "jsonmodel_type": "external_id"}]
 
+    def transform_identifier_ref(self, data, key):
+        for identifier in data.get(key, []):
+            if identifier['source'] == 'archivesspace':
+                return identifier['identifier']
+
     def transform_langcode(self, languages):
         langcode = "mul"
         if len(languages) == 1:
@@ -134,6 +139,7 @@ class ArchivesSpaceDataTransformer(object):
 
     def transform_component(self, data):
         metadata = data['metadata']
+        collection_ref = self.transform_identifier_ref(data, 'collections')
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
             "external_documents": [], "instances": [], "subjects": []
@@ -151,13 +157,13 @@ class ArchivesSpaceDataTransformer(object):
                 "rights_statements": self.transform_rights(data['rights_statements']),
                 "linked_agents": self.transform_linked_agents(
                     metadata['record_creators'] + [{"name": metadata['source_organization'], "type": "organization"}]),
-                "resource": {'ref': data['collection']},
+                "resource": {'ref': collection_ref},
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "notes": [
                     self.transform_note_multipart(metadata['internal_sender_description'], "scopecontent"),
                     self.transform_langnote(metadata['language'])]}
-            if 'parent' in data:
-                consumer_data = {**consumer_data, "parent": {"ref": data['parent']}}
+            if self.parent:
+                consumer_data = {**consumer_data, "parent": {"ref": self.parent}}
             return consumer_data
         except Exception as e:
             raise ComponentTransformError('Error transforming component: {}'.format(e))
