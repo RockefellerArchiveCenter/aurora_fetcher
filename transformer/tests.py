@@ -61,6 +61,10 @@ class TransformTest(TestCase):
         print('*** Transforming components ***')
         with transformer_vcr.use_cassette('transform_components.json'):
             cron = ProcessAccessions().do()
+            for component in SourceObject.objects.filter(type='component'):
+                self.assertEqual(len(component.data['external_identifiers']), 1)
+                self.assertEqual(len(component.data['parents']), 1)
+                self.assertEqual(len(component.data['collections']), 1)
             self.assertEqual(len(ConsumerObject.objects.filter(type='component')), self.transfer_count+len(self.accession_data)) # account for grouping components
             self.assertEqual(len(SourceObject.objects.filter(type='component')), self.transfer_count)
             self.assertEqual(len(Identifier.objects.all()), len(ConsumerObject.objects.all()))

@@ -46,8 +46,17 @@ class AccessionRoutine:
         consumer_data = self.transformer.transform_grouping_component(self.data)
         aspace_identifier = self.aspace_client.create(consumer_data, 'component')
         if (consumer_data and aspace_identifier):
-            ConsumerObject().initial_save(consumer_data=consumer_data, identifier=aspace_identifier, type='component', source_object=self.source_object)
+            ConsumerObject().initial_save(
+                consumer_data=consumer_data, identifier=aspace_identifier,
+                type='component', source_object=self.source_object)
             return True
+        return False
+
+    def update_identifier(self, identifiers, new_identifier):
+        for identifier in identifiers:
+            if identifier['source'] == 'archivesspace':
+                identifier['identifier'] = new_identifier
+                return True
         return False
 
     def create_component(self, data):
@@ -56,10 +65,18 @@ class AccessionRoutine:
         self.transformer.parent = self.parent
         consumer_data = self.transformer.transform_component(source_data)
         aspace_identifier = self.aspace_client.create(consumer_data, 'component')
-        source_data['parents'].append({"identifier": self.parent, "source": "archivesspace"})
-        source_data['collections'].append({"identifier": self.collection, "source": "archivesspace"})
-        source_data['external_identifiers'].append({"identifier": aspace_identifier, "source": "archivesspace"})
+        IDENTIFIERS = (
+            (source_data['parents'], self.parent),
+            (source_data['collections'], self.collection),
+            (source_data['external_identifiers'], aspace_identifier)
+        )
+        # If an ArchivesSpace identifier exists, update it. If not, add a new identifier.
+        for t in IDENTIFIERS:
+            if not self.update_identifier(t[0], t[1]):
+                t[0].append({"identifier": t[1], "source": "archivesspace"})
         if self.aurora_client.update(data['url'], data=source_data):
-            ConsumerObject().initial_save(consumer_data=consumer_data, identifier=aspace_identifier, type='component', source_data=source_data)
+            ConsumerObject().initial_save(
+                consumer_data=consumer_data, identifier=aspace_identifier,
+                type='component', source_data=source_data)
             return True
         return False
