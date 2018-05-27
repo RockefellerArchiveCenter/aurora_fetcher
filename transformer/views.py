@@ -26,7 +26,11 @@ class HomeView(View):
 
 
 class TransformViewSet(viewsets.ViewSet):
-    """Accepts Accession records from Aurora, transforms and saves data to ArchivesSpace"""
+    """
+    Accepts accession record data from Aurora, transforms it sends data to ArchivesSpaceself.
+
+    create: Accepts a JSON representation of an accession record. Returns the transformed data.
+    """
     permission_classes = (IsAuthenticated,)
     log = logger
 
@@ -48,6 +52,15 @@ class TransformViewSet(viewsets.ViewSet):
 
 
 class SourceObjectViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Read-only endpoint for Source Objects.
+
+    list:
+    Returns a list of Source Objects. Accepts query parameters `type` and `updated_since`.
+
+    retrieve:
+    Returns a single Source Object, identified by a primary key.
+    """
     permission_classes = (IsAuthenticated,)
     model = SourceObject
     serializer_class = SourceObjectSerializer
@@ -69,6 +82,15 @@ class SourceObjectViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ConsumerObjectViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Read-only endpoint for Consumer Objects.
+
+    list:
+    Returns a list of Consumer Objects. Accepts query parameters `type` and `updated_since`.
+
+    retrieve:
+    Returns a single Consumer Object, identified by a primary key.
+    """
     permission_classes = (IsAuthenticated,)
     model = ConsumerObject
     serializer_class = ConsumerObjectSerializer

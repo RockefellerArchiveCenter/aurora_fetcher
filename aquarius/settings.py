@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_cron',
     'rest_framework',
     'health_check',
+    'drf_yasg',
     'client',
     'transformer',
 ]
