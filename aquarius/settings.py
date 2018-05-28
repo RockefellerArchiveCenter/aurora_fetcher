@@ -132,6 +132,7 @@ STATIC_URL = '/static/'
 
 CRON_CLASSES = [
     "transformer.cron.ProcessAccessions",
+    "transformer.cron.RetrieveFailed",
 ]
 
 REST_FRAMEWORK = {
