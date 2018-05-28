@@ -139,7 +139,6 @@ class ArchivesSpaceDataTransformer(object):
 
     def transform_component(self, data):
         metadata = data['metadata']
-        collection_ref = self.transform_identifier_ref(data, 'collections')
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
             "external_documents": [], "instances": [], "subjects": []
@@ -157,7 +156,7 @@ class ArchivesSpaceDataTransformer(object):
                 "rights_statements": self.transform_rights(data['rights_statements']),
                 "linked_agents": self.transform_linked_agents(
                     metadata['record_creators'] + [{"name": metadata['source_organization'], "type": "organization"}]),
-                "resource": {'ref': collection_ref},
+                "resource": {'ref': self.collection},
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "notes": [
                     self.transform_note_multipart(metadata['internal_sender_description'], "scopecontent"),
