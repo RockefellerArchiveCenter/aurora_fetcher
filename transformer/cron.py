@@ -47,10 +47,9 @@ class RetrieveFailed(CronJobBase):
             self.aurora_client = AuroraClient()
             self.aspace_client = ArchivesSpaceClient()
             self.transformer = ArchivesSpaceDataTransformer(aspace_client=self.aspace_client)
-            accessions = self.aurora_client.get('accessions/?process_status=10')['results']
-            for accession in accessions:
+            for accession in self.aurora_client.retrieve_paged('accessions/', params={"process_status": 10}):
                 try:
-                    data = self.aurora_client.get(accession['url'])
+                    data = self.aurora_client.retrieve(accession['url'])
                     consumer_data = self.transformer.transform_accession(data)
                     aspace_identifier = self.aspace_client.create(consumer_data, 'accession')
                     if aspace_identifier:

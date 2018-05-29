@@ -61,7 +61,7 @@ class AccessionRoutine:
 
     def create_component(self, data):
         self.log.bind(request_id=str(uuid4()))
-        source_data = self.aurora_client.get(data['url'])
+        source_data = self.aurora_client.retrieve(data['url'])
         self.transformer.parent = self.parent
         self.transformer.collection = self.collection
         consumer_data = self.transformer.transform_component(source_data)
