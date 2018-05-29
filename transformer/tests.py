@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from aquarius import settings
-from transformer.cron import ProcessAccessions
+from transformer.cron import ProcessAccessions, RetrieveFailed
 from transformer.models import SourceObject, ConsumerObject, Identifier
 from transformer.views import TransformViewSet, SourceObjectViewSet, ConsumerObjectViewSet
 from client import clients
@@ -48,7 +48,7 @@ class TransformTest(TestCase):
                 force_authenticate(request, user=self.user)
                 response = TransformViewSet.as_view(actions={"post": "create"})(request)
                 print('Created accession {url}'.format(url=response.data['url']))
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+                self.assertEqual(response.status_code, 200, "Wrong HTTP code")
             self.assertEqual(len(self.accession_data), len(SourceObject.objects.all()))
             self.assertEqual(len(self.accession_data), len(ConsumerObject.objects.all()))
             self.assertEqual(len(self.accession_data), len(Identifier.objects.all()))
@@ -67,6 +67,13 @@ class TransformTest(TestCase):
                 self.assertEqual(len(component.data['collections']), 1)
             self.assertEqual(len(ConsumerObject.objects.filter(type='component')), self.transfer_count+len(self.accession_data)) # account for grouping components
             self.assertEqual(len(SourceObject.objects.filter(type='component')), self.transfer_count)
+            self.assertEqual(len(Identifier.objects.all()), len(ConsumerObject.objects.all()))
+
+    def retrieve_failed(self):
+        print('*** Retrieving failed accessions ***')
+        with transformer_vcr.use_cassette('retrieve_failed.json'):
+            cron = RetrieveFailed().do()
+            self.assertIsNot(False, cron)
             self.assertEqual(len(Identifier.objects.all()), len(ConsumerObject.objects.all()))
 
     def search_objects(self):
@@ -94,6 +101,7 @@ class TransformTest(TestCase):
     def test_components(self):
         self.transform_accessions()
         self.transform_components()
+        self.retrieve_failed()
         self.search_objects()
         self.home_view()
         self.unauthorized_user()

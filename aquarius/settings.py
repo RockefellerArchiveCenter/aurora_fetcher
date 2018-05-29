@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_cron',
     'rest_framework',
     'health_check',
+    'drf_yasg',
     'client',
     'transformer',
 ]
@@ -131,6 +132,7 @@ STATIC_URL = '/static/'
 
 CRON_CLASSES = [
     "transformer.cron.ProcessAccessions",
+    "transformer.cron.RetrieveFailed",
 ]
 
 REST_FRAMEWORK = {
