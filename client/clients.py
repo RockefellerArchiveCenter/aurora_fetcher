@@ -41,18 +41,28 @@ class AuroraClient(object):
             self.log.error("Couldn't authenticate user credentials for Aurora")
             raise AuroraClientAuthError("Couldn't authenticate user credentials for Aurora")
 
-    def get(self, url):
+    def retrieve(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.get(url)
+        resp = self.client.get(url, *args, **kwargs)
         if resp.status_code != 200:
             self.log.error("Error retrieving data from Aurora: {msg}".format(msg=resp.json()['detail']))
             raise AuroraClientDataError("Error retrieving data from Aurora: {msg}".format(msg=resp.json()['detail']))
         self.log.debug("Object retrieved from Aurora", object=url)
         return resp.json()
 
-    def update(self, url, data):
+    def retrieve_paged(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"})
+        try:
+            resp = self.client.get_paged(url, *args, **kwargs)
+            self.log.debug("List retrieved from Aurora", object=url)
+            return resp
+        except Exception as e:
+            self.log.error("Error retrieving list from Aurora: {}".format(e))
+            raise AuroraClientDataError(e)
+
+    def update(self, url, data, *args, **kwargs):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
         if resp.status_code != 200:
             self.log.error("Error saving data in Aurora: {msg}".format(msg=resp.json()['detail']))
             raise AuroraClientDataError("Error saving data in Aurora: {msg}".format(msg=resp.json()['detail']))
@@ -78,7 +88,7 @@ class ArchivesSpaceClient(object):
                 object=settings.ARCHIVESSPACE['username'])
         self.repo_id = settings.ARCHIVESSPACE['repo_id']
 
-    def create(self, data, type):
+    def create(self, data, type, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         ENDPOINTS = {
             'component': 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id),
@@ -87,7 +97,7 @@ class ArchivesSpaceClient(object):
             'organization': 'agents/corporate_entities',
             'family': 'agents/families',
         }
-        resp = self.client.post(ENDPOINTS[type], data=json.dumps(data))
+        resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
         if resp.status_code != 200:
             self.log.error('Error creating object in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
             raise ArchivesSpaceClientDataError('Error creating object in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
