@@ -1,0 +1,21 @@
+{% extends 'accession_numbers/base.html' %}
+
+{% block content %}
+<div class="jumbotron col-md-6 offset-md-3 col-sm-10 offset-sm-1">
+  <div class="float-right">
+    <a class="btn btn-secondary btn-sm" href="status/">Service Status</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'schema-json' '.json' %}">OpenAPI Schema</a>
+  </div>
+  <h1 class="display-4">altair</h1>
+  <p class="lead">A microservice for accession numbers. Altair keeps a running list of accession numbers, and can give you a list for each year. It can also tell you the next available accession number in a given year.</p>
+  <hr class="my-4">
+  <div>
+    {% if user.is_authenticated %}
+    <a class="btn btn-primary btn-lg mb-2 mr-2" href="{% url 'accessionnumber-list' %}">Accession Numbers</a>
+    <a class="btn btn-primary btn-lg mb-2 mr-2" href="{% url 'next-accession' %}">Next Accession Number</a>
+    {% else %}
+    <a class="btn btn-primary btn-lg mb-2 mr-2" href="{% url 'rest_framework:login' %}?next={% url 'home' %}">Login</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -18,12 +18,13 @@ from django.conf.urls import url
 from django.urls import include, re_path
 from transformer.models import SourceObject
 from transformer.views import HomeView, SourceObjectViewSet, ConsumerObjectViewSet, TransformViewSet
+from accession_numbers.views import AccessionNumberViewSet, NextAccessionNumberView
 from rest_framework import routers
-from rest_framework_jwt.views import obtain_jwt_token
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 router = routers.DefaultRouter()
+router.register(r'accession-numbers', AccessionNumberViewSet)
 router.register(r'transform', TransformViewSet, 'transform')
 router.register(r'source_objects', SourceObjectViewSet, 'sourceobject')
 router.register(r'consumer_objects', ConsumerObjectViewSet, 'consumerobject')
@@ -43,8 +44,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     re_path(r'^$', HomeView.as_view(), name='home'),
     url(r'^', include(router.urls)),
-    url(r'^get-token/', obtain_jwt_token),
-    url(r'^', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^next-accession-number', NextAccessionNumberView.as_view(), name='next-accession'),
     url(r'^status/', include('health_check.api.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^schema(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),

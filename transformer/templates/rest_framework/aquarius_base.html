@@ -34,25 +34,25 @@
             <a class="navbar-brand" rel="nofollow" href="/">Aquarius</a>
             {% endblock %}
             <ul class="navbar-nav mr-auto">
-              <li class="nav-item"><a class="nav-link" href="/transform">Transform</a></li>
-              <li class="nav-item"><a class="nav-link" href="/source_objects">Source Objects</a></li>
-              <li class="nav-item"><a class="nav-link" href="/consumer_objects">Consumer Objects</a></li>
-            </ul>
-            <ul class="nav navbar-nav float-right">
-              {% block userlinks %}
-                {% if user.is_authenticated %}
-                <li class="dropdown nav-item">
-                  <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">{{user}}
-                    <b class="caret"></b>
-                  </a>
-                  <div class="dropdown-menu">
-                    <a class="dropdown-item" href='{% url 'rest_framework:logout' %}?next={% url 'home' %}'>Log out</a></li>
-                  </div>
-                </li>
-                {% else %}
-                <a class="nav-link" href='{% url 'rest_framework:login' %}?next={{request.path}}'>Log in</a></li>
-                {% endif %}
-              {% endblock %}
+              <li class="dropdown nav-item">
+                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">Transform Accessions
+                  <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'transform-list' %}">Transform</a></li>
+                  <li><a class="dropdown-item" href="{% url 'sourceobject-list' %}">Source Objects</a></li>
+                  <li><a class="dropdown-item" href="{% url 'consumerobject-list' %}">Consumer Objects</a></li>
+                </ul>
+              </li>
+              <li class="dropdown nav-item">
+                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">Accession Numbers
+                  <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'accessionnumber-list' %}">List</a></li>
+                  <li><a class="dropdown-item" href="{% url 'next-accession' %}">Next</a></li>
+                </ul>
+              </li>
             </ul>
           </div>
         </div>

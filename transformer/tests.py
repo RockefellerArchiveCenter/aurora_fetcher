@@ -14,7 +14,7 @@ from aquarius import settings
 from transformer.cron import ProcessAccessions, RetrieveFailed
 from transformer.models import SourceObject, ConsumerObject, Identifier
 from transformer.views import TransformViewSet, SourceObjectViewSet, ConsumerObjectViewSet
-from client import clients
+from clients import clients
 
 transformer_vcr = vcr.VCR(
     serializer='json',

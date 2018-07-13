@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django_cron import CronJobBase, Schedule
 
-from client.clients import ArchivesSpaceClient, AuroraClient
+from clients.clients import ArchivesSpaceClient, AuroraClient
 from transformer.models import SourceObject, ConsumerObject
 from transformer.routines import AccessionRoutine
 from transformer.transformers import ArchivesSpaceDataTransformer

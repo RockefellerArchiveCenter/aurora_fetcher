@@ -2,7 +2,7 @@ import logging
 from structlog import wrap_logger
 from uuid import uuid4
 
-from client.clients import ArchivesSpaceClient, AuroraClient
+from clients.clients import ArchivesSpaceClient, AuroraClient
 from transformer.models import ConsumerObject, Identifier
 from transformer.transformers import ArchivesSpaceDataTransformer
 
