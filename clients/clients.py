@@ -133,3 +133,12 @@ class ArchivesSpaceClient(object):
             self.log.debug("No match for object found in ArchivesSpace", object=value)
             return self.create(consumer_data, type)
         return resp.json()['results'][0]['uri']
+
+    def retrieve(self, url, *args, **kwargs):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        resp = self.client.get(url, *args, **kwargs)
+        if resp.status_code != 200:
+            self.log.error('Error retrieving object from ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
+            raise ArchivesSpaceClientDataError('Error retrieving object from ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
+        self.log.debug("Updated accessions retrieved from Archivesspace")
+        return resp.json()

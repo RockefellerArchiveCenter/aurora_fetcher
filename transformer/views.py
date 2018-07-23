@@ -8,9 +8,8 @@ from django.views.generic import View
 
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
-from client.clients import ArchivesSpaceClient
+from clients.clients import ArchivesSpaceClient
 from transformer.models import SourceObject, ConsumerObject, Identifier
 from transformer.serializers import SourceObjectSerializer, SourceObjectListSerializer, ConsumerObjectSerializer, ConsumerObjectListSerializer
 from transformer.transformers import ArchivesSpaceDataTransformer
@@ -31,7 +30,6 @@ class TransformViewSet(viewsets.ViewSet):
 
     create: Accepts a JSON representation of an accession record. Returns the transformed data.
     """
-    permission_classes = (IsAuthenticated,)
     log = logger
 
     def create(self, request):
@@ -61,7 +59,6 @@ class SourceObjectViewSet(viewsets.ReadOnlyModelViewSet):
     retrieve:
     Returns a single Source Object, identified by a primary key.
     """
-    permission_classes = (IsAuthenticated,)
     model = SourceObject
     serializer_class = SourceObjectSerializer
 
@@ -91,7 +88,6 @@ class ConsumerObjectViewSet(viewsets.ReadOnlyModelViewSet):
     retrieve:
     Returns a single Consumer Object, identified by a primary key.
     """
-    permission_classes = (IsAuthenticated,)
     model = ConsumerObject
     serializer_class = ConsumerObjectSerializer
 

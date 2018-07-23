@@ -43,8 +43,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'health_check',
     'drf_yasg',
-    'client',
+    'clients',
     'transformer',
+    'accession_numbers'
 ]
 
 MIDDLEWARE = [
@@ -134,13 +135,6 @@ CRON_CLASSES = [
     "transformer.cron.ProcessAccessions",
     "transformer.cron.RetrieveFailed",
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    )
-}
 
 AURORA = CF.AURORA
 ARCHIVESSPACE = CF.ARCHIVESSPACE

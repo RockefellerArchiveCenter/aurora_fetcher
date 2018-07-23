@@ -10,13 +10,9 @@
   <p class="lead">A proof-of-concept microservice to fetch data from Aurora, then transform and deliver it to ArchivesSpace.</p>
   <hr class="my-4">
   <div>
-    {% if user.is_authenticated %}
-    <a class="btn btn-primary btn-lg mb-2 mr-2" href="transform/">Transform Accessions</a>
-    <a class="btn btn-primary btn-lg mb-2 mr-2" href="source_objects/">Source Objects</a>
-    <a class="btn btn-primary btn-lg mb-2 mr-2" href="consumer_objects/">Consumer Objects</a>
-    {% else %}
-    <a class="btn btn-primary btn-lg mb-2 mr-2" href="{% url 'rest_framework:login' %}?next={% url 'home' %}">Login</a>
-    {% endif %}
+    <a class="btn btn-primary btn mb-2 mr-2" href="{% url 'transform-list' %}">Transform Accessions</a>
+    <a class="btn btn-primary btn mb-2 mr-2" href="{% url 'accessionnumber-list' %}">Accession Numbers</a>
+    <a class="btn btn-primary btn mb-2 mr-2" href="{% url 'next-accession' %}">Next Accession Number</a>
   </div>
 </div>
 <div class="fixed-bottom bg-light">

@@ -5,7 +5,7 @@ import time
 
 from aquarius import settings
 from transformer.models import ConsumerObject, Identifier
-from client.clients import ArchivesSpaceClient
+from clients.clients import ArchivesSpaceClient
 
 
 class AccessionTransformError(Exception): pass
