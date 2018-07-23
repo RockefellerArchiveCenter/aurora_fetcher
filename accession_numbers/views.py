@@ -52,7 +52,8 @@ Deletes an existing accession number, identified by a primary key.
         if page is not None:
             serializer = AccessionNumberSerializer(page, context={'request': request}, many=True)
             return self.get_paginated_response(serializer.data)
-        return Response()
+        serializer = AccessionNumberSerializer(numbers, context={'request': request}, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
         log = logger.bind(request_id=str(uuid4()))

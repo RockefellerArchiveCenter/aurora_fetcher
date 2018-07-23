@@ -93,15 +93,9 @@ class TransformTest(TestCase):
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
-    def unauthorized_user(self):
-        print('*** Testing unauthenticated user ***')
-        response = self.client.get(reverse('transform-list'))
-        self.assertEqual(response.status_code, 401, "Wrong HTTP code")
-
     def test_components(self):
         self.transform_accessions()
         self.transform_components()
         self.retrieve_failed()
         self.search_objects()
         self.home_view()
-        self.unauthorized_user()

@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 
 from aquarius import settings
 from accession_numbers.models import AccessionNumber
-from clients.clients import ArchivesSpaceClient
+from clients.clients import ArchivesSpaceClient, ArchivesSpaceClientAuthError, ArchivesSpaceClientDataError
 
 logger = wrap_logger(logger=logging.getLogger(__name__))
 
@@ -44,10 +44,10 @@ class ArchivesSpaceAccessionNumbers(CronJobBase):
             new_update_time = int(time.time())
             last_crawl_time = last_crawl_time if last_crawl_time else read_time(join(settings.BASE_DIR, 'as_update_time.pickle'), log)
             client = ArchivesSpaceClient()
-            accessions = client.get_updated_accessions(last_crawl_time)
+            accessions = client.retrieve('repositories/{repo_id}/accessions'.format(repo_id=settings.ARCHIVESSPACE['repo_id']), params={'all_ids': True, 'last_modified': last_crawl_time})
             for acc_id in accessions:
                 log.bind(request_id=str(uuid4()))
-                acc = client.get_accession(acc_id)
+                acc = client.retrieve('repositories/{repo_id}/accessions/{acc_id}'.format(repo_id=settings.ARCHIVESSPACE['repo_id'], acc_id=str(acc_id)))
                 accession_number = AccessionNumber(
                     segment_1=acc.get('id_0', None),
                     segment_2=acc.get('id_1', None),
@@ -72,5 +72,7 @@ class ArchivesSpaceAccessionNumbers(CronJobBase):
                     log.error(e)
             update_time(new_update_time, join(settings.BASE_DIR, 'as_update_time.pickle'), log)
             log.info("Finished polling ArchivesSpace for new or changed accessions")
-        except Exception as e:
-            log.error("Error getting accessions from ArchivesSpace: {msg}".format(msg=e), request_id=str(uuid4()))
+        except ArchivesSpaceClientAuthError:
+            log.error(e, request_id=str(uuid4()))
+        except ArchivesSpaceClientDataError as e:
+            log.error(e, request_id=str(uuid4()))

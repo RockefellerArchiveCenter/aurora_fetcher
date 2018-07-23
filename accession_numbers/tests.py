@@ -48,17 +48,6 @@ class AccessionNumberTest(TestCase):
             "Incorrect number of accession numbers created")
         return AccessionNumber.objects.all()
 
-    def archivesspace_client(self):
-        with altair_vcr.use_cassette('archivesspace_client_test.json'):
-            print('*** Testing ArchivesSpace client ***')
-            client = ArchivesSpaceClient()
-            self.assertIsNot(False, client.get_updated_accessions(last_crawl_time=self.timestamp))
-            print("Got updated accessions from ArchivesSpace")
-            self.assertIsNot(False, client.get_deleted_accessions(last_crawl_time=self.timestamp))
-            print("Got deleted accessions from ArchivesSpace")
-            self.assertIsNot(False, client.get_accession(13))
-            print("Got random accession from ArchivesSpace")
-
     def update_from_archivesspace(self):
         with altair_vcr.use_cassette('archivesspace_update.json'):
             self.assertIsNot(False, ArchivesSpaceAccessionNumbers().do(
@@ -71,9 +60,10 @@ class AccessionNumberTest(TestCase):
         request = self.factory.get(reverse('accessionnumber-list'), format='json')
         force_authenticate(request, user=self.user)
         response = AccessionNumberViewSet.as_view(actions={"get": "list"})(request)
+        print(response.data)
         self.assertEqual(response.status_code, 200, "Wrong HTTP code")
         self.assertEqual(
-            response.data['count'], len(AccessionNumber.objects.all()),
+            len(response.data), len(AccessionNumber.objects.all()),
             "Number of accession numbers doesn't match what was returned")
 
     def get_individual_accession_number(self):
@@ -120,7 +110,6 @@ class AccessionNumberTest(TestCase):
 
     def test_accession_numbers(self):
         self.accession_numbers = self.create_accession_numbers()
-        self.archivesspace_client()
         self.update_from_archivesspace()
         self.get_all_accession_numbers()
         self.get_individual_accession_number()

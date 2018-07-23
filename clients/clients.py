@@ -134,36 +134,11 @@ class ArchivesSpaceClient(object):
             return self.create(consumer_data, type)
         return resp.json()['results'][0]['uri']
 
-    def get_updated_accessions(self, last_crawl_time=None):
+    def retrieve(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.get(
-            'repositories/{repo_id}/accessions'.format(repo_id=settings.ARCHIVESSPACE['repo_id']),
-            params={'all_ids': True, 'modified_since': last_crawl_time})
+        resp = self.client.get(url, *args, **kwargs)
         if resp.status_code != 200:
-            self.log.error(
-                "Error retrieving updated accessions from ArchivesSpace: {msg}".format(msg=resp.json()['error']))
-            return False
+            self.log.error('Error retrieving object from ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
+            raise ArchivesSpaceClientDataError('Error retrieving object from ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
         self.log.debug("Updated accessions retrieved from Archivesspace")
         return resp.json()
-
-    def get_accession(self, acc_id):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.get(
-            'repositories/{repo_id}/accessions/{acc_id}'.format(repo_id=settings.ARCHIVESSPACE['repo_id'],
-            acc_id=str(acc_id)))
-        if resp.status_code != 200:
-            self.log.error(
-                "Error getting accession from ArchivesSpace: {msg}".format(msg=resp.json()['error']),
-                request_id=str(uuid4()))
-            return False
-        self.log.debug("Accession retrieved from ArchivesSpace", object=resp.json()['uri'])
-        return resp.json()
-
-    def get_deleted_accessions(self, last_crawl_time=0):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        deleted_accessions = []
-        for item in self.client.get_paged('delete-feed', params={'modified_since': last_crawl_time}):
-            if 'accessions' in item:
-                deleted_accessions.append(item)
-        self.log.debug("List of deleted accessions retrieved from ArchivesSpace")
-        return deleted_accessions
