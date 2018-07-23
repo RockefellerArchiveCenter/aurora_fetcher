@@ -29,7 +29,7 @@ transformer_vcr = vcr.VCR(
 class TransformTest(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.test_client = Client()
+        self.test = Client()
         self.user = User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')
         self.accession_data = []
         self.transfer_count = 0
@@ -90,7 +90,7 @@ class TransformTest(TestCase):
 
     def home_view(self):
         print('*** Getting home page ***')
-        response = self.test_client.get(reverse('home'))
+        response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def test_components(self):

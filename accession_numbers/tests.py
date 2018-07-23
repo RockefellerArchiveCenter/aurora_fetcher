@@ -81,32 +81,33 @@ class AccessionNumberTest(TestCase):
                 "Got the wrong accession number")
 
     def get_next_accession_number(self):
-        print('*** Getting next accession number ***')
-        # adding letter to segment_2 to cover this edge case
-        accession_number = AccessionNumber.objects.last()
-        accession_number.segment_2 = str(self.accession_number_count).zfill(2)+"B"
-        accession_number.save()
-        request = self.factory.get(reverse('next-accession'), format='json')
-        force_authenticate(request, user=self.user)
-        response = NextAccessionNumberView.as_view()(request)
-        print('Getting next accession number: {}'.format(response.data['display_string']))
-        self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-        self.assertEqual(
-            str(self.year), response.data['segment_1'],
-            "Did not get the next accession number for the current year")
+        with altair_vcr.use_cassette('archivesspace_update.json'):
+            print('*** Getting next accession number ***')
+            # adding letter to segment_2 to cover this edge case
+            accession_number = AccessionNumber.objects.last()
+            accession_number.segment_2 = str(self.accession_number_count).zfill(2)+"B"
+            accession_number.save()
+            request = self.factory.get(reverse('next-accession'), format='json')
+            force_authenticate(request, user=self.user)
+            response = NextAccessionNumberView.as_view()(request)
+            print('Getting next accession number: {}'.format(response.data['display_string']))
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+            self.assertEqual(
+                str(self.year), response.data['segment_1'],
+                "Did not get the next accession number for the current year")
 
-        test_year = self.year-random.randint(1, 40)
-        request = self.factory.get(reverse('next-accession'), {'year': str(test_year)}, format='json')
-        force_authenticate(request, user=self.user)
-        response = NextAccessionNumberView.as_view()(request, {'year': str(test_year)})
-        print('Getting next accession number for {}'.format(test_year))
-        self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-        self.assertEqual(
-            str(test_year), response.data['segment_1'],
-            "Did not get the next accession number for {}".format(test_year))
-        self.assertEqual(
-            "001", response.data['segment_2'],
-            "Segment_2 was not equal to 001")
+            test_year = self.year-random.randint(1, 40)
+            request = self.factory.get(reverse('next-accession'), {'year': str(test_year)}, format='json')
+            force_authenticate(request, user=self.user)
+            response = NextAccessionNumberView.as_view()(request, {'year': str(test_year)})
+            print('Getting next accession number for {}'.format(test_year))
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+            self.assertEqual(
+                str(test_year), response.data['segment_1'],
+                "Did not get the next accession number for {}".format(test_year))
+            self.assertEqual(
+                "001", response.data['segment_2'],
+                "Segment_2 was not equal to 001")
 
     def test_accession_numbers(self):
         self.accession_numbers = self.create_accession_numbers()
