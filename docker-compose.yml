@@ -1,14 +1,14 @@
 version: '3'
 
 services:
-  db:
+  aquarius_db:
     image: postgres:10.4
-  web:
+  aquarius_web:
     build: .
     entrypoint: /code/entrypoint.sh
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8001:8001"
     depends_on:
-      - db
+      - aquarius_db
