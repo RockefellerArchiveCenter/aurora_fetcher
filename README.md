@@ -36,11 +36,7 @@ By default a new superuser is created. See `entrypoint.sh` for those users and a
 
 ## Usage
 
-This microservice consists of two basic interactions:
-1. Accepts POST request containing accession data from Aurora, and then transforms that data and saves an accession record in ArchivesSpace.  
-2. A cron job that looks for all unprocessed accessions, runs data transformations and saves components for each transfer in that accession in ArchivesSpace.
-
-![Accession Routine diagram](accession_routine.png)
+![Accession Routine diagram](transformer.png)
 
 For an example of the data Aquarius expects from Aurora, see `fixtures/data/accession.json`.
 
