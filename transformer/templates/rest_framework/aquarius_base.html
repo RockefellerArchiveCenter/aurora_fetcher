@@ -35,14 +35,7 @@
             {% endblock %}
             <ul class="navbar-nav mr-auto">
               <li class="dropdown nav-item">
-                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">Transform Accessions
-                  <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'transform-list' %}">Transform</a></li>
-                  <li><a class="dropdown-item" href="{% url 'sourceobject-list' %}">Source Objects</a></li>
-                  <li><a class="dropdown-item" href="{% url 'consumerobject-list' %}">Consumer Objects</a></li>
-                </ul>
+                <a href="{% url 'transfer-list' %}" class="nav-link">Transfers</a>
               </li>
               <li class="dropdown nav-item">
                 <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">Accession Numbers

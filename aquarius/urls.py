@@ -16,8 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url
 from django.urls import include, re_path
-from transformer.models import SourceObject
-from transformer.views import HomeView, SourceObjectViewSet, ConsumerObjectViewSet, TransformViewSet
+from transformer.models import Transfer
+from transformer.views import TransferViewSet
 from accession_numbers.views import AccessionNumberViewSet, NextAccessionNumberView
 from rest_framework import routers
 from drf_yasg.views import get_schema_view
@@ -25,15 +25,13 @@ from drf_yasg import openapi
 
 router = routers.DefaultRouter()
 router.register(r'accession-numbers', AccessionNumberViewSet)
-router.register(r'transform', TransformViewSet, 'transform')
-router.register(r'source_objects', SourceObjectViewSet, 'sourceobject')
-router.register(r'consumer_objects', ConsumerObjectViewSet, 'consumerobject')
+router.register(r'transform', TransferViewSet, 'transfer')
 
 schema_view = get_schema_view(
    openapi.Info(
       title="Aquarius API",
       default_version='v1',
-      description="Test description",
+      description="API for Aquarius.",
       contact=openapi.Contact(email="archive@rockarch.org"),
       license=openapi.License(name="MIT License"),
    ),
@@ -42,7 +40,6 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    re_path(r'^$', HomeView.as_view(), name='home'),
     url(r'^', include(router.urls)),
     re_path(r'^next-accession-number', NextAccessionNumberView.as_view(), name='next-accession'),
     url(r'^status/', include('health_check.api.urls')),
