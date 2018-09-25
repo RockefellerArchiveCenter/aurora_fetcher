@@ -6,8 +6,8 @@ from uuid import uuid4
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from transformer.models import Transfer, Identifier
-from transformer.serializers import TransferSerializer, TransferListSerializer
+from .models import Transfer, Identifier
+from .serializers import TransferSerializer, TransferListSerializer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -31,11 +31,11 @@ class TransferViewSet(viewsets.ModelViewSet):
     serializer_class = TransferSerializer
 
     def create(self, request):
-        self.log.bind(request_id=str(uuid4()))
         source_object = Transfer.objects.create(
             fedora_uri=request.data['uri'],
             internal_sender_identifier=request.data['identifier'],
-            package_type=request.data['package_type']
+            package_type=request.data['package_type'],
+            process_status=10
         )
         serializer = TransferSerializer(source_object, context={'request': request})
         return Response(serializer.data)

@@ -11,7 +11,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from accession_numbers.cron import ArchivesSpaceAccessionNumbers
 from accession_numbers.models import AccessionNumber
 from accession_numbers.views import AccessionNumberViewSet, NextAccessionNumberView
-from clients.clients import ArchivesSpaceClient
+from transformer.clients import ArchivesSpaceClient
 
 altair_vcr = vcr.VCR(
     serializer='json',

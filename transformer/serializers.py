@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from transformer.models import Transfer, Identifier
+from .models import Transfer, Identifier
 
 
 class IdentifierSerializer(serializers.ModelSerializer):

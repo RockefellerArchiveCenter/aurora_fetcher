@@ -2,44 +2,55 @@ import logging
 from structlog import wrap_logger
 from uuid import uuid4
 
-from clients.clients import ArchivesSpaceClient, AuroraClient
-from transformer.models import ConsumerObject, Identifier
-from transformer.transformers import ArchivesSpaceDataTransformer
+from .clients import ArchivesSpaceClient
+from .models import Transfer, Identifier
+from .transformers import ArchivesSpaceDataTransformer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger = wrap_logger(logger)
 
 
-class AccessionRoutine:
-    def __init__(self, aspace_client, aurora_client):
+class TransferRoutine:
+    def __init__(self, aspace_client):
         self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
-        self.aurora_client = aurora_client if aurora_client else AuroraClient()
         self.transformer = ArchivesSpaceDataTransformer(aspace_client=self.aspace_client)
         self.log = logger
 
-    def run(self, source_object):
+    def run(self, transfer):
         self.log.bind(request_id=str(uuid4()))
-        self.source_object = source_object
-        self.data = source_object.data
-        if int(self.source_object.process_status) <= 10:
-            if not self.create_grouping_component():
-                self.log.error("Error creating grouping component", object=self.data['url'])
-                return False
-            self.source_object.process_status = 30
-            self.source_object.save()
 
-        if int(self.source_object.process_status) <= 30:
-            # TODO: find a cleaner way to get the ArchivesSpace URI
-            parent_object = ConsumerObject.objects.get(source_object=self.source_object, type='component')
-            self.parent = Identifier.objects.get(consumer_object=parent_object, source='archivesspace').identifier
-            self.collection = self.source_object.data['resource']
-            for transfer in self.data['transfers']:
-                if not self.create_component(transfer):
-                    self.log.error("Error creating component", object=transfer['url'])
-                    return False
-            self.source_object.process_status = 50
-            self.source_object.save()
+        print(transfer.process_status)
+
+        if int(transfer.process_status) <= 20:
+            # Get transfer data
+            # Save transfer data
+            # if not accession exists:
+                # get accession data
+                # save accession data
+                # transform accession data
+                # post accession data to AS
+                # save identifier
+                # post identifier to Ursa Major
+            transfer.process_status = 20
+            transfer.save()
+
+        if int(transfer.process_status) <= 30:
+            # if not grouping component exists: BUT HOW WILL I KNOW??
+                # transform accession data
+                # post grouping component to AS
+                # save identifier
+                # post identifier to UM
+            transfer.process_status = 30
+            transfer.save()
+
+        if int(transfer.process_status) <= 40:
+            # transform transfer_data
+            # post transfer to AS
+            # save identifier
+            # post identifier to UM
+            transfer.process_status = 40
+            transfer.save()
 
     def create_grouping_component(self):
         self.log.bind(request_id=str(uuid4()))

@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'health_check',
     'drf_yasg',
-    'clients',
     'transformer',
     'accession_numbers'
 ]
@@ -136,7 +135,7 @@ CRON_CLASSES = [
     "transformer.cron.RetrieveFailed",
 ]
 
-AURORA = CF.AURORA
+CALLBACKS = CF.CALLBACKS
 ARCHIVESSPACE = CF.ARCHIVESSPACE
 
 structlog.configure(

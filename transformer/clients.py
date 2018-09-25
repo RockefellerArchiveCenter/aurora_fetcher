@@ -14,60 +14,7 @@ logger.setLevel(logging.DEBUG)
 logger = wrap_logger(logger)
 
 
-class ArchivesSpaceClientAuthError(Exception): pass
-
-
-class ArchivesSpaceClientDataError(Exception): pass
-
-
-class AuroraClientAuthError(Exception): pass
-
-
-class AuroraClientDataError(Exception): pass
-
-
-class AuroraClient(object):
-
-    def __init__(self):
-        self.log = logger.bind(transaction_id=str(uuid4()))
-        self.client = ElectronBond(
-            baseurl=settings.AURORA['baseurl'],
-            username=settings.AURORA['username'],
-            password=settings.AURORA['password'],
-        )
-        try:
-            self.client.authorize()
-        except ElectronBondAuthError:
-            self.log.error("Couldn't authenticate user credentials for Aurora")
-            raise AuroraClientAuthError("Couldn't authenticate user credentials for Aurora")
-
-    def retrieve(self, url, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.get(url, *args, **kwargs)
-        if resp.status_code != 200:
-            self.log.error("Error retrieving data from Aurora: {msg}".format(msg=resp.json()['detail']))
-            raise AuroraClientDataError("Error retrieving data from Aurora: {msg}".format(msg=resp.json()['detail']))
-        self.log.debug("Object retrieved from Aurora", object=url)
-        return resp.json()
-
-    def retrieve_paged(self, url, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        try:
-            resp = self.client.get_paged(url, *args, **kwargs)
-            self.log.debug("List retrieved from Aurora", object=url)
-            return resp
-        except Exception as e:
-            self.log.error("Error retrieving list from Aurora: {}".format(e))
-            raise AuroraClientDataError(e)
-
-    def update(self, url, data, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
-        if resp.status_code != 200:
-            self.log.error("Error saving data in Aurora: {msg}".format(msg=resp.json()['detail']))
-            raise AuroraClientDataError("Error saving data in Aurora: {msg}".format(msg=resp.json()['detail']))
-        self.log.debug("Object saved in Aurora", object=url)
-        return resp.json()
+class ArchivesSpaceClientError(Exception): pass
 
 
 class ArchivesSpaceClient(object):
@@ -83,7 +30,7 @@ class ArchivesSpaceClient(object):
             self.log.error(
                 "Couldn't authenticate user credentials for ArchivesSpace",
                 object=settings.ARCHIVESSPACE['username'])
-            raise ArchivesSpaceClientAuthError(
+            raise ArchivesSpaceClientError(
                 "Couldn't authenticate user credentials for ArchivesSpace",
                 object=settings.ARCHIVESSPACE['username'])
         self.repo_id = settings.ARCHIVESSPACE['repo_id']
@@ -100,7 +47,7 @@ class ArchivesSpaceClient(object):
         resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
         if resp.status_code != 200:
             self.log.error('Error creating object in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
-            raise ArchivesSpaceClientDataError('Error creating object in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
+            raise ArchivesSpaceClientError('Error creating object in ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
         self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
         return resp.json()['uri']
 
@@ -120,12 +67,12 @@ class ArchivesSpaceClient(object):
         resp = self.client.get('search', params={"page": 1, "type[]": model_type, "aq": query})
         if resp.status_code != 200:
             self.log.error('Error searching for agent: {msg}'.format(msg=resp.json()['error']))
-            raise ArchivesSpaceClientDataError('Error searching for agent: {msg}'.format(msg=resp.json()['error']))
+            raise ArchivesSpaceClientError('Error searching for agent: {msg}'.format(msg=resp.json()['error']))
         if len(resp.json()['results']) == 0:
             resp = self.client.get(endpoint, params={"all_ids": True, "modified_since": last_updated-120})
             if resp.status_code != 200:
                 self.log.error('Error getting updated agents: {msg}'.format(msg=resp.json()['error']))
-                raise ArchivesSpaceClientDataError('Error getting updated agents: {msg}'.format(msg=resp.json()['error']))
+                raise ArchivesSpaceClientError('Error getting updated agents: {msg}'.format(msg=resp.json()['error']))
             for ref in resp.json():
                 resp = self.client.get('{}/{}'.format(endpoint, ref))
                 if resp.json()[field] == str(value):
@@ -139,6 +86,6 @@ class ArchivesSpaceClient(object):
         resp = self.client.get(url, *args, **kwargs)
         if resp.status_code != 200:
             self.log.error('Error retrieving object from ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
-            raise ArchivesSpaceClientDataError('Error retrieving object from ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
+            raise ArchivesSpaceClientError('Error retrieving object from ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
         self.log.debug("Updated accessions retrieved from Archivesspace")
         return resp.json()

@@ -4,17 +4,11 @@ from pycountry import languages as langz
 import time
 
 from aquarius import settings
-from transformer.models import ConsumerObject, Identifier
-from clients.clients import ArchivesSpaceClient
+from .models import Transfer, Identifier
+from .clients import ArchivesSpaceClient
 
 
-class AccessionTransformError(Exception): pass
-
-
-class ComponentTransformError(Exception): pass
-
-
-class AgentTransformError(Exception): pass
+class TransformError(Exception): pass
 
 
 class ArchivesSpaceDataTransformer(object):
@@ -165,7 +159,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data = {**consumer_data, "parent": {"ref": self.parent}}
             return consumer_data
         except Exception as e:
-            raise ComponentTransformError('Error transforming component: {}'.format(e))
+            raise TransformError('Error transforming component: {}'.format(e))
 
     def transform_grouping_component(self, data):
         defaults = {
@@ -198,7 +192,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data['notes'].append(self.transform_note_multipart(data['appraisal_note'], "appraisal"))
             return consumer_data
         except Exception as e:
-            raise ComponentTransformError('Error transforming grouping component: {}'.format(e))
+            raise TransformError('Error transforming grouping component: {}'.format(e))
 
     def transform_accession(self, data):
         accession_number = self.transform_accession_number(data['accession_number'])
@@ -235,7 +229,7 @@ class ArchivesSpaceDataTransformer(object):
                 consumer_data = {**consumer_data, "general_note": data['appraisal_note']}
             return consumer_data
         except Exception as e:
-            raise AccessionTransformError('Error transforming accession: {}'.format(e))
+            raise TransformError('Error transforming accession: {}'.format(e))
 
     def transform_agent(self, data):
         try:
@@ -263,4 +257,4 @@ class ArchivesSpaceDataTransformer(object):
                                "source": "local", "rules": "dacs"}]}
             return consumer_data
         except Exception as e:
-            raise AgentTransformError('Error transforming agent: {}'.format(e))
+            raise TransformError('Error transforming agent: {}'.format(e))

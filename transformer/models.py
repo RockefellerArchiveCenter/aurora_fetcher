@@ -12,8 +12,15 @@ class Transfer(models.Model):
         ('dip', 'DIP')
     )
     package_type = models.CharField(max_length=10, choices=PACKAGE_TYPE_CHOICES)
-    transfer_data = JSONField()
-    accession_data = JSONField()
+    PROCESS_STATUS_CHOICES = (
+        (10, 'Transfer saved'),
+        (20, 'Accession record created'),
+        (30, 'Grouping component created'),
+        (40, 'Transfer component created'),
+    )
+    process_status = models.CharField(max_length=50, choices=PROCESS_STATUS_CHOICES)
+    transfer_data = JSONField(null=True, blank=True)
+    accession_data = JSONField(null=True, blank=True)
 
     def __str__(self):
         return '{} {}'.format(self.package_type, self.internal_sender_identifier)
