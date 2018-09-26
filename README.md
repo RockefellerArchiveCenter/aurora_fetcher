@@ -45,27 +45,10 @@ For an example of the data Aquarius expects from Aurora, see `fixtures/data/acce
 
 | Method | URL | Parameters | Response  | Behavior  |
 |--------|-----|---|---|---|
-|POST|/transform| |200|Accepts accession data from Aurora, transforms it and saves a new accession in ArchivesSpace|
-|GET|/source_objects|`type` - object type (for example component, accession) <br/> `last_modified` - unix timestamp |200|Returns a list of Aurora objects|
-|GET|/source_objects/{id}| |200|Returns data about an individual Aurora object|
-|GET|/consumer_objects|`type` - object type (for example component, accession) <br/> `last_modified` - unix timestamp |200|Returns a list of consumer objects|
-|GET|/consumer_objects/{id}| |200|Returns data about an individual consumer object|
+|POST|/transfers| |200|Accepts accession data from Aurora, transforms it and saves a new accession in ArchivesSpace|
+|GET|/transfers|`last_modified` - unix timestamp |200|Returns a list of Aurora objects|
+|GET|/transfers/{id}| |200|Returns data about an individual transfer|
 |GET|/status||200|Return the status of the microservice
-
-
-### Authentication
-
-This application uses [JSON Web Token Authentication](https://github.com/GetBlimp/django-rest-framework-jwt). In order to get a token, you must POST a valid username and password to the `/get-token/` endpoint:
-
-    curl http://localhost:8000/get-token/ -d username=user&password=pass123
-
-The response will contain a token
-
-    { 'token' : '9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' }
-
-This token key should be included in the `Authorization` header of your requests, prefixed by the string "JWT" followed by whitespace.
-
-    Authorization: JWT 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 
 
 ### Logging
