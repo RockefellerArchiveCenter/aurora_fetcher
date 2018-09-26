@@ -27,7 +27,7 @@ SECRET_KEY = '9d*g(#ya!0ho+l+ela_y0$zs@k)h1f0#p*bi9520l0h$u)7go0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['aquarius-web']
 
 
 # Application definition
@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'HOST': 'aquarius_db',
+        'HOST': 'aquarius-db',
         'PORT': 5432,
     }
 }
