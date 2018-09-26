@@ -29,11 +29,6 @@ When you're done, shut down docker-compose
 Right now, the Docker container does not persist any data, which means that when you shut down the services using `docker-compose down`, you'll lose any data you entered. In order to facilitate development, a few default objects will be created for you when you run `docker-compose up`.
 
 
-### Users
-
-By default a new superuser is created. See `entrypoint.sh` for those users and associated credentials. THIS IS FOR TESTING PURPOSES ONLY, BE SURE TO CHANGE THIS IN PRODUCTION.
-
-
 ## Usage
 
 ![Accession Routine diagram](transformer.png)
