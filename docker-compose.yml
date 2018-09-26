@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-  aquarius_db:
+  aquarius-db:
     image: postgres:10.4
     volumes:
       - aquariusdb:/var/lib/postgresql/data/
-  aquarius_web:
+  aquarius-web:
     build: .
     entrypoint: /code/entrypoint.sh
     volumes:
@@ -13,7 +13,7 @@ services:
     ports:
       - "8002:8002"
     depends_on:
-      - aquarius_db
+      - aquarius-db
 
 volumes:
   aquariusdb:
