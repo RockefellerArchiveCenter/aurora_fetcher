@@ -4,14 +4,14 @@ from pycountry import languages as langz
 import time
 
 from aquarius import settings
-from .models import Transfer, Identifier
+from .models import Transfer
 from .clients import ArchivesSpaceClient
 
 
 class TransformError(Exception): pass
 
 
-class ArchivesSpaceDataTransformer(object):
+class DataTransformer(object):
     def __init__(self, aspace_client=None):
         self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
         self.transform_start_time = int(time.time())
@@ -20,8 +20,10 @@ class ArchivesSpaceDataTransformer(object):
     # Helper functions
     ####################################
 
+    # TODO remove this function
     def transform_accession_number(self, number):
-        return number.split(".")
+        # return number.split(".")
+        return ["2019", "001", "002"]
 
     def transform_dates(self, start, end):
         date_start = iso8601.parse_date(start)
@@ -150,7 +152,7 @@ class ArchivesSpaceDataTransformer(object):
                 "rights_statements": self.transform_rights(data['rights_statements']),
                 "linked_agents": self.transform_linked_agents(
                     metadata['record_creators'] + [{"name": metadata['source_organization'], "type": "organization"}]),
-                "resource": {'ref': self.collection},
+                "resource": {'ref': self.resource},
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "notes": [
                     self.transform_note_multipart(metadata['internal_sender_description'], "scopecontent"),
@@ -195,6 +197,7 @@ class ArchivesSpaceDataTransformer(object):
             raise TransformError('Error transforming grouping component: {}'.format(e))
 
     def transform_accession(self, data):
+        # TODO this should be a call to get the next accession numbre
         accession_number = self.transform_accession_number(data['accession_number'])
         defaults = {
             "publish": False, "linked_events": [], "jsonmodel_type": "accession",

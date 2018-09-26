@@ -10,7 +10,7 @@ from rest_framework.test import APIRequestFactory
 
 from aquarius import settings
 from .cron import ProcessTransfers
-from .models import Transfer, Identifier
+from .models import Transfer
 from .views import TransferViewSet
 
 transformer_vcr = vcr.VCR(
@@ -28,8 +28,8 @@ class TransformTest(TestCase):
         self.factory = APIRequestFactory()
         self.transfer_data = []
         self.transfer_count = 0
-        for file in listdir(join(settings.BASE_DIR, 'fixtures/data/')):
-            with open(join(settings.BASE_DIR, 'fixtures/data/{}'.format(file)), 'r') as json_file:
+        for file in listdir(join(settings.BASE_DIR, 'fixtures/data/post')):
+            with open(join(settings.BASE_DIR, 'fixtures/data/post/{}'.format(file)), 'r') as json_file:
                 data = json.load(json_file)
                 self.transfer_data.append(data)
                 self.transfer_count += 1
