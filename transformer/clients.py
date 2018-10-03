@@ -6,6 +6,7 @@ from os.path import join
 import requests
 from structlog import wrap_logger
 from uuid import uuid4
+import urljoin
 
 from aquarius import settings
 
@@ -15,6 +16,9 @@ logger = wrap_logger(logger)
 
 
 class ArchivesSpaceClientError(Exception): pass
+
+
+class UrsaMajorClientError(Exception): pass
 
 
 class ArchivesSpaceClient(object):
@@ -89,3 +93,49 @@ class ArchivesSpaceClient(object):
             raise ArchivesSpaceClientError('Error retrieving object from ArchivesSpace: {msg}'.format(msg=resp.json()['error']))
         self.log.debug("Updated accessions retrieved from Archivesspace")
         return resp.json()
+
+
+class UrsaMajorClient(object):
+
+    def __init__(self):
+        self.log = logger.bind(transaction_id=str(uuid4()))
+        self.client = ElectronBond(
+            baseurl=settings.URSA_MAJOR['baseurl'],
+        )
+
+    def retrieve(self, url, *args, **kwargs):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        resp = self.client.get(url, *args, **kwargs)
+        if resp.status_code != 200:
+            self.log.error("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
+            raise UrsaMajorClientError("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
+        self.log.debug("Object retrieved from Ursa Major", object=url)
+        return resp.json()
+
+    def retrieve_paged(self, url, *args, **kwargs):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        try:
+            resp = self.client.get_paged(url, *args, **kwargs)
+            self.log.debug("List retrieved from Ursa Major", object=url)
+            return resp
+        except Exception as e:
+            self.log.error("Error retrieving list from Ursa Major: {}".format(e))
+            raise UrsaMajorClientError(e)
+
+    def update(self, url, data, *args, **kwargs):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
+        if resp.status_code != 200:
+            self.log.error("Error saving data in Ursa Major: {msg}".format(msg=resp.json()['detail']))
+            raise UrsaMajorClientError("Error saving data in Ursa Major: {msg}".format(msg=resp.json()['detail']))
+        self.log.debug("Object saved in Aurora", object=url)
+        return resp.json()
+
+    def find_bag_by_id(self, identifier, *args, **kwargs):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        resp = self.client.get('bags/?id={}'.format(identifier), *args, **kwargs)
+        if resp.status_code != 200:
+            self.log.error("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
+            raise UrsaMajorClientError("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
+        self.log.debug("Object retrieved from Ursa Major", object=url)
+        return resp.json()[0]
