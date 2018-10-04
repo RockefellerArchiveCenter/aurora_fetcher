@@ -6,7 +6,8 @@ from os.path import join
 import requests
 from structlog import wrap_logger
 from uuid import uuid4
-import urljoin
+from urllib.parse import urljoin, urlparse
+from urllib3.util.retry import Retry
 
 from aquarius import settings
 
@@ -99,13 +100,30 @@ class UrsaMajorClient(object):
 
     def __init__(self):
         self.log = logger.bind(transaction_id=str(uuid4()))
-        self.client = ElectronBond(
-            baseurl=settings.URSA_MAJOR['baseurl'],
+        self.client = self.retry_session(retries=5)
+        self.baseurl = settings.URSA_MAJOR['baseurl']
+
+    # TODO move this to client library
+    def retry_session(self, retries, session=None, backoff_factor=0.3, status_forcelist=(500, 502, 503, 504)):
+        session = session or requests.Session()
+        retry = Retry(
+            total=retries,
+            read=retries,
+            connect=retries,
+            backoff_factor=backoff_factor,
+            status_forcelist=status_forcelist,
         )
+        adapter = requests.adapters.HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        return session
 
     def retrieve(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.get(url, *args, **kwargs)
+        # TODO: move URL manipulation to client library
+        url = urlparse(url)
+        full_url = "/".join([self.baseurl.rstrip("/"), url.path.lstrip("/")])
+        resp = self.client.get(full_url, *args, **kwargs)
         if resp.status_code != 200:
             self.log.error("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
             raise UrsaMajorClientError("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
@@ -115,7 +133,9 @@ class UrsaMajorClient(object):
     def retrieve_paged(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
-            resp = self.client.get_paged(url, *args, **kwargs)
+            # TODO: move URL manipulation to client library
+            full_url = "/".join([self.baseurl.rstrip("/"), url.lstrip("/")])
+            resp = self.client.get_paged(full_url, *args, **kwargs)
             self.log.debug("List retrieved from Ursa Major", object=url)
             return resp
         except Exception as e:
@@ -124,18 +144,31 @@ class UrsaMajorClient(object):
 
     def update(self, url, data, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
+        # TODO: move URL manipulation to client library
+        url = urlparse(url)
+        full_url = "/".join([self.baseurl.rstrip("/"), url.path.lstrip("/")])
+        resp = self.client.put(full_url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
         if resp.status_code != 200:
             self.log.error("Error saving data in Ursa Major: {msg}".format(msg=resp.json()['detail']))
             raise UrsaMajorClientError("Error saving data in Ursa Major: {msg}".format(msg=resp.json()['detail']))
-        self.log.debug("Object saved in Aurora", object=url)
+        self.log.debug("Object saved in Ursa Major", object=url)
         return resp.json()
 
     def find_bag_by_id(self, identifier, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
-        resp = self.client.get('bags/?id={}'.format(identifier), *args, **kwargs)
-        if resp.status_code != 200:
+        # TODO: move URL manipulation to client library
+        full_url = "/".join([self.baseurl.rstrip("/"), 'bags/?id={}'.format(identifier)])
+        object = self.client.get(full_url, *args, **kwargs)
+        if object.status_code != 200:
             self.log.error("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
             raise UrsaMajorClientError("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
-        self.log.debug("Object retrieved from Ursa Major", object=url)
-        return resp.json()[0]
+        bag = object.json()[0]
+        object_url = bag['url']
+        object_url = urlparse(object_url)
+        full_url = "/".join([self.baseurl.rstrip("/"), object_url.path.lstrip("/")])
+        resp = self.client.get(full_url, *args, **kwargs)
+        if object.status_code != 200:
+            self.log.error("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
+            raise UrsaMajorClientError("Error retrieving data from Ursa Major: {msg}".format(msg=resp.json()['detail']))
+        self.log.debug("Object retrieved from Ursa Major", object=identifier)
+        return resp.json()

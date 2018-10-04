@@ -3,6 +3,7 @@ import logging
 from os import path
 from structlog import wrap_logger
 from uuid import uuid4
+from urllib.parse import urlparse
 
 from aquarius import settings
 
@@ -16,7 +17,7 @@ logger = wrap_logger(logger)
 
 
 class TransferRoutine:
-    def __init__(self, aspace_client):
+    def __init__(self, aspace_client=None, ursa_major_client=None):
         self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
         self.ursa_major_client = ursa_major_client if ursa_major_client else UrsaMajorClient()
         self.transformer = DataTransformer(aspace_client=self.aspace_client)
@@ -26,34 +27,36 @@ class TransferRoutine:
         self.log.bind(request_id=str(uuid4()))
 
         if int(transfer.process_status) <= 20:
-            transfer.transfer_data = self.ursa_major_client.find_bag_by_id(transfer.identifier)
-            transfer.accession_data = self.ursa_major_client.retrieve(transfer.accession)
+            transfer_data = self.ursa_major_client.find_bag_by_id(transfer.identifier)
+            transfer.transfer_data = transfer_data
+            accession_data = self.ursa_major_client.retrieve(transfer.transfer_data['accession'])
+            transfer.accession_data = accession_data
             if not transfer.accession_data.get('archivesspace_identifier'):
-                transformed_data = self.transformer.transform_accession(transfer.accession_data.data)
+                transformed_data = self.transformer.transform_accession(transfer.accession_data['data'])
                 accession_identifier = self.aspace_client.create(transformed_data, 'accession')
                 transfer.accession_data['archivesspace_identifier'] = accession_identifier
-                self.ursa_major_client.update(transfer.accession_data.data['url'], data=transfer.accession_data)
+                updated = self.ursa_major_client.update(transfer.accession_data['url'], data=transfer.accession_data)
             transfer.process_status = 20
             transfer.save()
 
         if int(transfer.process_status) <= 30:
-            if not transfer.transfer_data['archivesspace_parent_identifier']:
-                transformed_data = self.transformer.transform_grouping_component(transfer.accession_data.data)
+            if not transfer.transfer_data.get('archivesspace_parent_identifier'):
+                transformed_data = self.transformer.transform_grouping_component(transfer.accession_data['data'])
                 self.transformer.parent = self.aspace_client.create(transformed_data, 'component')
-                for t in self.accession_data.data['transfers']:
-                    data = self.ursa_major_client.retrieve(t['url'])
-                    data['archivesspace_parent_identifier'] = grouping_identifier
+                for t in transfer.accession_data['data']['transfers']:
+                    data = self.ursa_major_client.find_bag_by_id(t['identifier'])
+                    data['archivesspace_parent_identifier'] = self.transformer.parent
                     self.ursa_major_client.update(data['url'], data=data)
             else:
                 self.transformer.parent = transfer.transfer_data['archivesspace_identifier']
-            self.transformer.resource = transfer.accession_data.data['resource']
+            self.transformer.resource = transfer.accession_data['data']['resource']
             transfer.process_status = 30
             transfer.save()
 
         if int(transfer.process_status) <= 40:
-            transformed_data = self.transformer.transform_component(transfer.transfer_data.data)
+            transformed_data = self.transformer.transform_component(transfer.transfer_data['data'])
             transfer_identifier = self.aspace_client.create(transformed_data, 'component')
             transfer.transfer_data['archivesspace_identifier'] = transfer_identifier
-            self.ursa_major_client.update(transfer.transfer_data.data['url'], data=transfer.transfer_data)
+            self.ursa_major_client.update(transfer.transfer_data['url'], data=transfer.transfer_data)
             transfer.process_status = 40
             transfer.save()

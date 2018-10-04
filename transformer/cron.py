@@ -26,8 +26,4 @@ class ProcessTransfers(CronJobBase):
         self.log.debug("Found {} transfers to process".format(len(transfers)))
         for transfer in transfers:
             self.log.debug("Running transfer routine", object=transfer)
-            try:
-                routine.run(transfer)
-            except Exception as e:
-                self.log.error("Error running transfer routine: {}".format(e), object=transfer)
-                print(e)
+            routine.run(transfer)
