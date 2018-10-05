@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 
 from aquarius import settings
 from accession_numbers.models import AccessionNumber
-from transformer.clients import ArchivesSpaceClient, ArchivesSpaceClientError
+from transformer.clients import ArchivesSpaceClient
 
 logger = wrap_logger(logger=logging.getLogger(__name__))
 
@@ -72,5 +72,5 @@ class ArchivesSpaceAccessionNumbers(CronJobBase):
                     log.error(e)
             update_time(new_update_time, join(settings.BASE_DIR, 'as_update_time.pickle'), log)
             log.info("Finished polling ArchivesSpace for new or changed accessions")
-        except ArchivesSpaceClientError:
+        except Exception as e:
             log.error(e, request_id=str(uuid4()))

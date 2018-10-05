@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django_cron import CronJobBase, Schedule
 
-from .clients import ArchivesSpaceClient
+from .clients import ArchivesSpaceClient, UrsaMajorClient
 from .models import Transfer
 from .routines import TransferRoutine
 
@@ -21,13 +21,9 @@ class ProcessTransfers(CronJobBase):
 
     def do(self):
         self.log = logger.new(transaction_id=str(uuid4()))
-        routine = TransferRoutine(aspace_client=ArchivesSpaceClient())
+        routine = TransferRoutine(aspace_client=ArchivesSpaceClient(), ursa_major_client=UrsaMajorClient())
         transfers = Transfer.objects.filter(process_status__lte=20)
         self.log.debug("Found {} transfers to process".format(len(transfers)))
         for transfer in transfers:
             self.log.debug("Running transfer routine", object=transfer)
-            try:
-                routine.run(transfer)
-            except Exception as e:
-                self.log.error("Error running transfer routine: {}".format(e), object=transfer)
-                print(e)
+            routine.run(transfer)

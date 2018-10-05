@@ -4,7 +4,7 @@
         {
             "request": {
                 "method": "POST",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/users/admin/login?expiring=False",
+                "uri": "http://192.168.50.7:8089/users/admin/login?expiring=False",
                 "body": null,
                 "headers": {
                     "User-Agent": [
@@ -30,34 +30,34 @@
                     "message": "OK"
                 },
                 "headers": {
-                    "Cache-Control": [
-                        "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
-                    ],
                     "X-Content-Type-Options": [
                         "nosniff"
                     ],
                     "Date": [
-                        "Tue, 25 Sep 2018 23:46:42 GMT"
+                        "Fri, 27 Apr 2018 01:13:10 GMT"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Content-Length": [
+                        "3826"
                     ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
                     ],
-                    "Content-Length": [
-                        "2845"
+                    "Cache-Control": [
+                        "private, must-revalidate, max-age=0"
                     ]
                 },
                 "body": {
-                    "string": "{\"session\":\"f@k3t0ken\",\"user\":{\"lock_version\":83,\"username\":\"admin\",\"name\":\"Administrator\",\"is_system_user\":true,\"create_time\":\"2018-06-25T17:43:22Z\",\"system_mtime\":\"2018-09-25T23:46:42Z\",\"user_mtime\":\"2018-09-25T23:46:42Z\",\"jsonmodel_type\":\"user\",\"groups\":[],\"is_admin\":true,\"uri\":\"/users/1\",\"agent_record\":{\"ref\":\"/agents/people/1\"},\"permissions\":{\"/repositories/1\":[\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\",\"system_config\",\"administer_system\",\"manage_users\",\"become_user\",\"view_all_records\",\"create_repository\",\"delete_repository\",\"transfer_repository\",\"index_system\",\"manage_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"update_event_record\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"delete_archival_record\",\"view_suppressed\",\"view_repository\",\"update_classification_record\",\"delete_classification_record\",\"mediate_edits\",\"import_records\",\"cancel_importer_job\",\"create_job\",\"cancel_job\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"update_assessment_record\",\"delete_assessment_record\",\"manage_assessment_attributes\"],\"_archivesspace\":[\"system_config\",\"administer_system\",\"manage_users\",\"become_user\",\"view_all_records\",\"create_repository\",\"delete_repository\",\"transfer_repository\",\"index_system\",\"manage_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"update_event_record\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"delete_archival_record\",\"view_suppressed\",\"view_repository\",\"update_classification_record\",\"delete_classification_record\",\"mediate_edits\",\"import_records\",\"cancel_importer_job\",\"create_job\",\"cancel_job\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"update_assessment_record\",\"delete_assessment_record\",\"manage_assessment_attributes\",\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\"]}}}\n"
+                    "string": "{\"session\":\"fAkeToKen\",\"user\":{\"lock_version\":1516,\"username\":\"admin\",\"name\":\"Administrator\",\"is_system_user\":true,\"create_time\":\"2014-12-05T20:32:17Z\",\"system_mtime\":\"2018-04-27T01:13:13Z\",\"user_mtime\":\"2018-04-27T01:13:13Z\",\"jsonmodel_type\":\"user\",\"groups\":[],\"is_admin\":true,\"uri\":\"/users/1\",\"agent_record\":{\"ref\":\"/agents/people/1\"},\"permissions\":{\"/repositories/2\":[\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\",\"view_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"create_job\",\"update_event_record\",\"delete_archival_record\",\"update_classification_record\",\"import_records\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"transfer_repository\",\"manage_repository\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"view_suppressed\",\"delete_classification_record\",\"cancel_importer_job\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"cancel_job\"],\"/repositories/1\":[\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\",\"system_config\",\"administer_system\",\"manage_users\",\"become_user\",\"view_all_records\",\"create_repository\",\"delete_repository\",\"transfer_repository\",\"index_system\",\"manage_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"update_event_record\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"delete_archival_record\",\"view_suppressed\",\"view_repository\",\"update_classification_record\",\"delete_classification_record\",\"mediate_edits\",\"import_records\",\"cancel_importer_job\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"create_job\",\"cancel_job\",\"update_assessment_record\",\"delete_assessment_record\",\"manage_assessment_attributes\"],\"_archivesspace\":[\"system_config\",\"administer_system\",\"manage_users\",\"become_user\",\"view_all_records\",\"create_repository\",\"delete_repository\",\"transfer_repository\",\"index_system\",\"manage_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"update_event_record\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"delete_archival_record\",\"view_suppressed\",\"view_repository\",\"update_classification_record\",\"delete_classification_record\",\"mediate_edits\",\"import_records\",\"cancel_importer_job\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"create_job\",\"cancel_job\",\"update_assessment_record\",\"delete_assessment_record\",\"manage_assessment_attributes\",\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\"]}}}\n"
                 }
             }
         },
         {
             "request": {
                 "method": "GET",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/accessions?all_ids=True&last_modified=1516150945",
+                "uri": "http://192.168.50.7:8089/repositories/2/accessions?all_ids=True&modified_since=1516150945",
                 "body": null,
                 "headers": {
                     "User-Agent": [
@@ -80,6 +80,115 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "X-Content-Type-Options": [
+                        "nosniff"
+                    ],
+                    "Date": [
+                        "Fri, 27 Apr 2018 01:13:13 GMT"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Content-Length": [
+                        "3"
+                    ],
+                    "Server": [
+                        "Jetty(8.1.5.v20120716)"
+                    ],
+                    "Cache-Control": [
+                        "private, must-revalidate, max-age=0"
+                    ]
+                },
+                "body": {
+                    "string": "[\"13\",\"12\"]\n"
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "GET",
+                "uri": "http://192.168.50.7:8089/repositories/2/accessions/repositories/2/accessions/13",
+                "body": null,
+                "headers": {
+                    "User-Agent": [
+                        "ArchivesSnake/0.1"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "application/json"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 404,
+                    "message": "Not Found"
+                },
+                "headers": {
+                    "X-Content-Type-Options": [
+                        "nosniff"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Fri, 27 Apr 2018 01:17:35 GMT"
+                    ],
+                    "Cache-Control": [
+                        "private, must-revalidate, max-age=0"
+                    ],
+                    "Server": [
+                        "Jetty(8.1.5.v20120716)"
+                    ],
+                    "Content-Length": [
+                        "30"
+                    ]
+                },
+                "body": {
+                    "string": "{\"error\":\"Sinatra::NotFound\"}\n"
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "GET",
+                "uri": "http://192.168.50.7:8089/repositories/2/accessions/13",
+                "body": null,
+                "headers": {
+                    "User-Agent": [
+                        "ArchivesSnake/0.1"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "application/json"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "Content-Length": [
+                        "2712"
+                    ],
+                    "Date": [
+                        "Fri, 27 Apr 2018 01:19:05 GMT"
+                    ],
+                    "Server": [
+                        "Jetty(8.1.5.v20120716)"
+                    ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
                     ],
@@ -88,19 +197,60 @@
                     ],
                     "X-Content-Type-Options": [
                         "nosniff"
+                    ]
+                },
+                "body": {
+                    "string": "{\"lock_version\":3,\"suppressed\":false,\"title\":\"Sleepy Hollow Restorations records\",\"display_string\":\"Sleepy Hollow Restorations records\",\"publish\":true,\"content_description\":\"419 boxes - archeological shards\\n1 box - cards on type of artifacts\\n1 box - cards on description of object\\n4 boxes - information on archeological dig at Philipsburg Manor\\n2 slide trays - dig progress\",\"inventory\":\"Inventory exists in paper form only.\",\"general_note\":\"Linked to Accession numbers 1976:004, 1976:008 and 1977:016. \\nAvailable to SHR Staff ONLY (see instrument of deposit)\",\"accession_date\":\"1977-01-05\",\"restrictions_apply\":true,\"access_restrictions\":true,\"access_restrictions_note\":\"Available to SHR Staff ONLY (see instrument of deposit)\",\"use_restrictions\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2014-12-06T03:07:47Z\",\"system_mtime\":\"2017-11-06T21:14:46Z\",\"user_mtime\":\"2014-12-06T03:07:47Z\",\"id_0\":\"1977\",\"id_1\":\"001\",\"acquisition_type\":\"deposit\",\"resource_type\":\"records\",\"jsonmodel_type\":\"accession\",\"external_ids\":[{\"external_id\":\"3759\",\"source\":\"Archivists Toolkit Database::ACCESSION\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2014-12-06T03:07:47Z\",\"system_mtime\":\"2014-12-06T03:07:47Z\",\"user_mtime\":\"2014-12-06T03:07:47Z\",\"jsonmodel_type\":\"external_id\"}],\"related_accessions\":[],\"classifications\":[],\"subjects\":[],\"linked_events\":[{\"ref\":\"/repositories/2/events/13909\"},{\"ref\":\"/repositories/2/events/13910\"},{\"ref\":\"/repositories/2/events/13911\"}],\"extents\":[{\"lock_version\":0,\"number\":\"427\",\"container_summary\":\"427 boxes\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2014-12-06T03:07:47Z\",\"system_mtime\":\"2014-12-06T03:07:47Z\",\"user_mtime\":\"2014-12-06T03:07:47Z\",\"portion\":\"whole\",\"extent_type\":\"box(es)\",\"jsonmodel_type\":\"extent\"}],\"dates\":[],\"external_documents\":[],\"rights_statements\":[],\"deaccessions\":[],\"related_resources\":[],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/6\"},{\"role\":\"source\",\"relator\":\"dpt\",\"terms\":[],\"ref\":\"/agents/corporate_entities/6\"}],\"instances\":[],\"uri\":\"/repositories/2/accessions/13\",\"repository\":{\"ref\":\"/repositories/2\"},\"user_defined\":{\"lock_version\":0,\"boolean_1\":false,\"boolean_2\":false,\"boolean_3\":false,\"string_1\":\"SA\",\"text_1\":\"The shards and records to be called The Sleepy Hollow Restorations, Inc. Archaeological Archives, shall remain the property of Sleepy Hollow Restorations, Inc.  \",\"text_3\":\"\\n\\n\",\"date_1\":\"1977-01-05\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2014-12-06T03:07:47Z\",\"system_mtime\":\"2014-12-06T03:07:47Z\",\"user_mtime\":\"2014-12-06T03:07:47Z\",\"jsonmodel_type\":\"user_defined\",\"repository\":{\"ref\":\"/repositories/2\"}}}\n"
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "GET",
+                "uri": "http://192.168.50.7:8089/repositories/2/accessions/12",
+                "body": null,
+                "headers": {
+                    "User-Agent": [
+                        "ArchivesSnake/0.1"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "application/json"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "Content-Length": [
+                        "2711"
                     ],
                     "Date": [
-                        "Tue, 25 Sep 2018 23:46:42 GMT"
+                        "Fri, 27 Apr 2018 01:19:05 GMT"
                     ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
                     ],
-                    "Content-Length": [
-                        "3"
+                    "Cache-Control": [
+                        "private, must-revalidate, max-age=0"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ]
                 },
                 "body": {
-                    "string": "[]\n"
+                    "string": "{\"lock_version\":3,\"suppressed\":false,\"title\":\"Rockefeller Family papers, Costumes\",\"display_string\":\"Rockefeller Family papers, Costumes\",\"publish\":true,\"content_description\":\"Clothing belonging to various members of the Family, includes:\",\"condition_description\":\"Important: These items should be checked at least once a year to determine their physical condition, and to be rotated in their boxes so that the same creases are not used all the time and wear out that place sooner than the rest of the garment. \",\"inventory\":\"Inventory in paper form only. \",\"general_note\":\"Linked to accession number 1977:010.\\nImportant: These items should be checked at least once a year to determine their physical condition, and to be rotated in their boxes so that the same creases are not used all the time and wear out that place sooner than the rest of the garment. \",\"accession_date\":\"1976-01-01\",\"restrictions_apply\":false,\"access_restrictions\":false,\"use_restrictions\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2014-12-06T03:07:46Z\",\"system_mtime\":\"2017-11-06T21:14:46Z\",\"user_mtime\":\"2014-12-06T03:07:46Z\",\"id_0\":\"1976\",\"id_1\":\"009\",\"acquisition_type\":\"deposit\",\"resource_type\":\"papers\",\"jsonmodel_type\":\"accession\",\"external_ids\":[{\"external_id\":\"3758\",\"source\":\"Archivists Toolkit Database::ACCESSION\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2014-12-06T03:07:46Z\",\"system_mtime\":\"2014-12-06T03:07:46Z\",\"user_mtime\":\"2014-12-06T03:07:46Z\",\"jsonmodel_type\":\"external_id\"}],\"related_accessions\":[],\"classifications\":[],\"subjects\":[],\"linked_events\":[{\"ref\":\"/repositories/2/events/13906\"},{\"ref\":\"/repositories/2/events/13907\"},{\"ref\":\"/repositories/2/events/13908\"}],\"extents\":[{\"lock_version\":0,\"number\":\"0\",\"container_summary\":\"Clothing \",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2014-12-06T03:07:46Z\",\"system_mtime\":\"2014-12-06T03:07:46Z\",\"user_mtime\":\"2014-12-06T03:07:46Z\",\"portion\":\"whole\",\"extent_type\":\"cubic_feet\",\"jsonmodel_type\":\"extent\"}],\"dates\":[],\"external_documents\":[],\"rights_statements\":[],\"deaccessions\":[],\"related_resources\":[],\"linked_agents\":[{\"role\":\"source\",\"relator\":\"dpt\",\"terms\":[],\"ref\":\"/agents/families/1\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/families/1\"}],\"instances\":[],\"uri\":\"/repositories/2/accessions/12\",\"repository\":{\"ref\":\"/repositories/2\"},\"user_defined\":{\"lock_version\":0,\"boolean_1\":false,\"boolean_2\":false,\"boolean_3\":false,\"string_1\":\"SA\",\"string_2\":\"III 2\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2014-12-06T03:07:46Z\",\"system_mtime\":\"2014-12-06T03:07:46Z\",\"user_mtime\":\"2014-12-06T03:07:46Z\",\"jsonmodel_type\":\"user_defined\",\"repository\":{\"ref\":\"/repositories/2\"}}}\n"
                 }
             }
         }
