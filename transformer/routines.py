@@ -48,7 +48,7 @@ class TransferRoutine:
                     data['archivesspace_parent_identifier'] = self.transformer.parent
                     self.ursa_major_client.update(data['url'], data=data)
             else:
-                self.transformer.parent = transfer.transfer_data['archivesspace_identifier']
+                self.transformer.parent = transfer.transfer_data['archivesspace_parent_identifier']
             self.transformer.resource = transfer.accession_data['data']['resource']
             transfer.process_status = 30
             transfer.save()
