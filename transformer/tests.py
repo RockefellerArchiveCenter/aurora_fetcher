@@ -15,7 +15,7 @@ from .views import TransferViewSet
 
 transformer_vcr = vcr.VCR(
     serializer='json',
-    cassette_library_dir='fixtures/cassettes',
+    cassette_library_dir=join(settings.BASE_DIR, 'fixtures/cassettes'),
     record_mode='once',
     match_on=['path', 'method'],
     filter_query_parameters=['username', 'password'],

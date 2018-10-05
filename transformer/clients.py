@@ -92,31 +92,14 @@ class UrsaMajorClient(object):
 
     def __init__(self):
         self.log = logger.bind(transaction_id=str(uuid4()))
-        self.client = self.retry_session(retries=5)
-        self.baseurl = settings.URSA_MAJOR['baseurl']
-
-    # TODO move this to client library
-    def retry_session(self, retries, session=None, backoff_factor=0.3, status_forcelist=(500, 502, 503, 504)):
-        session = session or requests.Session()
-        retry = Retry(
-            total=retries,
-            read=retries,
-            connect=retries,
-            backoff_factor=backoff_factor,
-            status_forcelist=status_forcelist,
+        self.client = ElectronBond(
+             baseurl=settings.URSA_MAJOR['baseurl']
         )
-        adapter = requests.adapters.HTTPAdapter(max_retries=retry)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
-        return session
 
     def retrieve(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
-            # TODO: move URL manipulation to client library
-            url = urlparse(url)
-            full_url = "/".join([self.baseurl.rstrip("/"), url.path.lstrip("/")])
-            resp = self.client.get(full_url, *args, **kwargs)
+            resp = self.client.get(url, *args, **kwargs)
             self.log.debug("Object retrieved from Ursa Major", object=url)
             return resp.json()
         except Exception as e:
@@ -126,9 +109,7 @@ class UrsaMajorClient(object):
     def retrieve_paged(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
-            # TODO: move URL manipulation to client library
-            full_url = "/".join([self.baseurl.rstrip("/"), url.lstrip("/")])
-            resp = self.client.get_paged(full_url, *args, **kwargs)
+            resp = self.client.get_paged(url, *args, **kwargs)
             self.log.debug("List retrieved from Ursa Major", object=url)
             return resp
         except Exception as e:
@@ -138,11 +119,8 @@ class UrsaMajorClient(object):
     def update(self, url, data, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
-            # TODO: move URL manipulation to client library
-            url = urlparse(url)
-            full_url = "/".join([self.baseurl.rstrip("/"), url.path.lstrip("/")])
-            resp = self.client.put(full_url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
-            self.log.debug("Object saved in Ursa Major", object=full_url)
+            resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
+            self.log.debug("Object saved in Ursa Major", object=url)
             return resp.json()
         except Exception as e:
             self.log.error("Error updating object in Ursa Major: {}".format(e))
@@ -151,15 +129,10 @@ class UrsaMajorClient(object):
     def find_bag_by_id(self, identifier, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
-            # TODO: move URL manipulation to client library
-            full_url = "/".join([self.baseurl.rstrip("/"), 'bags/?id={}'.format(identifier)])
-            bag_resp = self.client.get(full_url, *args, **kwargs)
+            bag_resp = self.client.get("bags/?id={}".format(identifier), *args, **kwargs)
             bag_url = bag_resp.json()[0]['url']
-            # TODO move URL manipulation to client library
-            object_url = urlparse(bag_url)
-            full_url = "/".join([self.baseurl.rstrip("/"), object_url.path.lstrip("/")])
-            resp = self.client.get(full_url, *args, **kwargs)
-            self.log.debug("Object retrieved from Ursa Major", object=full_url)
+            resp = self.client.get(bag_url, *args, **kwargs)
+            self.log.debug("Object retrieved from Ursa Major", object=bag_url)
             return resp.json()
         except Exception as e:
             self.log.error("Error finding bag by id: {}".format(e))
