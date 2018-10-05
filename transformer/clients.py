@@ -1,5 +1,6 @@
 from asnake.client import *
 from electronbonder.client import *
+from datetime import date
 import json
 import logging
 from os.path import join
@@ -85,6 +86,25 @@ class ArchivesSpaceClient(object):
             return resp.json()
         except Exception as e:
             self.log.error('Error retrieving object from ArchivesSpace: {}'.format(e))
+            return False
+
+    def next_accession_number(self):
+        current_year = str(date.today().year)
+        try:
+            query = json.dumps({"query": {"field": "four_part_id", "value": current_year, "jsonmodel_type": "field_query"}})
+            resp = self.client.get('search', params={"page": 1, "type[]": "accession", "sort": "four_part_id desc", "aq": query}).json()
+            if resp.get('total_hits') < 1:
+                return [current_year, "001"]
+            else:
+                if resp['results'][0]['identifier'].split("-")[0] == current_year:
+                    id_1 = int(resp['results'][0]['identifier'].split("-")[1])
+                    id_1 += 1
+                    updated = str(id_1).zfill(3)
+                    return [current_year, updated]
+                else:
+                    return [current_year, "001"]
+        except Exception as e:
+            self.log.error('Error retrieving next accession number from ArchivesSpace: {}'.format(e))
             return False
 
 

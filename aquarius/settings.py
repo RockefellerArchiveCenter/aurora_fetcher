@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'health_check',
     'drf_yasg',
     'transformer',
-    'accession_numbers'
 ]
 
 MIDDLEWARE = [
