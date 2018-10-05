@@ -18,3 +18,7 @@ ARCHIVESSPACE = {
   "password": "admin",
   "repo_id": 2,
 }
+
+URSA_MAJOR = {
+  "baseurl": "http://ursa-major-web:8005/",
+}
