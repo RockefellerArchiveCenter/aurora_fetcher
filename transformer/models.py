@@ -17,6 +17,7 @@ class Transfer(models.Model):
         (20, 'Accession record created'),
         (30, 'Grouping component created'),
         (40, 'Transfer component created'),
+        (50, 'Digital object created'),
     )
     process_status = models.CharField(max_length=50, choices=PROCESS_STATUS_CHOICES)
     transfer_data = JSONField(null=True, blank=True)

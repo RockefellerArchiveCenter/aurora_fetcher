@@ -29,12 +29,10 @@ class TransferRoutine:
     def run(self, transfer):
         self.log.bind(request_id=str(uuid4()))
 
-        if int(transfer.process_status) <= 20:
+        if int(transfer.process_status) < 20:
             try:
-                transfer_data = self.ursa_major_client.find_bag_by_id(transfer.identifier)
-                transfer.transfer_data = transfer_data
-                accession_data = self.ursa_major_client.retrieve(transfer.transfer_data['accession'])
-                transfer.accession_data = accession_data
+                transfer.transfer_data = self.ursa_major_client.find_bag_by_id(transfer.identifier)
+                transfer.accession_data = self.ursa_major_client.retrieve(transfer.transfer_data['accession'])
                 if not transfer.accession_data.get('archivesspace_identifier'):
                     transformed_data = self.transformer.transform_accession(transfer.accession_data['data'])
                     accession_identifier = self.aspace_client.create(transformed_data, 'accession')
@@ -43,13 +41,14 @@ class TransferRoutine:
                 transfer.process_status = 20
                 transfer.save()
             except Exception as e:
-                raise TransferRoutineError("Error with accession: {}".format(e))
+                raise TransferRoutineError("Accession error: {}".format(e))
 
-        if int(transfer.process_status) <= 30:
+        if int(transfer.process_status) < 30:
             try:
                 if not transfer.transfer_data.get('archivesspace_parent_identifier'):
                     transformed_data = self.transformer.transform_grouping_component(transfer.accession_data['data'])
                     self.transformer.parent = self.aspace_client.create(transformed_data, 'component')
+                    transfer.transfer_data['archivesspace_parent_identifier'] = self.transformer.parent
                     for t in transfer.accession_data['data']['transfers']:
                         data = self.ursa_major_client.find_bag_by_id(t['identifier'])
                         data['archivesspace_parent_identifier'] = self.transformer.parent
@@ -60,15 +59,32 @@ class TransferRoutine:
                 transfer.process_status = 30
                 transfer.save()
             except Exception as e:
-                raise TransferRoutineError("Error with grouping component: {}".format(e))
+                raise TransferRoutineError("Grouping component error: {}".format(e))
 
-        if int(transfer.process_status) <= 40:
+        if int(transfer.process_status) < 40:
             try:
-                transformed_data = self.transformer.transform_component(transfer.transfer_data['data'])
-                transfer_identifier = self.aspace_client.create(transformed_data, 'component')
-                transfer.transfer_data['archivesspace_identifier'] = transfer_identifier
-                self.ursa_major_client.update(transfer.transfer_data['url'], data=transfer.transfer_data)
+                if not transfer.transfer_data.get('archivesspace_identifier'):
+                    transformed_data = self.transformer.transform_component(transfer.transfer_data['data'])
+                    transfer_identifier = self.aspace_client.create(transformed_data, 'component')
+                    transfer.transfer_data['archivesspace_identifier'] = transfer_identifier
+                    self.ursa_major_client.update(transfer.transfer_data['url'], data=transfer.transfer_data)
                 transfer.process_status = 40
                 transfer.save()
             except Exception as e:
-                raise TransferRoutineError("Error with transfer component: {}".format(e))
+                raise TransferRoutineError("Transfer component error: {}".format(e))
+
+        if int(transfer.process_status) < 50:
+            try:
+                transformed_data = self.transformer.transform_digital_object(transfer)
+                do_identifier = self.aspace_client.create(transformed_data, 'digital object')
+                transfer_component = self.aspace_client.retrieve(transfer.transfer_data['archivesspace_identifier'])
+                transfer_component['instances'].append(
+                    {"instance_type": "digital_object",
+                     "jsonmodel_type": "instance",
+                     "digital_object": {"ref": do_identifier}
+                     })
+                updated_component = self.aspace_client.update(transfer.transfer_data['archivesspace_identifier'], transfer_component)
+                transfer.process_status = 40
+                transfer.save()
+            except Exception as e:
+                raise TransferRoutineError("Digital object error: {}".format(e))

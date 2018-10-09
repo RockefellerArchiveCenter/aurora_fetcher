@@ -6,7 +6,7 @@ class TransferSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Transfer
-        fields = ('url', 'fedora_uri', 'identifier', 'package_type', 'transfer_data', 'accession_data', 'created', 'last_modified')
+        fields = ('url', 'fedora_uri', 'identifier', 'package_type', 'process_status', 'transfer_data', 'accession_data', 'created', 'last_modified')
 
 
 class TransferListSerializer(serializers.HyperlinkedModelSerializer):
