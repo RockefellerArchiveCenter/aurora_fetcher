@@ -38,6 +38,7 @@ class ArchivesSpaceClient(object):
         ENDPOINTS = {
             'component': 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id),
             'accession': 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id),
+            'digital object': 'repositories/{repo_id}/digital_objects'.format(repo_id=self.repo_id),
             'person': 'agents/people',
             'organization': 'agents/corporate_entities',
             'family': 'agents/families',
@@ -48,6 +49,16 @@ class ArchivesSpaceClient(object):
             return resp.json()['uri']
         except Exception as e:
             self.log.error('Error creating object in ArchivesSpace: {}'.format(e))
+            return False
+
+    def update(self, uri, data, *args, **kwargs):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        try:
+            resp = self.client.post(uri, data=json.dumps(data), *args, **kwargs)
+            self.log.debug("Object updated in Archivesspace", object=resp.json()['uri'])
+            return resp.json()['uri']
+        except Exception as e:
+            self.log.error('Error updating object in ArchivesSpace: {}'.format(e))
             return False
 
     def get_or_create(self, type, field, value, last_updated, consumer_data):

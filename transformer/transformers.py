@@ -129,9 +129,32 @@ class DataTransformer(object):
             rights_statements.append(statement)
         return rights_statements
 
+    def transform_use_statement(self, package_type):
+        if package_type == 'AIP':
+            use_statement = 'Master'
+        elif package_type == 'DIP':
+            use_statement = 'Service-Edited'
+        return use_statement
+
     ##################################
     # Main object transformations
     #################################
+
+    def transform_digital_object(self, data):
+        defaults = {"publish": False, "jsonmodel_type": "digital_object"}
+        try:
+            consumer_data = {
+                **defaults,
+                "title": data.identifier,
+                "digital_object_id": data.identifier,
+                "file_versions": [{
+                    "file_uri": data.fedora_uri,
+                    "use_statement": self.transform_use_statement(data.package_type)}],
+                "repository": {"ref": "/repositories/2"}
+                }
+            return consumer_data
+        except Exception as e:
+            raise TransformError('Error transforming digital object: {}'.format(e))
 
     def transform_component(self, data):
         metadata = data['metadata']
