@@ -93,7 +93,7 @@ class ArchivesSpaceClient(object):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
             resp = self.client.get(url, *args, **kwargs)
-            self.log.debug("Updated accessions retrieved from Archivesspace")
+            self.log.debug("Object retrieved from Archivesspace")
             return resp.json()
         except Exception as e:
             self.log.error('Error retrieving object from ArchivesSpace: {}'.format(e))
@@ -103,7 +103,7 @@ class ArchivesSpaceClient(object):
         current_year = str(date.today().year)
         try:
             query = json.dumps({"query": {"field": "four_part_id", "value": current_year, "jsonmodel_type": "field_query"}})
-            resp = self.client.get('search', params={"page": 1, "type[]": "accession", "sort": "four_part_id desc", "aq": query}).json()
+            resp = self.client.get('search', params={"page": 1, "type[]": "accession", "sort": "identifier desc", "aq": query}).json()
             if resp.get('total_hits') < 1:
                 return [current_year, "001"]
             else:
@@ -160,7 +160,7 @@ class UrsaMajorClient(object):
     def find_bag_by_id(self, identifier, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
-            bag_resp = self.client.get("bags/?id={}".format(identifier), *args, **kwargs)
+            bag_resp = self.client.get("bags/", params={"id": identifier})
             bag_url = bag_resp.json()[0]['url']
             resp = self.client.get(bag_url, *args, **kwargs)
             self.log.debug("Object retrieved from Ursa Major", object=bag_url)

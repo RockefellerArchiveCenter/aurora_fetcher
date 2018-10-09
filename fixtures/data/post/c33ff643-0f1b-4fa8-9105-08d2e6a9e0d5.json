@@ -1,5 +1,5 @@
 {
     "uri": "http://dev.fedora.marist.edu:8000/fedora/rest/c33ff643-0f1b-4fa8-9105-08d2e6a9e0d5",
     "identifier": "286e977d-ff33-4345-a532-4d6d85c25b3a",
-    "package_type": "DIP"
+    "package_type": "dip"
 }

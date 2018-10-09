@@ -31,10 +31,8 @@ class TransferRoutine:
 
         if int(transfer.process_status) < 20:
             try:
-                transfer_data = self.ursa_major_client.find_bag_by_id(transfer.identifier)
-                transfer.transfer_data = transfer_data
-                accession_data = self.ursa_major_client.retrieve(transfer.transfer_data['accession'])
-                transfer.accession_data = accession_data
+                transfer.transfer_data = self.ursa_major_client.find_bag_by_id(transfer.identifier)
+                transfer.accession_data = self.ursa_major_client.retrieve(transfer.transfer_data['accession'])
                 if not transfer.accession_data.get('archivesspace_identifier'):
                     transformed_data = self.transformer.transform_accession(transfer.accession_data['data'])
                     accession_identifier = self.aspace_client.create(transformed_data, 'accession')
@@ -50,6 +48,7 @@ class TransferRoutine:
                 if not transfer.transfer_data.get('archivesspace_parent_identifier'):
                     transformed_data = self.transformer.transform_grouping_component(transfer.accession_data['data'])
                     self.transformer.parent = self.aspace_client.create(transformed_data, 'component')
+                    transfer.transfer_data['archivesspace_parent_identifier'] = self.transformer.parent
                     for t in transfer.accession_data['data']['transfers']:
                         data = self.ursa_major_client.find_bag_by_id(t['identifier'])
                         data['archivesspace_parent_identifier'] = self.transformer.parent

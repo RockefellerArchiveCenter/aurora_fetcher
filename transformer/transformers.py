@@ -20,11 +20,6 @@ class DataTransformer(object):
     # Helper functions
     ####################################
 
-    # TODO remove this function
-    def transform_accession_number(self, number):
-        # return number.split(".")
-        return ["2019", "001", "002"]
-
     def transform_dates(self, start, end):
         date_start = iso8601.parse_date(start)
         date_end = iso8601.parse_date(end)
@@ -130,10 +125,10 @@ class DataTransformer(object):
         return rights_statements
 
     def transform_use_statement(self, package_type):
-        if package_type == 'AIP':
-            use_statement = 'Master'
-        elif package_type == 'DIP':
-            use_statement = 'Service-Edited'
+        if package_type == 'aip':
+            use_statement = 'image-service'
+        elif package_type == 'dip':
+            use_statement = 'image-service'
         return use_statement
 
     ##################################
@@ -142,11 +137,12 @@ class DataTransformer(object):
 
     def transform_digital_object(self, data):
         defaults = {"publish": False, "jsonmodel_type": "digital_object"}
+        do_id = data.fedora_uri.split("/")[-1]
         try:
             consumer_data = {
                 **defaults,
-                "title": data.identifier,
-                "digital_object_id": data.identifier,
+                "title": do_id,
+                "digital_object_id": do_id,
                 "file_versions": [{
                     "file_uri": data.fedora_uri,
                     "use_statement": self.transform_use_statement(data.package_type)}],
@@ -220,8 +216,7 @@ class DataTransformer(object):
             raise TransformError('Error transforming grouping component: {}'.format(e))
 
     def transform_accession(self, data):
-        # TODO this should be a call to get the next accession numbre
-        accession_number = self.transform_accession_number(data['accession_number'])
+        accession_number = self.aspace_client.next_accession_number()
         defaults = {
             "publish": False, "linked_events": [], "jsonmodel_type": "accession",
             "external_documents": [], "instances": [], "subjects": [],
