@@ -1,17 +1,5 @@
 # Local config file - rename to config.py
 
-CALLBACKS = {
-    "post_create_accession": {
-        "url": "http://aurora/api/",
-    },
-    "post_create_grouping_component": {
-        "url": "http://aurora/api/",
-    },
-    "post_create_transfer_component": {
-        "url": "http://aurora/api/",
-    }
-}
-
 ARCHIVESSPACE = {
   "baseurl": "http://localhost:8089/",
   "username": "admin",
