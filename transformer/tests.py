@@ -61,9 +61,10 @@ class TransformTest(TestCase):
 
     def process_view(self):
         print('*** Test TransferProcessView ***')
-        request = self.factory.post(reverse('process'))
-        response = ProcessTransfersView.as_view()(request)
-        self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+        with transformer_vcr.use_cassette('process_transfers.json'):
+            request = self.factory.post(reverse('process'))
+            response = ProcessTransfersView.as_view()(request)
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):
         print('*** Getting schema view ***')
