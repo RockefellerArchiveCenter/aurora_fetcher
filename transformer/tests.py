@@ -11,7 +11,7 @@ from rest_framework.test import APIRequestFactory
 from aquarius import settings
 from .cron import ProcessTransfers
 from .models import Transfer
-from .views import TransferViewSet
+from .views import TransferViewSet, ProcessTransfersView
 
 transformer_vcr = vcr.VCR(
     serializer='json',
@@ -59,7 +59,27 @@ class TransformTest(TestCase):
         self.assertEqual(response.status_code, 200, "Wrong HTTP code")
         self.assertTrue(len(response.data) >= 1, "No search results")
 
+    def process_view(self):
+        print('*** Test TransferProcessView ***')
+        with transformer_vcr.use_cassette('process_transfers.json'):
+            request = self.factory.post(reverse('process'))
+            response = ProcessTransfersView.as_view()(request)
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+
+    def schema(self):
+        print('*** Getting schema view ***')
+        schema = self.client.get(reverse('schema-json', kwargs={"format": ".json"}))
+        self.assertEqual(schema.status_code, 200, "Wrong HTTP code")
+
+    def health_check(self):
+        print('*** Getting status view ***')
+        status = self.client.get(reverse('api_health_ping'))
+        self.assertEqual(status.status_code, 200, "Wrong HTTP code")
+
     def test_components(self):
         self.create_transfers()
         self.process_transfers()
         self.search_objects()
+        self.process_view()
+        self.schema()
+        self.health_check()

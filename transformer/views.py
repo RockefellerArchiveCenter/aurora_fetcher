@@ -3,10 +3,12 @@ import logging
 from structlog import wrap_logger
 from uuid import uuid4
 
-from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
 from .models import Transfer
+from .routines import TransferRoutine
 from .serializers import TransferSerializer, TransferListSerializer
 
 logger = logging.getLogger(__name__)
@@ -14,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 logger = wrap_logger(logger)
 
 
-class TransferViewSet(viewsets.ModelViewSet):
+class TransferViewSet(ModelViewSet):
     """
     Endpoint for Transfers.
 
@@ -51,3 +53,15 @@ class TransferViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             return TransferListSerializer
         return TransferSerializer
+
+
+class ProcessTransfersView(APIView):
+    """Runs the ProcessTransfers routine. Accepts POST requests only."""
+
+    def post(self, request, format=None):
+        log = logger.new(transaction_id=str(uuid4()))
+        try:
+            TransferRoutine().run()
+            return Response({"detail": "ProcessTransfers routine complete."}, status=200)
+        except Exception as e:
+            return Response({"detail": str(e)}, status=500)
