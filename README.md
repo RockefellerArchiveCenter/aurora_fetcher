@@ -23,10 +23,9 @@ When you're done, shut down docker-compose
 
     $ docker-compose down
 
+Or, if you want to remove all data
 
-### Data Persistence
-
-Right now, the Docker container does not persist any data, which means that when you shut down the services using `docker-compose down`, you'll lose any data you entered. In order to facilitate development, a few default objects will be created for you when you run `docker-compose up`.
+    $ docker-compose down -v
 
 
 ## Usage
@@ -43,6 +42,7 @@ For an example of the data Aquarius expects from Aurora, see `fixtures/data/acce
 |POST|/transfers| |200|Accepts accession data from Aurora, transforms it and saves a new accession in ArchivesSpace|
 |GET|/transfers|`last_modified` - unix timestamp |200|Returns a list of Aurora objects|
 |GET|/transfers/{id}| |200|Returns data about an individual transfer|
+|POST|/process| |200|Runs the TransferRoutine process|
 |GET|/status||200|Return the status of the microservice
 
 

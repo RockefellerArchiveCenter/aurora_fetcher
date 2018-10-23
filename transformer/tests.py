@@ -49,7 +49,7 @@ class TransformTest(TestCase):
         with transformer_vcr.use_cassette('process_transfers.json'):
             cron = ProcessTransfers().do()
             for transfer in Transfer.objects.all():
-                self.assertEqual(int(transfer.process_status), 40)
+                self.assertEqual(int(transfer.process_status), 50)
             self.assertEqual(len(Transfer.objects.all()), self.transfer_count)
 
     def search_objects(self):

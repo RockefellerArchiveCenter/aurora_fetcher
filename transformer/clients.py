@@ -3,12 +3,9 @@ from electronbonder.client import *
 from datetime import date
 import json
 import logging
-from os.path import join
 import requests
 from structlog import wrap_logger
 from uuid import uuid4
-from urllib.parse import urljoin, urlparse
-from urllib3.util.retry import Retry
 
 from aquarius import settings
 
