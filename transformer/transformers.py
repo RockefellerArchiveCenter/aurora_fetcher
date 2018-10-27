@@ -126,9 +126,9 @@ class DataTransformer(object):
 
     def transform_use_statement(self, package_type):
         if package_type == 'aip':
-            use_statement = 'image-service'
+            use_statement = 'master'
         elif package_type == 'dip':
-            use_statement = 'image-service'
+            use_statement = 'service-edited'
         return use_statement
 
     ##################################

@@ -30,7 +30,7 @@ Or, if you want to remove all data
 
 ## Usage
 
-![Accession Routine diagram](transformer.png)
+![TransferRoutine diagram](transformer.png)
 
 For an example of the data Aquarius expects from Aurora, see `fixtures/data/accession.json`.
 
@@ -48,7 +48,16 @@ For an example of the data Aquarius expects from Aurora, see `fixtures/data/acce
 
 ### Logging
 
-aquarius uses `structlog` to output structured JSON logs. Logging can be configured in `aquarius/settings.py`.
+Aquarius uses `structlog` to output structured JSON logs. Logging can be configured in `aquarius/settings.py`.
+
+
+### ArchivesSpace configuration
+
+In order to successfully save data to ArchivesSpace, you will have to make some changes to some of the default enumerations:
+
+* Accession Acquisition Type: add `donation`
+* Extent Extent Type: add `bytes` and `files`
+* File Version Use Statement: add `master` and `service-edited`
 
 
 ## License
