@@ -130,8 +130,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CRON_CLASSES = [
-    "transformer.cron.ProcessAccessions",
-    "transformer.cron.RetrieveFailed",
+    "transformer.cron.ProcessTransfers",
 ]
 
 ARCHIVESSPACE = CF.ARCHIVESSPACE
