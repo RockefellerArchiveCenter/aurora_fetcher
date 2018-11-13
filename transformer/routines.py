@@ -28,6 +28,7 @@ class TransferRoutine:
         self.log.bind(request_id=str(uuid4()))
         transfers = Transfer.objects.filter(process_status__lte=20)
         self.log.debug("Found {} transfers to process".format(len(transfers)))
+        transfer_count = 0
 
         for transfer in transfers:
             self.log.debug("Running transfer routine", object=transfer)
@@ -68,10 +69,11 @@ class TransferRoutine:
                     self.save_new_digital_object(transfer)
                     transfer.process_status = 50
                     transfer.save()
+                    transfer_count += 1
                 except Exception as e:
                     raise TransferRoutineError("Digital object error: {}".format(e))
 
-        return True
+        return "{} transfers processed and delivered.".format(transfer_count)
 
     def save_new_accession(self, transfer):
         transformed_data = self.transformer.transform_accession(transfer.accession_data['data'])

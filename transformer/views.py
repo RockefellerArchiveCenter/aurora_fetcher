@@ -61,7 +61,7 @@ class ProcessTransfersView(APIView):
     def post(self, request, format=None):
         log = logger.new(transaction_id=str(uuid4()))
         try:
-            TransferRoutine().run()
-            return Response({"detail": "ProcessTransfers routine complete."}, status=200)
+            transfers = TransferRoutine().run()
+            return Response({"detail": transfers}, status=200)
         except Exception as e:
             return Response({"detail": str(e)}, status=500)
