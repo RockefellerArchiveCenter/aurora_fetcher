@@ -10,7 +10,7 @@ from uuid import uuid4
 from aquarius import settings
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 logger = wrap_logger(logger)
 
 
@@ -42,8 +42,12 @@ class ArchivesSpaceClient(object):
         }
         try:
             resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
-            self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
-            return resp.json()['uri']
+            if resp.status_code == 200:
+                self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
+                return resp.json()['uri']
+            else:
+                self.log.error('Error creating object in ArchivesSpace: {}'.format(resp.json()['error']))
+                return False
         except Exception as e:
             self.log.error('Error creating object in ArchivesSpace: {}'.format(e))
             return False
@@ -52,8 +56,12 @@ class ArchivesSpaceClient(object):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
             resp = self.client.post(uri, data=json.dumps(data), *args, **kwargs)
-            self.log.debug("Object updated in Archivesspace", object=resp.json()['uri'])
-            return resp.json()['uri']
+            if resp.status_code == 200:
+                self.log.debug("Object updated in Archivesspace", object=resp.json()['uri'])
+                return resp.json()['uri']
+            else:
+                self.log.error('Error updating object in ArchivesSpace: {}'.format(resp.json()['error']))
+                return False
         except Exception as e:
             self.log.error('Error updating object in ArchivesSpace: {}'.format(e))
             return False
@@ -90,8 +98,12 @@ class ArchivesSpaceClient(object):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
             resp = self.client.get(url, *args, **kwargs)
-            self.log.debug("Object retrieved from Archivesspace")
-            return resp.json()
+            if resp.status_code == 200:
+                self.log.debug("Object retrieved from Archivesspace")
+                return resp.json()
+            else:
+                self.log.error('Error retrieving object from ArchivesSpace: {}'.format(resp.json()['error']))
+                return False
         except Exception as e:
             self.log.error('Error retrieving object from ArchivesSpace: {}'.format(e))
             return False
@@ -158,6 +170,9 @@ class UrsaMajorClient(object):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
             bag_resp = self.client.get("bags/", params={"id": identifier})
+            if len(bag_resp.json()) < 1:
+                self.log.error("No bags matching id {} found".format(identifier))
+                return False
             bag_url = bag_resp.json()[0]['url']
             resp = self.client.get(bag_url, *args, **kwargs)
             self.log.debug("Object retrieved from Ursa Major", object=bag_url)

@@ -7,43 +7,43 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
-from .models import Transfer
-from .routines import TransferRoutine
-from .serializers import TransferSerializer, TransferListSerializer
+from .models import Package
+from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine
+from .serializers import PackageSerializer, PackageListSerializer
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 logger = wrap_logger(logger)
 
 
-class TransferViewSet(ModelViewSet):
+class PackageViewSet(ModelViewSet):
     """
-    Endpoint for Transfers.
+    Endpoint for packages.
 
     create:
-    Creates a Transfer.
+    Creates a Package.
 
     list:
-    Returns a list of Transfers. Accepts query parameter `updated_since`.
+    Returns a list of Packages. Accepts query parameter `updated_since`.
 
     retrieve:
-    Returns a single Transfer, identified by a primary key.
+    Returns a single Package, identified by a primary key.
     """
-    model = Transfer
-    serializer_class = TransferSerializer
+    model = Package
+    serializer_class = PackageSerializer
 
     def create(self, request):
-        source_object = Transfer.objects.create(
+        source_object = Package.objects.create(
             fedora_uri=request.data['uri'],
             identifier=request.data['identifier'],
             package_type=request.data['package_type'],
             process_status=10
         )
-        serializer = TransferSerializer(source_object, context={'request': request})
+        serializer = PackageSerializer(source_object, context={'request': request})
         return Response(serializer.data)
 
     def get_queryset(self):
-        queryset = Transfer.objects.all()
+        queryset = Package.objects.all()
         updated_since = self.request.GET.get('updated_since', "")
         if updated_since != "":
             queryset = queryset.filter(last_modified__gte=datetime.fromtimestamp(int(updated_since)))
@@ -51,17 +51,39 @@ class TransferViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return TransferListSerializer
-        return TransferSerializer
+            return PackageListSerializer
+        return PackageSerializer
 
 
-class ProcessTransfersView(APIView):
-    """Runs the ProcessTransfers routine. Accepts POST requests only."""
-
+class ProcessView(APIView):
     def post(self, request, format=None):
         log = logger.new(transaction_id=str(uuid4()))
         try:
-            transfers = TransferRoutine().run()
-            return Response({"detail": transfers}, status=200)
+            message = self.routine
+            return Response({"detail": message}, status=200)
         except Exception as e:
             return Response({"detail": str(e)}, status=500)
+
+
+class ProcessAccessionsView(ProcessView):
+    """Runs the AccessionRoutine. Accepts POST requests only."""
+    def __init__(self):
+        self.routine = AccessionRoutine().run()
+
+
+class ProcessGroupingComponentsView(ProcessView):
+    """Runs the GroupingComponentRoutine. Accepts POST requests only."""
+    def __init__(self):
+        self.routine = GroupingComponentRoutine().run()
+
+
+class ProcessTransferComponentsView(ProcessView):
+    """Runs the TransferComponentRoutine. Accepts POST requests only."""
+    def __init__(self):
+        self.routine = TransferComponentRoutine().run()
+
+
+class ProcessDigitalObjectsView(ProcessView):
+    """Runs the DigitalObjectRoutine. Accepts POST requests only."""
+    def __init__(self):
+        self.routine = DigitalObjectRoutine().run()

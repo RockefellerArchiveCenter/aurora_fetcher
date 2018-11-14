@@ -1,6 +1,6 @@
 # Aquarius
 
-A microservice to fetch data from Aurora, then transform and deliver it to ArchivesSpace.
+A microservice to transform and deliver Accessions, Archival Objects and Digital Objects to ArchivesSpace.
 
 [![Build Status](https://travis-ci.org/RockefellerArchiveCenter/aquarius.svg?branch=master)](https://travis-ci.org/RockefellerArchiveCenter/aquarius)
 
@@ -32,18 +32,21 @@ Or, if you want to remove all data
 
 ![TransferRoutine diagram](transformer.png)
 
-For an example of the data Aquarius expects from Aurora, see `fixtures/data/accession.json`.
+For examples of the data Aquarius expects, see `fixtures/json/`.
 
 
 ### Routes
 
 | Method | URL | Parameters | Response  | Behavior  |
 |--------|-----|---|---|---|
-|POST|/transfers| |200|Accepts accession data from Aurora, transforms it and saves a new accession in ArchivesSpace|
-|GET|/transfers|`last_modified` - unix timestamp |200|Returns a list of Aurora objects|
-|GET|/transfers/{id}| |200|Returns data about an individual transfer|
-|POST|/process| |200|Runs the TransferRoutine process|
-|GET|/status||200|Return the status of the microservice
+|POST|/packages| |200|Saves new package objects|
+|GET|/packages| |200|Returns a list of packages|
+|GET|/packages/{id}| |200|Returns data about an individual transfer|
+|POST|/accessions| |200|Runs the AccessionRoutine process|
+|POST|/grouping-components| |200|Runs the GroupingComponentRoutine process|
+|POST|/transfer-components| |200|Runs the TransferComponentRoutine process|
+|POST|/digital-objects| |200|Runs the DigitalObjectRoutine process|
+|GET|/status||200|Return the status of the microservice|
 
 
 ### Logging

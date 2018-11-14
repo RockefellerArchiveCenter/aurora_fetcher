@@ -9,9 +9,9 @@ from django.urls import reverse
 from rest_framework.test import APIRequestFactory
 
 from aquarius import settings
-from .cron import ProcessTransfers
-from .models import Transfer
-from .views import TransferViewSet, ProcessTransfersView
+from .models import Package
+from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine
+from .views import PackageViewSet, ProcessAccessionsView
 
 transformer_vcr = vcr.VCR(
     serializer='json',
@@ -28,42 +28,80 @@ class TransformTest(TestCase):
         self.factory = APIRequestFactory()
         self.transfer_data = []
         self.transfer_count = 0
-        for file in listdir(join(settings.BASE_DIR, 'fixtures/data/post')):
-            with open(join(settings.BASE_DIR, 'fixtures/data/post/{}'.format(file)), 'r') as json_file:
+        for file in listdir(join(settings.BASE_DIR, 'fixtures/data')):
+            with open(join(settings.BASE_DIR, 'fixtures/data/{}'.format(file)), 'r') as json_file:
                 data = json.load(json_file)
                 self.transfer_data.append(data)
                 self.transfer_count += 1
         self.updated_time = int(time.time())-(24*3600) # this is the current time minus 24 hours
 
     def create_transfers(self):
-        print('*** Creating Transfers ***')
+        print('*** Creating Packages ***')
         for transfer in self.transfer_data:
-            request = self.factory.post(reverse('transfer-list'), transfer, format='json')
-            response = TransferViewSet.as_view(actions={"post": "create"})(request)
+            request = self.factory.post(reverse('package-list'), transfer, format='json')
+            response = PackageViewSet.as_view(actions={"post": "create"})(request)
             print('Created transfer {url}'.format(url=response.data['url']))
             self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-        self.assertEqual(len(self.transfer_data), len(Transfer.objects.all()))
+        self.assertEqual(len(self.transfer_data), len(Package.objects.all()))
 
     def process_transfers(self):
-        print('*** Processing Transfers ***')
+        with transformer_vcr.use_cassette('process_accessions.json'):
+            print('*** Processing Accessions ***')
+            accessions = AccessionRoutine().run()
+            self.assertNotEqual(False, accessions)
+            for transfer in Package.objects.all():
+                self.assertEqual(int(transfer.process_status), 20)
+
+        with transformer_vcr.use_cassette('process_grouping.json'):
+            print('*** Processing Grouping Components ***')
+            grouping = GroupingComponentRoutine().run()
+            self.assertNotEqual(False, grouping)
+            for transfer in Package.objects.all():
+                self.assertEqual(int(transfer.process_status), 30)
+
         with transformer_vcr.use_cassette('process_transfers.json'):
-            cron = ProcessTransfers().do()
-            for transfer in Transfer.objects.all():
+            print('*** Processing Transfer Components ***')
+            transfers = TransferComponentRoutine().run()
+            self.assertNotEqual(False, transfers)
+            for transfer in Package.objects.all():
+                self.assertEqual(int(transfer.process_status), 40)
+
+        with transformer_vcr.use_cassette('process_digital.json'):
+            print('*** Processing Digital Objects ***')
+            digital = DigitalObjectRoutine().run()
+            self.assertNotEqual(False, digital)
+            for transfer in Package.objects.all():
                 self.assertEqual(int(transfer.process_status), 50)
-            self.assertEqual(len(Transfer.objects.all()), self.transfer_count)
+
+            self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
     def search_objects(self):
         print('*** Searching for objects ***')
-        request = self.factory.get(reverse('transfer-list'), {'updated_since': self.updated_time})
-        response = TransferViewSet.as_view(actions={"get": "list"})(request)
+        request = self.factory.get(reverse('package-list'), {'updated_since': self.updated_time})
+        response = PackageViewSet.as_view(actions={"get": "list"})(request)
         self.assertEqual(response.status_code, 200, "Wrong HTTP code")
         self.assertTrue(len(response.data) >= 1, "No search results")
 
-    def process_view(self):
-        print('*** Test TransferProcessView ***')
+    def process_views(self):
+        print('*** Test ProcessAccessionsView ***')
+        with transformer_vcr.use_cassette('process_accessions.json'):
+            request = self.factory.post(reverse('accessions'))
+            response = ProcessAccessionsView.as_view()(request)
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+
+        with transformer_vcr.use_cassette('process_grouping.json'):
+            request = self.factory.post(reverse('grouping-components'))
+            response = ProcessAccessionsView.as_view()(request)
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+
         with transformer_vcr.use_cassette('process_transfers.json'):
-            request = self.factory.post(reverse('process'))
-            response = ProcessTransfersView.as_view()(request)
+            request = self.factory.post(reverse('transfer-components'))
+            response = ProcessAccessionsView.as_view()(request)
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+
+        with transformer_vcr.use_cassette('process_digital.json'):
+            request = self.factory.post(reverse('digital-objects'))
+            response = ProcessAccessionsView.as_view()(request)
             self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):
@@ -80,6 +118,6 @@ class TransformTest(TestCase):
         self.create_transfers()
         self.process_transfers()
         self.search_objects()
-        self.process_view()
+        self.process_views()
         self.schema()
         self.health_check()

@@ -4,7 +4,6 @@ from pycountry import languages as langz
 import time
 
 from aquarius import settings
-from .models import Transfer
 from .clients import ArchivesSpaceClient
 
 
