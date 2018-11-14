@@ -95,7 +95,6 @@ class TransferComponentRoutine(Routine):
         for p in packages:
             try:
                 package = Package.objects.get(id=p.pk)
-                print(package.transfer_data['archivesspace_identifier'])
                 if not package.transfer_data.get('archivesspace_identifier'):
                     self.transformer.resource = package.accession_data['data']['resource']
                     self.transformer.parent = package.transfer_data['archivesspace_parent_identifier']
