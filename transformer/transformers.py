@@ -23,6 +23,7 @@ class DataTransformer(object):
         date_start = iso8601.parse_date(start)
         date_end = iso8601.parse_date(end)
         if date_end > date_start:
+            # TODO: make get_date_expression a model method
             expression = '{} - {}'.format(
                 date_start.strftime("%Y %B %e"),
                 date_end.strftime("%Y %B %e"))
@@ -34,11 +35,7 @@ class DataTransformer(object):
                     "label": "creation"}]
 
     def transform_extents(self, extent_values):
-        extents = []
-        for k, v in extent_values.items():
-            extent = {"number": v, "portion": "whole", "extent_type": k}
-            extents.append(extent)
-        return extents
+        return [{"number": v, "portion": "whole", "extent_type": k} for k, v in extent_values.items()]
 
     def transform_external_ids(self, identifier):
         return [{"external_id": identifier, "source": "aurora", "jsonmodel_type": "external_id"}]
@@ -49,16 +46,10 @@ class DataTransformer(object):
                 return identifier['identifier']
 
     def transform_langcode(self, languages):
-        langcode = "mul"
-        if len(languages) == 1:
-            langcode = languages[0]
-        return langcode
+        return 'mul' if len(languages) > 1 else langcode[0]
 
     def transform_langnote(self, languages):
-        language = "multiple languages"
-        if len(languages) == 1:
-            obj = langz.get(alpha_3=languages[0])
-            language = obj.name
+        language = "multiple languages" if (len(languages)>1) else langz.get(alpha_3=languages[0]).name
         return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
                 "publish": False, "content": ["Materials are in {}".format(language)]}
 
@@ -66,23 +57,24 @@ class DataTransformer(object):
         linked_agents = []
         for agent in agents:
             consumer_data = self.transform_agent(agent)
-            agent_ref = self.aspace_client.get_or_create(agent['type'], 'title', agent['name'], self.transform_start_time, consumer_data)
+            agent_ref = self.aspace_client.get_or_create(
+                agent['type'], 'title', agent['name'],
+                self.transform_start_time, consumer_data)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
 
     def transform_note_multipart(self, text, type):
-        note = ""
         if len(text) > 0:
-            note = {"jsonmodel_type": "note_multipart", "type": type,
-                    "publish": False, "subnotes": [
+            return = {"jsonmodel_type": "note_multipart", "type": type,
+                      "publish": False, "subnotes": [
                         {"content": text, "publish": True,
                          "jsonmodel_type": "note_text"}]}
-        return note
+        return ""
 
     def transform_rights_acts(self, rights_granted):
         acts = []
         for granted in rights_granted:
-            act = {
+            acts.append({
                 "notes": [
                     {"jsonmodel_type": "note_rights_statement_act",
                      "type": "additional_information", "content": [granted['note']]}],
@@ -90,8 +82,7 @@ class DataTransformer(object):
                 "restriction": granted['restriction'],
                 "start_date": granted['start_date'],
                 "end_date": granted['end_date'],
-            }
-            acts.append(act)
+            })
         return acts
 
     def transform_rights(self, statements):
@@ -108,27 +99,20 @@ class DataTransformer(object):
                 "external_documents": [],
                 "linked_agents": [],
             }
-            if 'status' in r:
-                statement = {**statement, "status": r['status']}
-            if 'determination_date' in r:
-                statement = {**statement, "determination_date": r['determination_date']}
-            if 'terms' in r:
-                statement = {**statement, "license_terms": r['terms']}
+            key_values = [
+                {"status": r['status']},
+                {"determination_date": r['determination_date']},
+                {"license_terms": r['terms']},
+                {"jurisdiction": r['jurisdiction'].upper()}
+                {"other_rights_basis": r['other_rights_basis'].lower()}
+            ]
+            for pair in key_values:
+                if pair[0] in r:
+                    statement = {**statement, pair}
             if 'citation' in r:
-                statement = {**statement, "statute_citation": r['citation']}
-            if 'jurisdiction' in r:
-                statement = {**statement, "jurisdiction": r['jurisdiction'].upper()}
-            if 'other_rights_basis' in r:
-                statement = {**statement, "other_rights_basis": r['other_rights_basis'].lower()}
+                statement = {**statement, {"statute_citation": r['citation']}}
             rights_statements.append(statement)
         return rights_statements
-
-    def transform_use_statement(self, package_type):
-        if package_type == 'aip':
-            use_statement = 'master'
-        elif package_type == 'dip':
-            use_statement = 'service-edited'
-        return use_statement
 
     ##################################
     # Main object transformations
@@ -138,16 +122,15 @@ class DataTransformer(object):
         defaults = {"publish": False, "jsonmodel_type": "digital_object"}
         do_id = data.fedora_uri.split("/")[-1]
         try:
-            consumer_data = {
+            return {
                 **defaults,
                 "title": do_id,
                 "digital_object_id": do_id,
                 "file_versions": [{
                     "file_uri": data.fedora_uri,
-                    "use_statement": self.transform_use_statement(data.package_type)}],
+                    "use_statement": data.get_use_statement()}],
                 "repository": {"ref": "/repositories/2"}
                 }
-            return consumer_data
         except Exception as e:
             raise TransformError('Error transforming digital object: {}'.format(e))
 
@@ -245,9 +228,7 @@ class DataTransformer(object):
                 consumer_data = {
                     **consumer_data,
                     "id_{}".format(n): accession_number[n]}
-            if 'appraisal_note' in data:
-                consumer_data = {**consumer_data, "general_note": data['appraisal_note']}
-            return consumer_data
+            return {**consumer_data, "general_note": data['appraisal_note']} if ('appraisal_note' in data) else consumer_data
         except Exception as e:
             raise TransformError('Error transforming accession: {}'.format(e))
 

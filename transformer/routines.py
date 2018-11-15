@@ -24,11 +24,14 @@ class Routine:
         self.transformer = DataTransformer(aspace_client=self.aspace_client)
         self.log = logger
 
+    def bind_log(self):
+        self.log.bind(request_id=str(uuid4()))
+
 
 class AccessionRoutine(Routine):
 
     def run(self):
-        self.log.bind(request_id=str(uuid4()))
+        self.bind_log()
         packages = Package.objects.filter(process_status=10)
         accession_count = 0
 
@@ -59,7 +62,7 @@ class AccessionRoutine(Routine):
 class GroupingComponentRoutine(Routine):
 
     def run(self):
-        self.log.bind(request_id=str(uuid4()))
+        self.bind_log()
         packages = Package.objects.filter(process_status=20)
         grouping_count = 0
 
@@ -88,7 +91,7 @@ class GroupingComponentRoutine(Routine):
 class TransferComponentRoutine(Routine):
 
     def run(self):
-        self.log.bind(request_id=str(uuid4()))
+        self.bind_log()
         packages = Package.objects.filter(process_status=30)
         transfer_count = 0
 
@@ -118,7 +121,7 @@ class TransferComponentRoutine(Routine):
 class DigitalObjectRoutine(Routine):
 
     def run(self):
-        self.log.bind(request_id=str(uuid4()))
+        self.bind_log()
         packages = Package.objects.filter(process_status=40)
         digital_count = 0
 

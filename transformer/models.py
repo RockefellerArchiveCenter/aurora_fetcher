@@ -25,3 +25,6 @@ class Package(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.package_type, self.identifier)
+
+    def get_use_statement(self):
+        return 'master' if (self.package_type == 'aip') else 'service-edited'
