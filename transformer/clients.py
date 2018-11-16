@@ -7,8 +7,6 @@ import requests
 from structlog import wrap_logger
 from uuid import uuid4
 
-from aquarius import settings
-
 logger = logging.getLogger(__name__)
 # logger.setLevel(logging.DEBUG)
 logger = wrap_logger(logger)
@@ -16,14 +14,10 @@ logger = wrap_logger(logger)
 
 class ArchivesSpaceClient(object):
 
-    def __init__(self):
+    def __init__(self, baseurl, username, password, repo_id):
         self.log = logger.bind(transaction_id=str(uuid4()))
-        self.client = ASnakeClient(
-            baseurl=settings.ARCHIVESSPACE['baseurl'],
-            username=settings.ARCHIVESSPACE['username'],
-            password=settings.ARCHIVESSPACE['password'],
-        )
-        self.repo_id = settings.ARCHIVESSPACE['repo_id']
+        self.client = ASnakeClient(baseurl=baseurl, username=username, password=password)
+        self.repo_id = repo_id
         if not self.client.authorize():
             self.log.error(
                 "Couldn't authenticate user credentials for ArchivesSpace",
@@ -130,11 +124,9 @@ class ArchivesSpaceClient(object):
 
 class UrsaMajorClient(object):
 
-    def __init__(self):
+    def __init__(self, baseurl):
         self.log = logger.bind(transaction_id=str(uuid4()))
-        self.client = ElectronBond(
-             baseurl=settings.URSA_MAJOR['baseurl']
-        )
+        self.client = ElectronBond(baseurl=baseurl)
 
     def retrieve(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))

@@ -19,8 +19,11 @@ class RoutineError(Exception): pass
 
 class Routine:
     def __init__(self):
-        self.aspace_client = ArchivesSpaceClient()
-        self.ursa_major_client = UrsaMajorClient()
+        self.aspace_client = ArchivesSpaceClient(settings.ARCHIVESSPACE['baseurl'],
+                                                 settings.ARCHIVESSPACE['username'],
+                                                 settings.ARCHIVESSPACE['password'],
+                                                 settings.ARCHIVESSPACE['repo_id'])
+        self.ursa_major_client = UrsaMajorClient(settings.URSA_MAJOR['baseurl'])
         self.transformer = DataTransformer(aspace_client=self.aspace_client)
         self.log = logger
 

@@ -12,7 +12,10 @@ class TransformError(Exception): pass
 
 class DataTransformer(object):
     def __init__(self, aspace_client=None):
-        self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient()
+        self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient(settings.ARCHIVESSPACE['baseurl'],
+                                                                                     settings.ARCHIVESSPACE['username'],
+                                                                                     settings.ARCHIVESSPACE['password'],
+                                                                                     settings.ARCHIVESSPACE['repo_id'])
         self.transform_start_time = int(time.time())
 
     ####################################
