@@ -2,7 +2,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 
-class Transfer(models.Model):
+class Package(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     fedora_uri = models.CharField(max_length=512)
@@ -25,3 +25,6 @@ class Transfer(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.package_type, self.identifier)
+
+    def get_use_statement(self):
+        return 'master' if (self.package_type == 'aip') else 'service-edited'

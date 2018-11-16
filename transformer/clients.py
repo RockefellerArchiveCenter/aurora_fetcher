@@ -7,23 +7,18 @@ import requests
 from structlog import wrap_logger
 from uuid import uuid4
 
-from aquarius import settings
-
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 logger = wrap_logger(logger)
 
 
 class ArchivesSpaceClient(object):
+    """Client to get and receive data from ArchivesSpace."""
 
-    def __init__(self):
+    def __init__(self, baseurl, username, password, repo_id):
         self.log = logger.bind(transaction_id=str(uuid4()))
-        self.client = ASnakeClient(
-            baseurl=settings.ARCHIVESSPACE['baseurl'],
-            username=settings.ARCHIVESSPACE['username'],
-            password=settings.ARCHIVESSPACE['password'],
-        )
-        self.repo_id = settings.ARCHIVESSPACE['repo_id']
+        self.client = ASnakeClient(baseurl=baseurl, username=username, password=password)
+        self.repo_id = repo_id
         if not self.client.authorize():
             self.log.error(
                 "Couldn't authenticate user credentials for ArchivesSpace",
@@ -42,8 +37,12 @@ class ArchivesSpaceClient(object):
         }
         try:
             resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
-            self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
-            return resp.json()['uri']
+            if resp.status_code == 200:
+                self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
+                return resp.json()['uri']
+            else:
+                self.log.error('Error creating object in ArchivesSpace: {}'.format(resp.json()['error']))
+                return False
         except Exception as e:
             self.log.error('Error creating object in ArchivesSpace: {}'.format(e))
             return False
@@ -52,8 +51,12 @@ class ArchivesSpaceClient(object):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
             resp = self.client.post(uri, data=json.dumps(data), *args, **kwargs)
-            self.log.debug("Object updated in Archivesspace", object=resp.json()['uri'])
-            return resp.json()['uri']
+            if resp.status_code == 200:
+                self.log.debug("Object updated in Archivesspace", object=resp.json()['uri'])
+                return resp.json()['uri']
+            else:
+                self.log.error('Error updating object in ArchivesSpace: {}'.format(resp.json()['error']))
+                return False
         except Exception as e:
             self.log.error('Error updating object in ArchivesSpace: {}'.format(e))
             return False
@@ -90,8 +93,12 @@ class ArchivesSpaceClient(object):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
             resp = self.client.get(url, *args, **kwargs)
-            self.log.debug("Object retrieved from Archivesspace")
-            return resp.json()
+            if resp.status_code == 200:
+                self.log.debug("Object retrieved from Archivesspace")
+                return resp.json()
+            else:
+                self.log.error('Error retrieving object from ArchivesSpace: {}'.format(resp.json()['error']))
+                return False
         except Exception as e:
             self.log.error('Error retrieving object from ArchivesSpace: {}'.format(e))
             return False
@@ -117,12 +124,11 @@ class ArchivesSpaceClient(object):
 
 
 class UrsaMajorClient(object):
+    """Client to get and receive data from UrsaMajor."""
 
-    def __init__(self):
+    def __init__(self, baseurl):
         self.log = logger.bind(transaction_id=str(uuid4()))
-        self.client = ElectronBond(
-             baseurl=settings.URSA_MAJOR['baseurl']
-        )
+        self.client = ElectronBond(baseurl=baseurl)
 
     def retrieve(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
@@ -158,6 +164,9 @@ class UrsaMajorClient(object):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
             bag_resp = self.client.get("bags/", params={"id": identifier})
+            if len(bag_resp.json()) < 1:
+                self.log.error("No bags matching id {} found".format(identifier))
+                return False
             bag_url = bag_resp.json()[0]['url']
             resp = self.client.get(bag_url, *args, **kwargs)
             self.log.debug("Object retrieved from Ursa Major", object=bag_url)

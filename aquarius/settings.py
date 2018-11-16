@@ -129,10 +129,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CRON_CLASSES = [
-    "transformer.cron.ProcessTransfers",
-]
-
 ARCHIVESSPACE = CF.ARCHIVESSPACE
 URSA_MAJOR = CF.URSA_MAJOR
 
