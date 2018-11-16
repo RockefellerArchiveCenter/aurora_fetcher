@@ -46,7 +46,7 @@ class DataTransformer(object):
                 return identifier['identifier']
 
     def transform_langcode(self, languages):
-        return 'mul' if len(languages) > 1 else langcode[0]
+        return 'mul' if len(languages) > 1 else languages[0]
 
     def transform_langnote(self, languages):
         language = "multiple languages" if (len(languages)>1) else langz.get(alpha_3=languages[0]).name
@@ -65,7 +65,7 @@ class DataTransformer(object):
 
     def transform_note_multipart(self, text, type):
         if len(text) > 0:
-            return = {"jsonmodel_type": "note_multipart", "type": type,
+            return {"jsonmodel_type": "note_multipart", "type": type,
                       "publish": False, "subnotes": [
                         {"content": text, "publish": True,
                          "jsonmodel_type": "note_text"}]}
@@ -99,18 +99,13 @@ class DataTransformer(object):
                 "external_documents": [],
                 "linked_agents": [],
             }
-            key_values = [
-                {"status": r['status']},
-                {"determination_date": r['determination_date']},
-                {"license_terms": r['terms']},
-                {"jurisdiction": r['jurisdiction'].upper()}
-                {"other_rights_basis": r['other_rights_basis'].lower()}
-            ]
-            for pair in key_values:
-                if pair[0] in r:
-                    statement = {**statement, pair}
+            field_keys = ["status", "determination_date", "license_terms",
+                          "jurisdiction", "other_rights_basis"]
+            for k in field_keys:
+                if k in r:
+                    statement[k] = r[k]
             if 'citation' in r:
-                statement = {**statement, {"statute_citation": r['citation']}}
+                statement["statute_citation"] = r['citation']
             rights_statements.append(statement)
         return rights_statements
 
