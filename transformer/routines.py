@@ -39,7 +39,7 @@ class AccessionRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=10)
+        packages = Package.objects.filter(process_status=Package.SAVED)
         accession_count = 0
 
         for package in packages:
@@ -51,7 +51,7 @@ class AccessionRoutine(Routine):
                     self.transformer.object = package
                     self.save_new_accession(package)
                     accession_count += 1
-                package.process_status = 20
+                package.process_status = Package.ACCESSION_CREATED
                 package.save()
             except Exception as e:
                 raise RoutineError("Accession error: {}".format(e))
@@ -74,7 +74,7 @@ class GroupingComponentRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=20)
+        packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
         grouping_count = 0
 
         for p in packages:
@@ -84,7 +84,7 @@ class GroupingComponentRoutine(Routine):
                     self.transformer.object = package
                     self.save_new_grouping_component(package)
                     grouping_count += 1
-                package.process_status = 30
+                package.process_status = package.GROUPING_COMPONENT_CREATED
                 package.save()
             except Exception as e:
                 raise RoutineError("Grouping component error: {}".format(e))
@@ -106,7 +106,7 @@ class TransferComponentRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=30)
+        packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
         transfer_count = 0
 
         for p in packages:
@@ -119,7 +119,7 @@ class TransferComponentRoutine(Routine):
                     self.transformer.parent = package.transfer_data['archivesspace_parent_identifier']
                     self.save_new_transfer_component(package)
                     transfer_count += 1
-                package.process_status = 40
+                package.process_status = Package.TRANSFER_COMPONENT_CREATED
                 package.save()
             except Exception as e:
                 raise RoutineError("Transfer component error: {}".format(e))
@@ -140,7 +140,7 @@ class DigitalObjectRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=40)
+        packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED)
         digital_count = 0
 
         for p in packages:
@@ -149,7 +149,7 @@ class DigitalObjectRoutine(Routine):
                 self.transformer.object = package
                 self.save_new_digital_object(package)
                 digital_count += 1
-                package.process_status = 50
+                package.process_status = Package.DIGITAL_OBJECT_CREATED
                 package.save()
             except Exception as e:
                 raise RoutineError("Digital object error: {}".format(e))

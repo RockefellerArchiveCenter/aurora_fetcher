@@ -37,7 +37,7 @@ class PackageViewSet(ModelViewSet):
             fedora_uri=request.data['uri'],
             identifier=request.data['identifier'],
             package_type=request.data['package_type'],
-            process_status=10
+            process_status=Package.SAVED
         )
         serializer = PackageSerializer(source_object, context={'request': request})
         return Response(serializer.data)

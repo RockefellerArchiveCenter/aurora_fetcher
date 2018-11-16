@@ -12,12 +12,17 @@ class Package(models.Model):
         ('dip', 'DIP')
     )
     package_type = models.CharField(max_length=10, choices=PACKAGE_TYPE_CHOICES)
+    SAVED = 10
+    ACCESSION_CREATED = 20
+    GROUPING_COMPONENT_CREATED = 30
+    TRANSFER_COMPONENT_CREATED = 40
+    DIGITAL_OBJECT_CREATED = 50
     PROCESS_STATUS_CHOICES = (
-        (10, 'Transfer saved'),
-        (20, 'Accession record created'),
-        (30, 'Grouping component created'),
-        (40, 'Transfer component created'),
-        (50, 'Digital object created'),
+        (SAVED, 'Transfer saved'),
+        (ACCESSION_CREATED, 'Accession record created'),
+        (GROUPING_COMPONENT_CREATED, 'Grouping component created'),
+        (TRANSFER_COMPONENT_CREATED, 'Transfer component created'),
+        (DIGITAL_OBJECT_CREATED, 'Digital object created'),
     )
     process_status = models.CharField(max_length=50, choices=PROCESS_STATUS_CHOICES)
     transfer_data = JSONField(null=True, blank=True)

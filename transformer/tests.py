@@ -50,28 +50,28 @@ class TransformTest(TestCase):
             accessions = AccessionRoutine().run()
             self.assertNotEqual(False, accessions)
             for transfer in Package.objects.all():
-                self.assertEqual(int(transfer.process_status), 20)
+                self.assertEqual(int(transfer.process_status), Package.ACCESSION_CREATED)
 
         with transformer_vcr.use_cassette('process_grouping.json'):
             print('*** Processing Grouping Components ***')
             grouping = GroupingComponentRoutine().run()
             self.assertNotEqual(False, grouping)
             for transfer in Package.objects.all():
-                self.assertEqual(int(transfer.process_status), 30)
+                self.assertEqual(int(transfer.process_status), Package.GROUPING_COMPONENT_CREATED)
 
         with transformer_vcr.use_cassette('process_transfers.json'):
             print('*** Processing Transfer Components ***')
             transfers = TransferComponentRoutine().run()
             self.assertNotEqual(False, transfers)
             for transfer in Package.objects.all():
-                self.assertEqual(int(transfer.process_status), 40)
+                self.assertEqual(int(transfer.process_status), Package.TRANSFER_COMPONENT_CREATED)
 
         with transformer_vcr.use_cassette('process_digital.json'):
             print('*** Processing Digital Objects ***')
             digital = DigitalObjectRoutine().run()
             self.assertNotEqual(False, digital)
             for transfer in Package.objects.all():
-                self.assertEqual(int(transfer.process_status), 50)
+                self.assertEqual(int(transfer.process_status), Package.DIGITAL_OBJECT_CREATED)
 
             self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
