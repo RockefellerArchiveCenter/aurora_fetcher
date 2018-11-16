@@ -29,7 +29,7 @@ Or, if you want to remove all data
 
 ### Configuration
 
-You will need to edit configuration values in `gemini/config.py` to point to your instance of ArchivesSpace.
+You will need to edit configuration values in `aquarius/config.py` to point to your instance of ArchivesSpace.
 
 
 ## Usage
