@@ -115,7 +115,8 @@ class DataTransformer:
     # Main object transformations
     #################################
 
-    def transform_digital_object(self, data):
+    def transform_digital_object(self):
+        data = self.package
         defaults = {"publish": False, "jsonmodel_type": "digital_object"}
         do_id = data.fedora_uri.split("/")[-1]
         try:
@@ -131,7 +132,10 @@ class DataTransformer:
         except Exception as e:
             raise TransformError('Error transforming digital object: {}'.format(e))
 
-    def transform_component(self, data):
+    def transform_component(self):
+        data = self.package.transfer_data['data']
+        resource = self.package.accession_data['data']['resource']
+        parent = self.package.transfer_data['archivesspace_parent_identifier']
         metadata = data['metadata']
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
@@ -150,18 +154,19 @@ class DataTransformer:
                 "rights_statements": self.transform_rights(data['rights_statements']),
                 "linked_agents": self.transform_linked_agents(
                     metadata['record_creators'] + [{"name": metadata['source_organization'], "type": "organization"}]),
-                "resource": {'ref': self.resource},
+                "resource": {'ref': resource},
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "notes": [
                     self.transform_note_multipart(metadata['internal_sender_description'], "scopecontent"),
                     self.transform_langnote(metadata['language'])]}
-            if self.parent:
-                consumer_data = {**consumer_data, "parent": {"ref": self.parent}}
+            if parent:
+                consumer_data = {**consumer_data, "parent": {"ref": parent}}
             return consumer_data
         except Exception as e:
             raise TransformError('Error transforming component: {}'.format(e))
 
-    def transform_grouping_component(self, data):
+    def transform_grouping_component(self):
+        data = self.package.accession_data['data']
         defaults = {
             "publish": False, "level": "recordgrp", "linked_events": [],
             "external_documents": [], "instances": [], "subjects": []
@@ -194,7 +199,8 @@ class DataTransformer:
         except Exception as e:
             raise TransformError('Error transforming grouping component: {}'.format(e))
 
-    def transform_accession(self, data):
+    def transform_accession(self):
+        data = self.package.accession_data['data']
         accession_number = self.aspace_client.next_accession_number()
         defaults = {
             "publish": False, "linked_events": [], "jsonmodel_type": "accession",

@@ -34,7 +34,7 @@ class Routine:
 
 
 class AccessionRoutine(Routine):
-    """Transforms Accession data stored in Ursa Major and delivers the
+    """Transforms accession data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as an accession record."""
 
     def run(self):
@@ -48,8 +48,8 @@ class AccessionRoutine(Routine):
                 package.transfer_data = self.ursa_major_client.find_bag_by_id(package.identifier)
                 package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
                 if not package.accession_data.get('archivesspace_identifier'):
-                    self.transformer.object = package
-                    self.save_new_accession(package)
+                    self.transformer.package = package
+                    self.save_new_accession()
                     accession_count += 1
                 package.process_status = Package.ACCESSION_CREATED
                 package.save()
@@ -57,18 +57,18 @@ class AccessionRoutine(Routine):
                 raise RoutineError("Accession error: {}".format(e))
         return "{} accessions saved.".format(accession_count)
 
-    def save_new_accession(self, package):
-        transformed_data = self.transformer.transform_accession(package.accession_data['data'])
+    def save_new_accession(self):
+        transformed_data = self.transformer.transform_accession()
         accession_identifier = self.aspace_client.create(transformed_data, 'accession')
-        package.accession_data['archivesspace_identifier'] = accession_identifier
-        for p in package.accession_data['data']['transfers']:
+        self.transformer.package.accession_data['archivesspace_identifier'] = accession_identifier
+        for p in self.transformer.package.accession_data['data']['transfers']:
             for sibling in Package.objects.filter(identifier=p['identifier']):
-                sibling.accession_data = package.accession_data
+                sibling.accession_data = self.transformer.package.accession_data
                 sibling.save()
 
 
 class GroupingComponentRoutine(Routine):
-    """Transforms Accession data stored in Ursa Major into a grouping component
+    """Transforms accession data stored in Ursa Major into a grouping component
        and delivers the transformed data to ArchivesSpace where it is saved
        as an archival object record."""
 
@@ -81,8 +81,10 @@ class GroupingComponentRoutine(Routine):
             try:
                 package = Package.objects.get(id=p.pk)
                 if not package.transfer_data.get('archivesspace_parent_identifier'):
-                    self.transformer.object = package
-                    self.save_new_grouping_component(package)
+                    self.transformer.package = package
+                    self.parent = self.save_new_grouping_component()
+                    package.transfer_data['archivesspace_parent_identifier'] = self.parent
+                    self.update_siblings(package)
                     grouping_count += 1
                 package.process_status = package.GROUPING_COMPONENT_CREATED
                 package.save()
@@ -90,18 +92,19 @@ class GroupingComponentRoutine(Routine):
                 raise RoutineError("Grouping component error: {}".format(e))
         return "{} grouping components saved.".format(grouping_count)
 
-    def save_new_grouping_component(self, package):
-        transformed_data = self.transformer.transform_grouping_component(package.accession_data['data'])
-        parent = self.aspace_client.create(transformed_data, 'component')
-        package.transfer_data['archivesspace_parent_identifier'] = parent
+    def save_new_grouping_component(self):
+        transformed_data = self.transformer.transform_grouping_component()
+        return self.aspace_client.create(transformed_data, 'component')
+
+    def update_siblings(self, package):
         for p in package.accession_data['data']['transfers']:
             for sibling in Package.objects.filter(identifier=p['identifier']):
-                sibling.transfer_data['archivesspace_parent_identifier'] = parent
+                sibling.transfer_data['archivesspace_parent_identifier'] = self.parent
                 sibling.save()
 
 
 class TransferComponentRoutine(Routine):
-    """Transforms Transfer data stored in Ursa Major and delivers the
+    """Transforms transfer data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as an archival object record."""
 
     def run(self):
@@ -113,11 +116,10 @@ class TransferComponentRoutine(Routine):
             try:
                 package = Package.objects.get(id=p.pk)
                 if not package.transfer_data.get('archivesspace_identifier'):
-                    self.transformer.object = package
-                    # TODO: might not need the below
-                    self.transformer.resource = package.accession_data['data']['resource']
-                    self.transformer.parent = package.transfer_data['archivesspace_parent_identifier']
-                    self.save_new_transfer_component(package)
+                    self.transformer.package = package
+                    self.transfer_identifier = self.save_new_transfer_component()
+                    package.transfer_data['archivesspace_identifier'] = self.transfer_identifier
+                    self.update_siblings(package)
                     transfer_count += 1
                 package.process_status = Package.TRANSFER_COMPONENT_CREATED
                 package.save()
@@ -125,17 +127,18 @@ class TransferComponentRoutine(Routine):
                 raise RoutineError("Transfer component error: {}".format(e))
         return "{} transfer components created.".format(transfer_count)
 
-    def save_new_transfer_component(self, package):
-        transformed_data = self.transformer.transform_component(package.transfer_data['data'])
-        transfer_identifier = self.aspace_client.create(transformed_data, 'component')
-        package.transfer_data['archivesspace_identifier'] = transfer_identifier
+    def save_new_transfer_component(self):
+        transformed_data = self.transformer.transform_component()
+        return self.aspace_client.create(transformed_data, 'component')
+
+    def update_siblings(self, package):
         for sibling in Package.objects.filter(identifier=package.identifier):
-            sibling.transfer_data['archivesspace_identifier'] = transfer_identifier
+            sibling.transfer_data['archivesspace_identifier'] = self.transfer_identifier
             sibling.save()
 
 
 class DigitalObjectRoutine(Routine):
-    """Transforms Transfer data stored in Ursa Major and delivers the
+    """Transforms transfer data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as a digital object record."""
 
     def run(self):
@@ -146,8 +149,9 @@ class DigitalObjectRoutine(Routine):
         for p in packages:
             try:
                 package = Package.objects.get(id=p.pk)
-                self.transformer.object = package
-                self.save_new_digital_object(package)
+                self.transformer.package = package
+                self.do_identifier = self.save_new_digital_object()
+                self.update_instance(package)
                 digital_count += 1
                 package.process_status = Package.DIGITAL_OBJECT_CREATED
                 package.save()
@@ -155,13 +159,15 @@ class DigitalObjectRoutine(Routine):
                 raise RoutineError("Digital object error: {}".format(e))
         return "{} digital objects saved.".format(digital_count)
 
-    def save_new_digital_object(self, package):
-        transformed_data = self.transformer.transform_digital_object(package)
-        do_identifier = self.aspace_client.create(transformed_data, 'digital object')
+    def save_new_digital_object(self):
+        transformed_data = self.transformer.transform_digital_object()
+        return self.aspace_client.create(transformed_data, 'digital object')
+
+    def update_instance(self, package):
         transfer_component = self.aspace_client.retrieve(package.transfer_data['archivesspace_identifier'])
         transfer_component['instances'].append(
             {"instance_type": "digital_object",
              "jsonmodel_type": "instance",
-             "digital_object": {"ref": do_identifier}
+             "digital_object": {"ref": self.do_identifier}
              })
         updated_component = self.aspace_client.update(package.transfer_data['archivesspace_identifier'], transfer_component)
