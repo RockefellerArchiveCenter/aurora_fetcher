@@ -18,6 +18,8 @@ class RoutineError(Exception): pass
 
 
 class Routine:
+    """Base class which is inherited by all other routines."""
+
     def __init__(self):
         self.aspace_client = ArchivesSpaceClient(settings.ARCHIVESSPACE['baseurl'],
                                                  settings.ARCHIVESSPACE['username'],
@@ -32,6 +34,8 @@ class Routine:
 
 
 class AccessionRoutine(Routine):
+    """Transforms Accession data stored in Ursa Major and delivers the
+       transformed data to ArchivesSpace where it is saved as an accession record."""
 
     def run(self):
         self.bind_log()
@@ -44,6 +48,7 @@ class AccessionRoutine(Routine):
                 package.transfer_data = self.ursa_major_client.find_bag_by_id(package.identifier)
                 package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
                 if not package.accession_data.get('archivesspace_identifier'):
+                    self.transformer.object = package
                     self.save_new_accession(package)
                     accession_count += 1
                 package.process_status = 20
@@ -63,6 +68,9 @@ class AccessionRoutine(Routine):
 
 
 class GroupingComponentRoutine(Routine):
+    """Transforms Accession data stored in Ursa Major into a grouping component
+       and delivers the transformed data to ArchivesSpace where it is saved
+       as an archival object record."""
 
     def run(self):
         self.bind_log()
@@ -73,6 +81,7 @@ class GroupingComponentRoutine(Routine):
             try:
                 package = Package.objects.get(id=p.pk)
                 if not package.transfer_data.get('archivesspace_parent_identifier'):
+                    self.transformer.object = package
                     self.save_new_grouping_component(package)
                     grouping_count += 1
                 package.process_status = 30
@@ -92,6 +101,8 @@ class GroupingComponentRoutine(Routine):
 
 
 class TransferComponentRoutine(Routine):
+    """Transforms Transfer data stored in Ursa Major and delivers the
+       transformed data to ArchivesSpace where it is saved as an archival object record."""
 
     def run(self):
         self.bind_log()
@@ -102,6 +113,8 @@ class TransferComponentRoutine(Routine):
             try:
                 package = Package.objects.get(id=p.pk)
                 if not package.transfer_data.get('archivesspace_identifier'):
+                    self.transformer.object = package
+                    # TODO: might not need the below
                     self.transformer.resource = package.accession_data['data']['resource']
                     self.transformer.parent = package.transfer_data['archivesspace_parent_identifier']
                     self.save_new_transfer_component(package)
@@ -122,6 +135,8 @@ class TransferComponentRoutine(Routine):
 
 
 class DigitalObjectRoutine(Routine):
+    """Transforms Transfer data stored in Ursa Major and delivers the
+       transformed data to ArchivesSpace where it is saved as a digital object record."""
 
     def run(self):
         self.bind_log()
@@ -131,6 +146,7 @@ class DigitalObjectRoutine(Routine):
         for p in packages:
             try:
                 package = Package.objects.get(id=p.pk)
+                self.transformer.object = package
                 self.save_new_digital_object(package)
                 digital_count += 1
                 package.process_status = 50

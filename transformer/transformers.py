@@ -10,7 +10,7 @@ from .clients import ArchivesSpaceClient
 class TransformError(Exception): pass
 
 
-class DataTransformer(object):
+class DataTransformer:
     def __init__(self, aspace_client=None):
         self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient(settings.ARCHIVESSPACE['baseurl'],
                                                                                      settings.ARCHIVESSPACE['username'],
@@ -26,7 +26,6 @@ class DataTransformer(object):
         date_start = iso8601.parse_date(start)
         date_end = iso8601.parse_date(end)
         if date_end > date_start:
-            # TODO: make get_date_expression a model method
             expression = '{} - {}'.format(
                 date_start.strftime("%Y %B %e"),
                 date_end.strftime("%Y %B %e"))

@@ -13,6 +13,7 @@ logger = wrap_logger(logger)
 
 
 class ArchivesSpaceClient(object):
+    """Client to get and receive data from ArchivesSpace."""
 
     def __init__(self, baseurl, username, password, repo_id):
         self.log = logger.bind(transaction_id=str(uuid4()))
@@ -123,6 +124,7 @@ class ArchivesSpaceClient(object):
 
 
 class UrsaMajorClient(object):
+    """Client to get and receive data from UrsaMajor."""
 
     def __init__(self, baseurl):
         self.log = logger.bind(transaction_id=str(uuid4()))
