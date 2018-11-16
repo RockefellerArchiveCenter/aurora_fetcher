@@ -1,18 +1,18 @@
-# Aquarius
+# aquarius
 
 A microservice to transform and deliver Accessions, Archival Objects and Digital Objects to ArchivesSpace.
+
+aquarius is part of [Project Electron](https://github.com/RockefellerArchiveCenter/project_electron), an initiative to build sustainable, open and user-centered infrastructure for the archival management of digital records at the [Rockefeller Archive Center](http://rockarch.org/).
 
 [![Build Status](https://travis-ci.org/RockefellerArchiveCenter/aquarius.svg?branch=master)](https://travis-ci.org/RockefellerArchiveCenter/aquarius)
 
 ## Setup
 
-Clone the repository
+Install [git](https://git-scm.com/) and clone the repository
 
     $ git clone git@github.com:RockefellerArchiveCenter/aquarius.git
 
-Install [Docker](https://store.docker.com/search?type=edition&offering=community) (trust me, it makes things a lot easier)
-
-Run docker-compose from the root directory
+Install [Docker](https://store.docker.com/search?type=edition&offering=community) and run docker-compose from the root directory
 
     $ cd aquarius
     $ docker-compose up
@@ -32,7 +32,7 @@ Or, if you want to remove all data
 
 ![TransferRoutine diagram](transformer.png)
 
-For examples of the data Aquarius expects, see `fixtures/json/`.
+For an example of the data aquarius expects from Aurora, see `fixtures/data/accession.json`.
 
 
 ### Routes
@@ -51,7 +51,7 @@ For examples of the data Aquarius expects, see `fixtures/json/`.
 
 ### Logging
 
-Aquarius uses `structlog` to output structured JSON logs. Logging can be configured in `aquarius/settings.py`.
+aquarius uses `structlog` to output structured JSON logs. Logging can be configured in `aquarius/settings.py`.
 
 
 ### ArchivesSpace configuration
@@ -65,4 +65,4 @@ In order to successfully save data to ArchivesSpace, you will have to make some 
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+This code is released under an [MIT License](LICENSE).
