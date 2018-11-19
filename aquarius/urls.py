@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.urls import include, re_path
 from transformer.models import Package
-from transformer.views import PackageViewSet, ProcessAccessionsView, ProcessGroupingComponentsView, ProcessTransferComponentsView, ProcessDigitalObjectsView
+from transformer.views import *
 from rest_framework import routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -43,6 +43,7 @@ urlpatterns = [
     url(r'^grouping-components/', ProcessGroupingComponentsView.as_view(), name="grouping-components"),
     url(r'^transfer-components/', ProcessTransferComponentsView.as_view(), name="transfer-components"),
     url(r'^digital-objects/', ProcessDigitalObjectsView.as_view(), name="digital-objects"),
+    url(r'^send-update/', UpdateRequestView.as_view(), name="send-update"),
     url(r'^status/', include('health_check.api.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^schema(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),
