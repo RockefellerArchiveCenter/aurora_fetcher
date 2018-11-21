@@ -192,9 +192,9 @@ class AuroraClient:
     def update(self, url, data, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
-            resp = self.client.put(url, data=data, headers={"Content-Type":"application/json"}, *args, **kwargs)
+            resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
             self.log.debug("Object saved in Ursa Major", object=url)
-            return resp.json()
+            if resp.status_code == 200:
+                return resp.json()
         except Exception as e:
-            self.log.error("Error updating object in Ursa Major: {}".format(e))
-            return False
+            raise AuroraClientError("Error updating object in Aurora: {}".format(e))

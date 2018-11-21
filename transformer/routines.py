@@ -41,7 +41,7 @@ class AccessionRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.SAVED).order_by('pk')
+        packages = Package.objects.filter(process_status=Package.SAVED)
         accession_count = 0
 
         for package in packages:
@@ -86,7 +86,7 @@ class GroupingComponentRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED).order_by('pk')
+        packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
         grouping_count = 0
 
         for package in packages:
@@ -121,7 +121,7 @@ class TransferComponentRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED).order_by('pk')
+        packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
         transfer_count = 0
 
         for package in packages:
@@ -156,7 +156,7 @@ class DigitalObjectRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED).order_by('pk')
+        packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED)
         digital_count = 0
 
         for package in packages:
@@ -187,8 +187,7 @@ class DigitalObjectRoutine(Routine):
 
 
 class UpdateRequester:
-    def __init__(self, url):
-        self.url = url
+    def __init__(self):
         self.client = AuroraClient(baseurl=settings.AURORA['baseurl'],
                                    username=settings.AURORA['username'],
                                    password=settings.AURORA['password'])
@@ -200,8 +199,8 @@ class UpdateRequester:
                 data = package.transfer_data['data']
                 data['process_status'] = 80
                 identifier = data['url'].rstrip('/').split('/')[-1]
-                url = "/".join([self.url.rstrip('/'), "transfers", "{}/".format(identifier.lstrip('/'))])
-                r = self.client.update(url, data=json.dumps(data))
+                url = "/".join(["transfers", "{}/".format(identifier.lstrip('/'))])
+                r = self.client.update(url, data=data)
                 package.process_status = Package.UPDATE_SENT
                 package.save()
                 package_count += 1

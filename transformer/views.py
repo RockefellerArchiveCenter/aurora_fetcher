@@ -96,10 +96,9 @@ class UpdateRequestView(APIView):
 
     def post(self, request):
         log = logger.new(transaction_id=str(uuid4()))
-        url = request.GET.get('post_service_url')
-        url = (urllib.parse.unquote(url) if url else '')
+
         try:
-            update = UpdateRequester(url).run()
+            update = UpdateRequester().run()
             return Response({"detail": update}, status=200)
         except Exception as e:
             return Response({"detail": str(e)}, status=500)
