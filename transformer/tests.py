@@ -10,14 +10,14 @@ from rest_framework.test import APIRequestFactory
 
 from aquarius import settings
 from .models import Package
-from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine
-from .views import PackageViewSet, ProcessAccessionsView
+from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine, UpdateRequester
+from .views import PackageViewSet, ProcessAccessionsView, UpdateRequestView
 
 transformer_vcr = vcr.VCR(
     serializer='json',
     cassette_library_dir=join(settings.BASE_DIR, 'fixtures/cassettes'),
     record_mode='once',
-    match_on=['path', 'method'],
+    match_on=['path', 'method', 'query'],
     filter_query_parameters=['username', 'password'],
     filter_headers=['Authorization', 'X-ArchivesSpace-Session'],
 )
@@ -28,7 +28,7 @@ class TransformTest(TestCase):
         self.factory = APIRequestFactory()
         self.transfer_data = []
         self.transfer_count = 0
-        for file in listdir(join(settings.BASE_DIR, 'fixtures/data')):
+        for file in sorted(listdir(join(settings.BASE_DIR, 'fixtures/data'))):
             with open(join(settings.BASE_DIR, 'fixtures/data/{}'.format(file)), 'r') as json_file:
                 data = json.load(json_file)
                 self.transfer_data.append(data)
@@ -73,7 +73,14 @@ class TransformTest(TestCase):
             for transfer in Package.objects.all():
                 self.assertEqual(int(transfer.process_status), Package.DIGITAL_OBJECT_CREATED)
 
-            self.assertEqual(len(Package.objects.all()), self.transfer_count)
+        with transformer_vcr.use_cassette('send_update.json'):
+            print('*** Sending update request ***')
+            update = UpdateRequester().run()
+            self.assertNotEqual(False, update)
+            for transfer in Package.objects.all():
+                self.assertEqual(int(transfer.process_status), Package.UPDATE_SENT)
+
+        self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
     def search_objects(self):
         print('*** Searching for objects ***')
@@ -102,6 +109,11 @@ class TransformTest(TestCase):
         with transformer_vcr.use_cassette('process_digital.json'):
             request = self.factory.post(reverse('digital-objects'))
             response = ProcessAccessionsView.as_view()(request)
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+
+        with transformer_vcr.use_cassette('send_update.json'):
+            request = self.factory.post(reverse('send-update'))
+            response = UpdateRequestView.as_view()(request)
             self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):

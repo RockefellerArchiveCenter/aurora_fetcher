@@ -13,7 +13,7 @@ Django==2.0.8
 django-common-helpers==0.9.1
 django-cron==0.5.0
 drf-yasg==1.7.4
-ElectronBonder==0.4
+ElectronBonder==0.5
 flex==6.13.2
 future==0.16.0
 gitdb2==2.0.3

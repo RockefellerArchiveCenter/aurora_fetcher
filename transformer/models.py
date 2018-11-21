@@ -17,12 +17,14 @@ class Package(models.Model):
     GROUPING_COMPONENT_CREATED = 30
     TRANSFER_COMPONENT_CREATED = 40
     DIGITAL_OBJECT_CREATED = 50
+    UPDATE_SENT = 60
     PROCESS_STATUS_CHOICES = (
         (SAVED, 'Transfer saved'),
         (ACCESSION_CREATED, 'Accession record created'),
         (GROUPING_COMPONENT_CREATED, 'Grouping component created'),
         (TRANSFER_COMPONENT_CREATED, 'Transfer component created'),
         (DIGITAL_OBJECT_CREATED, 'Digital object created'),
+        (UPDATE_SENT, 'Updated data sent to Aurora')
     )
     process_status = models.CharField(max_length=50, choices=PROCESS_STATUS_CHOICES)
     transfer_data = JSONField(null=True, blank=True)

@@ -30,183 +30,27 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:45 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "2846"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:31 GMT"
-                    ],
-                    "Cache-Control": [
-                        "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
-                    ]
-                },
-                "body": {
-                    "string": "{\"session\":\"adba2b034f0c0c8c09d7ceb3b614e1d4134d1cc7fd98503a0b077cd1351576ab\",\"user\":{\"lock_version\":730,\"username\":\"admin\",\"name\":\"Administrator\",\"is_system_user\":true,\"create_time\":\"2018-06-25T17:43:22Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"jsonmodel_type\":\"user\",\"groups\":[],\"is_admin\":true,\"uri\":\"/users/1\",\"agent_record\":{\"ref\":\"/agents/people/1\"},\"permissions\":{\"/repositories/1\":[\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\",\"system_config\",\"administer_system\",\"manage_users\",\"become_user\",\"view_all_records\",\"create_repository\",\"delete_repository\",\"transfer_repository\",\"index_system\",\"manage_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"update_event_record\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"delete_archival_record\",\"view_suppressed\",\"view_repository\",\"update_classification_record\",\"delete_classification_record\",\"mediate_edits\",\"import_records\",\"cancel_importer_job\",\"create_job\",\"cancel_job\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"update_assessment_record\",\"delete_assessment_record\",\"manage_assessment_attributes\"],\"_archivesspace\":[\"system_config\",\"administer_system\",\"manage_users\",\"become_user\",\"view_all_records\",\"create_repository\",\"delete_repository\",\"transfer_repository\",\"index_system\",\"manage_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"update_event_record\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"delete_archival_record\",\"view_suppressed\",\"view_repository\",\"update_classification_record\",\"delete_classification_record\",\"mediate_edits\",\"import_records\",\"cancel_importer_job\",\"create_job\",\"cancel_job\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"update_assessment_record\",\"delete_assessment_record\",\"manage_assessment_attributes\",\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\"]}}}\n"
-                }
-            }
-        },
-        {
-            "request": {
-                "method": "POST",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/digital_objects",
-                "body": "{\"publish\": false, \"jsonmodel_type\": \"digital_object\", \"title\": \"e33ff643-0f1b-4fa8-9105-08d2e6a9e0d5\", \"digital_object_id\": \"e33ff643-0f1b-4fa8-9105-08d2e6a9e0d5\", \"file_versions\": [{\"file_uri\": \"http://dev.fedora.marist.edu:8000/fedora/rest/e33ff643-0f1b-4fa8-9105-08d2e6a9e0d5\", \"use_statement\": \"master\"}], \"repository\": {\"ref\": \"/repositories/2\"}}",
-                "headers": {
-                    "User-Agent": [
-                        "ArchivesSnake/0.1"
-                    ],
-                    "Accept-Encoding": [
-                        "gzip, deflate"
-                    ],
-                    "Accept": [
-                        "application/json"
-                    ],
-                    "Connection": [
-                        "keep-alive"
-                    ],
-                    "Content-Length": [
-                        "352"
-                    ]
-                }
-            },
-            "response": {
-                "status": {
-                    "code": 200,
-                    "message": "OK"
-                },
-                "headers": {
-                    "Server": [
-                        "Jetty(8.1.5.v20120716)"
-                    ],
                     "X-Content-Type-Options": [
                         "nosniff"
                     ],
-                    "Content-Length": [
-                        "116"
-                    ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:31 GMT"
-                    ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"status\":\"Created\",\"id\":36,\"lock_version\":0,\"stale\":null,\"uri\":\"/repositories/2/digital_objects/36\",\"warnings\":[]}\n"
-                }
-            }
-        },
-        {
-            "request": {
-                "method": "GET",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/137",
-                "body": null,
-                "headers": {
-                    "User-Agent": [
-                        "ArchivesSnake/0.1"
-                    ],
-                    "Accept-Encoding": [
-                        "gzip, deflate"
-                    ],
-                    "Accept": [
-                        "application/json"
-                    ],
-                    "Connection": [
-                        "keep-alive"
-                    ]
-                }
-            },
-            "response": {
-                "status": {
-                    "code": 200,
-                    "message": "OK"
-                },
-                "headers": {
-                    "Server": [
-                        "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
-                    ],
-                    "Content-Length": [
-                        "5814"
-                    ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:31 GMT"
-                    ],
-                    "Cache-Control": [
-                        "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
-                    ]
-                },
-                "body": {
-                    "string": "{\"lock_version\":0,\"position\":0,\"publish\":false,\"ref_id\":\"db3767c45e8ae0f073857af65db448e5\",\"title\":\"Grant to the Village Green Preservation Society\",\"display_string\":\"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\",\"restrictions_apply\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"suppressed\":false,\"language\":\"eng\",\"level\":\"file\",\"jsonmodel_type\":\"archival_object\",\"external_ids\":[{\"external_id\":\"http://localhost:8000/api/transfers/20/\",\"source\":\"aurora\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"jsonmodel_type\":\"external_id\"}],\"subjects\":[],\"linked_events\":[],\"extents\":[{\"lock_version\":0,\"number\":\"435255\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"portion\":\"whole\",\"extent_type\":\"bytes\",\"jsonmodel_type\":\"extent\"},{\"lock_version\":0,\"number\":\"8\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"portion\":\"whole\",\"extent_type\":\"files\",\"jsonmodel_type\":\"extent\"}],\"dates\":[{\"lock_version\":0,\"expression\":\"2000 May 14 - 2002 June 22\",\"begin\":\"2000-05-14\",\"end\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"date_type\":\"inclusive\",\"label\":\"creation\",\"jsonmodel_type\":\"date\"}],\"external_documents\":[],\"rights_statements\":[{\"lock_version\":0,\"identifier\":\"7b67d78a5ee93f80534a1fce2dab9e84\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"determination_date\":\"2018-09-18\",\"rights_type\":\"copyright\",\"status\":\"copyrighted\",\"jurisdiction\":\"US\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"act_type\":\"publish\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records under copyright may not be republished without permission from the copyright holder.\"],\"persistent_id\":\"fa75b5bf6b7550633009427eeaae1fa5\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Work for hire, under copyright until 40 years after creation.\"],\"persistent_id\":\"a1c39d4248bd647874bec234717cd1f8\",\"publish\":false}]},{\"lock_version\":0,\"identifier\":\"69d0c80e3f88dda6fa09c4c0fe8da735\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"rights_type\":\"other\",\"other_rights_basis\":\"donor\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2010-05-14\",\"end_date\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"act_type\":\"disseminate\",\"restriction\":\"allow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"2c3643db27cb3d7a45aeb4b05820c176\",\"publish\":false}]},{\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:30Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"act_type\":\"disseminate\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"ea8cd8e7d046c665af259ed9eecbfe8f\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Records embargoed for 10 years after date of creation.\"],\"persistent_id\":\"53b94caf223c3ae5e4f92647c03903db\",\"publish\":false}]}],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/4\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/5\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/1\"}],\"ancestors\":[{\"ref\":\"/repositories/2/archival_objects/136\",\"level\":\"recordgrp\"},{\"ref\":\"/repositories/2/resources/1\",\"level\":\"collection\"}],\"instances\":[],\"notes\":[{\"jsonmodel_type\":\"note_multipart\",\"type\":\"scopecontent\",\"subnotes\":[{\"content\":\"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\",\"publish\":true,\"jsonmodel_type\":\"note_text\"}],\"persistent_id\":\"7f7376f28d8470e8dce9ea0c36535135\",\"publish\":false},{\"jsonmodel_type\":\"note_singlepart\",\"type\":\"langmaterial\",\"content\":[\"Materials are in English\"],\"persistent_id\":\"98209509f1b88090643dc9f77e81ff10\",\"publish\":false}],\"uri\":\"/repositories/2/archival_objects/137\",\"repository\":{\"ref\":\"/repositories/2\"},\"resource\":{\"ref\":\"/repositories/2/resources/1\"},\"parent\":{\"ref\":\"/repositories/2/archival_objects/136\"},\"has_unpublished_ancestor\":true}\n"
-                }
-            }
-        },
-        {
-            "request": {
-                "method": "POST",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/137",
-                "body": "{\"lock_version\": 0, \"position\": 0, \"publish\": false, \"ref_id\": \"db3767c45e8ae0f073857af65db448e5\", \"title\": \"Grant to the Village Green Preservation Society\", \"display_string\": \"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\", \"restrictions_apply\": false, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"suppressed\": false, \"language\": \"eng\", \"level\": \"file\", \"jsonmodel_type\": \"archival_object\", \"external_ids\": [{\"external_id\": \"http://localhost:8000/api/transfers/20/\", \"source\": \"aurora\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"jsonmodel_type\": \"external_id\"}], \"subjects\": [], \"linked_events\": [], \"extents\": [{\"lock_version\": 0, \"number\": \"435255\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"portion\": \"whole\", \"extent_type\": \"bytes\", \"jsonmodel_type\": \"extent\"}, {\"lock_version\": 0, \"number\": \"8\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"portion\": \"whole\", \"extent_type\": \"files\", \"jsonmodel_type\": \"extent\"}], \"dates\": [{\"lock_version\": 0, \"expression\": \"2000 May 14 - 2002 June 22\", \"begin\": \"2000-05-14\", \"end\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"date_type\": \"inclusive\", \"label\": \"creation\", \"jsonmodel_type\": \"date\"}], \"external_documents\": [], \"rights_statements\": [{\"lock_version\": 0, \"identifier\": \"7b67d78a5ee93f80534a1fce2dab9e84\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"determination_date\": \"2018-09-18\", \"rights_type\": \"copyright\", \"status\": \"copyrighted\", \"jurisdiction\": \"US\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"act_type\": \"publish\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records under copyright may not be republished without permission from the copyright holder.\"], \"persistent_id\": \"fa75b5bf6b7550633009427eeaae1fa5\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Work for hire, under copyright until 40 years after creation.\"], \"persistent_id\": \"a1c39d4248bd647874bec234717cd1f8\", \"publish\": false}]}, {\"lock_version\": 0, \"identifier\": \"69d0c80e3f88dda6fa09c4c0fe8da735\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"rights_type\": \"other\", \"other_rights_basis\": \"donor\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2010-05-14\", \"end_date\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"act_type\": \"disseminate\", \"restriction\": \"allow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"2c3643db27cb3d7a45aeb4b05820c176\", \"publish\": false}]}, {\"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:30Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"act_type\": \"disseminate\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"ea8cd8e7d046c665af259ed9eecbfe8f\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Records embargoed for 10 years after date of creation.\"], \"persistent_id\": \"53b94caf223c3ae5e4f92647c03903db\", \"publish\": false}]}], \"linked_agents\": [{\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/4\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/5\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/1\"}], \"ancestors\": [{\"ref\": \"/repositories/2/archival_objects/136\", \"level\": \"recordgrp\"}, {\"ref\": \"/repositories/2/resources/1\", \"level\": \"collection\"}], \"instances\": [{\"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/36\"}}], \"notes\": [{\"jsonmodel_type\": \"note_multipart\", \"type\": \"scopecontent\", \"subnotes\": [{\"content\": \"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\", \"publish\": true, \"jsonmodel_type\": \"note_text\"}], \"persistent_id\": \"7f7376f28d8470e8dce9ea0c36535135\", \"publish\": false}, {\"jsonmodel_type\": \"note_singlepart\", \"type\": \"langmaterial\", \"content\": [\"Materials are in English\"], \"persistent_id\": \"98209509f1b88090643dc9f77e81ff10\", \"publish\": false}], \"uri\": \"/repositories/2/archival_objects/137\", \"repository\": {\"ref\": \"/repositories/2\"}, \"resource\": {\"ref\": \"/repositories/2/resources/1\"}, \"parent\": {\"ref\": \"/repositories/2/archival_objects/136\"}, \"has_unpublished_ancestor\": true}",
-                "headers": {
-                    "User-Agent": [
-                        "ArchivesSnake/0.1"
-                    ],
-                    "Accept-Encoding": [
-                        "gzip, deflate"
-                    ],
-                    "Accept": [
-                        "application/json"
-                    ],
-                    "Connection": [
-                        "keep-alive"
-                    ],
-                    "Content-Length": [
-                        "6310"
-                    ]
-                }
-            },
-            "response": {
-                "status": {
-                    "code": 200,
-                    "message": "OK"
-                },
-                "headers": {
-                    "Server": [
-                        "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
-                    ],
-                    "Content-Length": [
-                        "119"
-                    ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:31 GMT"
-                    ],
-                    "Cache-Control": [
-                        "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
-                    ]
-                },
-                "body": {
-                    "string": "{\"status\":\"Updated\",\"id\":137,\"lock_version\":1,\"stale\":true,\"uri\":\"/repositories/2/archival_objects/137\",\"warnings\":[]}\n"
+                    "string": "{\"session\":\"063802eb9e2220a5ac4498a9857f7d4ea2da9d9b83c821c2237734656f68c358\",\"user\":{\"lock_version\":851,\"username\":\"admin\",\"name\":\"Administrator\",\"is_system_user\":true,\"create_time\":\"2018-06-25T17:43:22Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"jsonmodel_type\":\"user\",\"groups\":[],\"is_admin\":true,\"uri\":\"/users/1\",\"agent_record\":{\"ref\":\"/agents/people/1\"},\"permissions\":{\"/repositories/1\":[\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\",\"system_config\",\"administer_system\",\"manage_users\",\"become_user\",\"view_all_records\",\"create_repository\",\"delete_repository\",\"transfer_repository\",\"index_system\",\"manage_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"update_event_record\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"delete_archival_record\",\"view_suppressed\",\"view_repository\",\"update_classification_record\",\"delete_classification_record\",\"mediate_edits\",\"import_records\",\"cancel_importer_job\",\"create_job\",\"cancel_job\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"update_assessment_record\",\"delete_assessment_record\",\"manage_assessment_attributes\"],\"_archivesspace\":[\"system_config\",\"administer_system\",\"manage_users\",\"become_user\",\"view_all_records\",\"create_repository\",\"delete_repository\",\"transfer_repository\",\"index_system\",\"manage_repository\",\"update_accession_record\",\"update_resource_record\",\"update_digital_object_record\",\"update_event_record\",\"delete_event_record\",\"suppress_archival_record\",\"transfer_archival_record\",\"delete_archival_record\",\"view_suppressed\",\"view_repository\",\"update_classification_record\",\"delete_classification_record\",\"mediate_edits\",\"import_records\",\"cancel_importer_job\",\"create_job\",\"cancel_job\",\"manage_subject_record\",\"manage_agent_record\",\"manage_vocabulary_record\",\"merge_agents_and_subjects\",\"merge_archival_record\",\"manage_rde_templates\",\"update_container_record\",\"manage_container_record\",\"manage_container_profile_record\",\"manage_location_profile_record\",\"update_assessment_record\",\"delete_assessment_record\",\"manage_assessment_attributes\",\"update_location_record\",\"delete_vocabulary_record\",\"update_subject_record\",\"delete_subject_record\",\"update_agent_record\",\"delete_agent_record\",\"update_vocabulary_record\",\"merge_subject_record\",\"merge_agent_record\",\"update_container_profile_record\",\"update_location_profile_record\"]}}}\n"
                 }
             }
         },
@@ -239,34 +83,34 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:45 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "116"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:32 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"status\":\"Created\",\"id\":37,\"lock_version\":0,\"stale\":null,\"uri\":\"/repositories/2/digital_objects/37\",\"warnings\":[]}\n"
+                    "string": "{\"status\":\"Created\",\"id\":48,\"lock_version\":0,\"stale\":null,\"uri\":\"/repositories/2/digital_objects/48\",\"warnings\":[]}\n"
                 }
             }
         },
         {
             "request": {
                 "method": "GET",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/138",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/168",
                 "body": null,
                 "headers": {
                     "User-Agent": [
@@ -289,35 +133,35 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:45 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "5814"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:32 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"lock_version\":0,\"position\":1,\"publish\":false,\"ref_id\":\"5696990bf9d505d838253cacc47d8a64\",\"title\":\"Grant to the Village Green Preservation Society\",\"display_string\":\"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\",\"restrictions_apply\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:30Z\",\"suppressed\":false,\"language\":\"eng\",\"level\":\"file\",\"jsonmodel_type\":\"archival_object\",\"external_ids\":[{\"external_id\":\"http://localhost:8000/api/transfers/21/\",\"source\":\"aurora\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"jsonmodel_type\":\"external_id\"}],\"subjects\":[],\"linked_events\":[],\"extents\":[{\"lock_version\":0,\"number\":\"435255\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"portion\":\"whole\",\"extent_type\":\"bytes\",\"jsonmodel_type\":\"extent\"},{\"lock_version\":0,\"number\":\"8\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"portion\":\"whole\",\"extent_type\":\"files\",\"jsonmodel_type\":\"extent\"}],\"dates\":[{\"lock_version\":0,\"expression\":\"2000 May 14 - 2002 June 22\",\"begin\":\"2000-05-14\",\"end\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"date_type\":\"inclusive\",\"label\":\"creation\",\"jsonmodel_type\":\"date\"}],\"external_documents\":[],\"rights_statements\":[{\"lock_version\":0,\"identifier\":\"15a05e8ec5967494d3cad2e7f2acf20b\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"determination_date\":\"2018-09-18\",\"rights_type\":\"copyright\",\"status\":\"copyrighted\",\"jurisdiction\":\"US\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"act_type\":\"publish\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records under copyright may not be republished without permission from the copyright holder.\"],\"persistent_id\":\"b4a6e39a8b3f49eb247e8de285372d0b\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Work for hire, under copyright until 40 years after creation.\"],\"persistent_id\":\"db61fb64a10732a31ab53b2af5e022ea\",\"publish\":false}]},{\"lock_version\":0,\"identifier\":\"032c3ffa6141cf6552f409d83ace4aab\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"rights_type\":\"other\",\"other_rights_basis\":\"donor\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2010-05-14\",\"end_date\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"act_type\":\"disseminate\",\"restriction\":\"allow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"6c5b4d47c82b3e908c9a5e68412e6605\",\"publish\":false}]},{\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"act_type\":\"disseminate\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"510452f1e4dbb05bc80b071810d134c5\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Records embargoed for 10 years after date of creation.\"],\"persistent_id\":\"869c05029012a9a71f78b9bcc3c56410\",\"publish\":false}]}],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/4\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/5\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/1\"}],\"ancestors\":[{\"ref\":\"/repositories/2/archival_objects/136\",\"level\":\"recordgrp\"},{\"ref\":\"/repositories/2/resources/1\",\"level\":\"collection\"}],\"instances\":[],\"notes\":[{\"jsonmodel_type\":\"note_multipart\",\"type\":\"scopecontent\",\"subnotes\":[{\"content\":\"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\",\"publish\":true,\"jsonmodel_type\":\"note_text\"}],\"persistent_id\":\"c231720b2bc1a33250ac20eb158e2eb2\",\"publish\":false},{\"jsonmodel_type\":\"note_singlepart\",\"type\":\"langmaterial\",\"content\":[\"Materials are in English\"],\"persistent_id\":\"9ded40ab0712b7762f0477e3bed3eb92\",\"publish\":false}],\"uri\":\"/repositories/2/archival_objects/138\",\"repository\":{\"ref\":\"/repositories/2\"},\"resource\":{\"ref\":\"/repositories/2/resources/1\"},\"parent\":{\"ref\":\"/repositories/2/archival_objects/136\"},\"has_unpublished_ancestor\":true}\n"
+                    "string": "{\"lock_version\":0,\"position\":0,\"publish\":false,\"ref_id\":\"28e6dcd51a528ac049eb8d76b284e1de\",\"title\":\"Grant to the Village Green Preservation Society\",\"display_string\":\"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\",\"restrictions_apply\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"suppressed\":false,\"language\":\"eng\",\"level\":\"file\",\"jsonmodel_type\":\"archival_object\",\"external_ids\":[{\"external_id\":\"http://localhost:8000/api/transfers/21/\",\"source\":\"aurora\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"jsonmodel_type\":\"external_id\"}],\"subjects\":[],\"linked_events\":[],\"extents\":[{\"lock_version\":0,\"number\":\"435255\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"portion\":\"whole\",\"extent_type\":\"bytes\",\"jsonmodel_type\":\"extent\"},{\"lock_version\":0,\"number\":\"8\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"portion\":\"whole\",\"extent_type\":\"files\",\"jsonmodel_type\":\"extent\"}],\"dates\":[{\"lock_version\":0,\"expression\":\"2000 May 14 - 2002 June 22\",\"begin\":\"2000-05-14\",\"end\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"date_type\":\"inclusive\",\"label\":\"creation\",\"jsonmodel_type\":\"date\"}],\"external_documents\":[],\"rights_statements\":[{\"lock_version\":0,\"identifier\":\"bc9f086a939d2543766d0e3550e1bf2f\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"determination_date\":\"2018-09-18\",\"rights_type\":\"copyright\",\"status\":\"copyrighted\",\"jurisdiction\":\"US\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"act_type\":\"publish\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records under copyright may not be republished without permission from the copyright holder.\"],\"persistent_id\":\"427ed06417e4794b85b5889550c866f4\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Work for hire, under copyright until 40 years after creation.\"],\"persistent_id\":\"209ecc2711d5481263604ee1d4d188da\",\"publish\":false}]},{\"lock_version\":0,\"identifier\":\"b67a21f23a7f717c0eeffbca42cf68ea\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"rights_type\":\"other\",\"other_rights_basis\":\"donor\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2010-05-14\",\"end_date\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"act_type\":\"disseminate\",\"restriction\":\"allow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"f6c0e92406f7ed6ac10dee51173aa8be\",\"publish\":false}]},{\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"act_type\":\"disseminate\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"de0757812e57e680351a610ff42ae83a\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Records embargoed for 10 years after date of creation.\"],\"persistent_id\":\"d8ab9057373a6ee130a18473a72fe6f0\",\"publish\":false}]}],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/4\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/5\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/1\"}],\"ancestors\":[{\"ref\":\"/repositories/2/archival_objects/167\",\"level\":\"recordgrp\"},{\"ref\":\"/repositories/2/resources/1\",\"level\":\"collection\"}],\"instances\":[],\"notes\":[{\"jsonmodel_type\":\"note_multipart\",\"type\":\"scopecontent\",\"subnotes\":[{\"content\":\"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\",\"publish\":true,\"jsonmodel_type\":\"note_text\"}],\"persistent_id\":\"42a9c5ecfa8a6515881845e8354b06ed\",\"publish\":false},{\"jsonmodel_type\":\"note_singlepart\",\"type\":\"langmaterial\",\"content\":[\"Materials are in English\"],\"persistent_id\":\"972ee931f6bd95ada5c046e0529b78e8\",\"publish\":false}],\"uri\":\"/repositories/2/archival_objects/168\",\"repository\":{\"ref\":\"/repositories/2\"},\"resource\":{\"ref\":\"/repositories/2/resources/1\"},\"parent\":{\"ref\":\"/repositories/2/archival_objects/167\"},\"has_unpublished_ancestor\":true}\n"
                 }
             }
         },
         {
             "request": {
                 "method": "POST",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/138",
-                "body": "{\"lock_version\": 0, \"position\": 1, \"publish\": false, \"ref_id\": \"5696990bf9d505d838253cacc47d8a64\", \"title\": \"Grant to the Village Green Preservation Society\", \"display_string\": \"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\", \"restrictions_apply\": false, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:30Z\", \"suppressed\": false, \"language\": \"eng\", \"level\": \"file\", \"jsonmodel_type\": \"archival_object\", \"external_ids\": [{\"external_id\": \"http://localhost:8000/api/transfers/21/\", \"source\": \"aurora\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"jsonmodel_type\": \"external_id\"}], \"subjects\": [], \"linked_events\": [], \"extents\": [{\"lock_version\": 0, \"number\": \"435255\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"portion\": \"whole\", \"extent_type\": \"bytes\", \"jsonmodel_type\": \"extent\"}, {\"lock_version\": 0, \"number\": \"8\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"portion\": \"whole\", \"extent_type\": \"files\", \"jsonmodel_type\": \"extent\"}], \"dates\": [{\"lock_version\": 0, \"expression\": \"2000 May 14 - 2002 June 22\", \"begin\": \"2000-05-14\", \"end\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"date_type\": \"inclusive\", \"label\": \"creation\", \"jsonmodel_type\": \"date\"}], \"external_documents\": [], \"rights_statements\": [{\"lock_version\": 0, \"identifier\": \"15a05e8ec5967494d3cad2e7f2acf20b\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"determination_date\": \"2018-09-18\", \"rights_type\": \"copyright\", \"status\": \"copyrighted\", \"jurisdiction\": \"US\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"act_type\": \"publish\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records under copyright may not be republished without permission from the copyright holder.\"], \"persistent_id\": \"b4a6e39a8b3f49eb247e8de285372d0b\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Work for hire, under copyright until 40 years after creation.\"], \"persistent_id\": \"db61fb64a10732a31ab53b2af5e022ea\", \"publish\": false}]}, {\"lock_version\": 0, \"identifier\": \"032c3ffa6141cf6552f409d83ace4aab\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"rights_type\": \"other\", \"other_rights_basis\": \"donor\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2010-05-14\", \"end_date\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"act_type\": \"disseminate\", \"restriction\": \"allow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"6c5b4d47c82b3e908c9a5e68412e6605\", \"publish\": false}]}, {\"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"act_type\": \"disseminate\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"510452f1e4dbb05bc80b071810d134c5\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Records embargoed for 10 years after date of creation.\"], \"persistent_id\": \"869c05029012a9a71f78b9bcc3c56410\", \"publish\": false}]}], \"linked_agents\": [{\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/4\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/5\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/1\"}], \"ancestors\": [{\"ref\": \"/repositories/2/archival_objects/136\", \"level\": \"recordgrp\"}, {\"ref\": \"/repositories/2/resources/1\", \"level\": \"collection\"}], \"instances\": [{\"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/37\"}}], \"notes\": [{\"jsonmodel_type\": \"note_multipart\", \"type\": \"scopecontent\", \"subnotes\": [{\"content\": \"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\", \"publish\": true, \"jsonmodel_type\": \"note_text\"}], \"persistent_id\": \"c231720b2bc1a33250ac20eb158e2eb2\", \"publish\": false}, {\"jsonmodel_type\": \"note_singlepart\", \"type\": \"langmaterial\", \"content\": [\"Materials are in English\"], \"persistent_id\": \"9ded40ab0712b7762f0477e3bed3eb92\", \"publish\": false}], \"uri\": \"/repositories/2/archival_objects/138\", \"repository\": {\"ref\": \"/repositories/2\"}, \"resource\": {\"ref\": \"/repositories/2/resources/1\"}, \"parent\": {\"ref\": \"/repositories/2/archival_objects/136\"}, \"has_unpublished_ancestor\": true}",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/168",
+                "body": "{\"lock_version\": 0, \"position\": 0, \"publish\": false, \"ref_id\": \"28e6dcd51a528ac049eb8d76b284e1de\", \"title\": \"Grant to the Village Green Preservation Society\", \"display_string\": \"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\", \"restrictions_apply\": false, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"suppressed\": false, \"language\": \"eng\", \"level\": \"file\", \"jsonmodel_type\": \"archival_object\", \"external_ids\": [{\"external_id\": \"http://localhost:8000/api/transfers/21/\", \"source\": \"aurora\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"jsonmodel_type\": \"external_id\"}], \"subjects\": [], \"linked_events\": [], \"extents\": [{\"lock_version\": 0, \"number\": \"435255\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"portion\": \"whole\", \"extent_type\": \"bytes\", \"jsonmodel_type\": \"extent\"}, {\"lock_version\": 0, \"number\": \"8\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"portion\": \"whole\", \"extent_type\": \"files\", \"jsonmodel_type\": \"extent\"}], \"dates\": [{\"lock_version\": 0, \"expression\": \"2000 May 14 - 2002 June 22\", \"begin\": \"2000-05-14\", \"end\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"date_type\": \"inclusive\", \"label\": \"creation\", \"jsonmodel_type\": \"date\"}], \"external_documents\": [], \"rights_statements\": [{\"lock_version\": 0, \"identifier\": \"bc9f086a939d2543766d0e3550e1bf2f\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"determination_date\": \"2018-09-18\", \"rights_type\": \"copyright\", \"status\": \"copyrighted\", \"jurisdiction\": \"US\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"act_type\": \"publish\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records under copyright may not be republished without permission from the copyright holder.\"], \"persistent_id\": \"427ed06417e4794b85b5889550c866f4\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Work for hire, under copyright until 40 years after creation.\"], \"persistent_id\": \"209ecc2711d5481263604ee1d4d188da\", \"publish\": false}]}, {\"lock_version\": 0, \"identifier\": \"b67a21f23a7f717c0eeffbca42cf68ea\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"rights_type\": \"other\", \"other_rights_basis\": \"donor\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2010-05-14\", \"end_date\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"act_type\": \"disseminate\", \"restriction\": \"allow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"f6c0e92406f7ed6ac10dee51173aa8be\", \"publish\": false}]}, {\"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"act_type\": \"disseminate\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"de0757812e57e680351a610ff42ae83a\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Records embargoed for 10 years after date of creation.\"], \"persistent_id\": \"d8ab9057373a6ee130a18473a72fe6f0\", \"publish\": false}]}], \"linked_agents\": [{\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/4\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/5\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/1\"}], \"ancestors\": [{\"ref\": \"/repositories/2/archival_objects/167\", \"level\": \"recordgrp\"}, {\"ref\": \"/repositories/2/resources/1\", \"level\": \"collection\"}], \"instances\": [{\"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/48\"}}], \"notes\": [{\"jsonmodel_type\": \"note_multipart\", \"type\": \"scopecontent\", \"subnotes\": [{\"content\": \"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\", \"publish\": true, \"jsonmodel_type\": \"note_text\"}], \"persistent_id\": \"42a9c5ecfa8a6515881845e8354b06ed\", \"publish\": false}, {\"jsonmodel_type\": \"note_singlepart\", \"type\": \"langmaterial\", \"content\": [\"Materials are in English\"], \"persistent_id\": \"972ee931f6bd95ada5c046e0529b78e8\", \"publish\": false}], \"uri\": \"/repositories/2/archival_objects/168\", \"repository\": {\"ref\": \"/repositories/2\"}, \"resource\": {\"ref\": \"/repositories/2/resources/1\"}, \"parent\": {\"ref\": \"/repositories/2/archival_objects/167\"}, \"has_unpublished_ancestor\": true}",
                 "headers": {
                     "User-Agent": [
                         "ArchivesSnake/0.1"
@@ -342,27 +186,183 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:45 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "119"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:32 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"status\":\"Updated\",\"id\":138,\"lock_version\":1,\"stale\":true,\"uri\":\"/repositories/2/archival_objects/138\",\"warnings\":[]}\n"
+                    "string": "{\"status\":\"Updated\",\"id\":168,\"lock_version\":1,\"stale\":true,\"uri\":\"/repositories/2/archival_objects/168\",\"warnings\":[]}\n"
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "POST",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/digital_objects",
+                "body": "{\"publish\": false, \"jsonmodel_type\": \"digital_object\", \"title\": \"e33ff643-0f1b-4fa8-9105-08d2e6a9e0d5\", \"digital_object_id\": \"e33ff643-0f1b-4fa8-9105-08d2e6a9e0d5\", \"file_versions\": [{\"file_uri\": \"http://dev.fedora.marist.edu:8000/fedora/rest/e33ff643-0f1b-4fa8-9105-08d2e6a9e0d5\", \"use_statement\": \"master\"}], \"repository\": {\"ref\": \"/repositories/2\"}}",
+                "headers": {
+                    "User-Agent": [
+                        "ArchivesSnake/0.1"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "application/json"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ],
+                    "Content-Length": [
+                        "352"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:46 GMT"
+                    ],
+                    "Server": [
+                        "Jetty(8.1.5.v20120716)"
+                    ],
+                    "Content-Length": [
+                        "116"
+                    ],
+                    "X-Content-Type-Options": [
+                        "nosniff"
+                    ],
+                    "Cache-Control": [
+                        "private, must-revalidate, max-age=0"
+                    ]
+                },
+                "body": {
+                    "string": "{\"status\":\"Created\",\"id\":49,\"lock_version\":0,\"stale\":null,\"uri\":\"/repositories/2/digital_objects/49\",\"warnings\":[]}\n"
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "GET",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/169",
+                "body": null,
+                "headers": {
+                    "User-Agent": [
+                        "ArchivesSnake/0.1"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "application/json"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:46 GMT"
+                    ],
+                    "Server": [
+                        "Jetty(8.1.5.v20120716)"
+                    ],
+                    "Content-Length": [
+                        "5814"
+                    ],
+                    "X-Content-Type-Options": [
+                        "nosniff"
+                    ],
+                    "Cache-Control": [
+                        "private, must-revalidate, max-age=0"
+                    ]
+                },
+                "body": {
+                    "string": "{\"lock_version\":0,\"position\":1,\"publish\":false,\"ref_id\":\"f6ba8e601eebdb6eafc38bebc0907507\",\"title\":\"Grant to the Village Green Preservation Society\",\"display_string\":\"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\",\"restrictions_apply\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"suppressed\":false,\"language\":\"eng\",\"level\":\"file\",\"jsonmodel_type\":\"archival_object\",\"external_ids\":[{\"external_id\":\"http://localhost:8000/api/transfers/20/\",\"source\":\"aurora\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"jsonmodel_type\":\"external_id\"}],\"subjects\":[],\"linked_events\":[],\"extents\":[{\"lock_version\":0,\"number\":\"435255\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"portion\":\"whole\",\"extent_type\":\"bytes\",\"jsonmodel_type\":\"extent\"},{\"lock_version\":0,\"number\":\"8\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"portion\":\"whole\",\"extent_type\":\"files\",\"jsonmodel_type\":\"extent\"}],\"dates\":[{\"lock_version\":0,\"expression\":\"2000 May 14 - 2002 June 22\",\"begin\":\"2000-05-14\",\"end\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"date_type\":\"inclusive\",\"label\":\"creation\",\"jsonmodel_type\":\"date\"}],\"external_documents\":[],\"rights_statements\":[{\"lock_version\":0,\"identifier\":\"32748d205ccade70cdbfd50f81294d7d\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"determination_date\":\"2018-09-18\",\"rights_type\":\"copyright\",\"status\":\"copyrighted\",\"jurisdiction\":\"US\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"act_type\":\"publish\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records under copyright may not be republished without permission from the copyright holder.\"],\"persistent_id\":\"6952fafa5e806e6f62b81cf6f9f39ff7\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Work for hire, under copyright until 40 years after creation.\"],\"persistent_id\":\"62d7593416042a6be5cf4ae01dcc5d3b\",\"publish\":false}]},{\"lock_version\":0,\"identifier\":\"429955797b24444b7c1a5c4140496638\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"rights_type\":\"other\",\"other_rights_basis\":\"donor\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2010-05-14\",\"end_date\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"act_type\":\"disseminate\",\"restriction\":\"allow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"3ace9e42351a3c03061d5f927a98ef62\",\"publish\":false}]},{\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:44Z\",\"user_mtime\":\"2018-11-21T19:09:44Z\",\"act_type\":\"disseminate\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"1af97188d2703731ac267dea7f52f0ce\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Records embargoed for 10 years after date of creation.\"],\"persistent_id\":\"587cd26259e475266dee794f76532335\",\"publish\":false}]}],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/4\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/5\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/1\"}],\"ancestors\":[{\"ref\":\"/repositories/2/archival_objects/167\",\"level\":\"recordgrp\"},{\"ref\":\"/repositories/2/resources/1\",\"level\":\"collection\"}],\"instances\":[],\"notes\":[{\"jsonmodel_type\":\"note_multipart\",\"type\":\"scopecontent\",\"subnotes\":[{\"content\":\"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\",\"publish\":true,\"jsonmodel_type\":\"note_text\"}],\"persistent_id\":\"11ba4a55aa2961afd23bea090c67ee6e\",\"publish\":false},{\"jsonmodel_type\":\"note_singlepart\",\"type\":\"langmaterial\",\"content\":[\"Materials are in English\"],\"persistent_id\":\"7ac6da764fcc3ddaf15a8f942c0aa554\",\"publish\":false}],\"uri\":\"/repositories/2/archival_objects/169\",\"repository\":{\"ref\":\"/repositories/2\"},\"resource\":{\"ref\":\"/repositories/2/resources/1\"},\"parent\":{\"ref\":\"/repositories/2/archival_objects/167\"},\"has_unpublished_ancestor\":true}\n"
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "POST",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/169",
+                "body": "{\"lock_version\": 0, \"position\": 1, \"publish\": false, \"ref_id\": \"f6ba8e601eebdb6eafc38bebc0907507\", \"title\": \"Grant to the Village Green Preservation Society\", \"display_string\": \"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\", \"restrictions_apply\": false, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"suppressed\": false, \"language\": \"eng\", \"level\": \"file\", \"jsonmodel_type\": \"archival_object\", \"external_ids\": [{\"external_id\": \"http://localhost:8000/api/transfers/20/\", \"source\": \"aurora\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"jsonmodel_type\": \"external_id\"}], \"subjects\": [], \"linked_events\": [], \"extents\": [{\"lock_version\": 0, \"number\": \"435255\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"portion\": \"whole\", \"extent_type\": \"bytes\", \"jsonmodel_type\": \"extent\"}, {\"lock_version\": 0, \"number\": \"8\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"portion\": \"whole\", \"extent_type\": \"files\", \"jsonmodel_type\": \"extent\"}], \"dates\": [{\"lock_version\": 0, \"expression\": \"2000 May 14 - 2002 June 22\", \"begin\": \"2000-05-14\", \"end\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"date_type\": \"inclusive\", \"label\": \"creation\", \"jsonmodel_type\": \"date\"}], \"external_documents\": [], \"rights_statements\": [{\"lock_version\": 0, \"identifier\": \"32748d205ccade70cdbfd50f81294d7d\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"determination_date\": \"2018-09-18\", \"rights_type\": \"copyright\", \"status\": \"copyrighted\", \"jurisdiction\": \"US\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"act_type\": \"publish\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records under copyright may not be republished without permission from the copyright holder.\"], \"persistent_id\": \"6952fafa5e806e6f62b81cf6f9f39ff7\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Work for hire, under copyright until 40 years after creation.\"], \"persistent_id\": \"62d7593416042a6be5cf4ae01dcc5d3b\", \"publish\": false}]}, {\"lock_version\": 0, \"identifier\": \"429955797b24444b7c1a5c4140496638\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"rights_type\": \"other\", \"other_rights_basis\": \"donor\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2010-05-14\", \"end_date\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"act_type\": \"disseminate\", \"restriction\": \"allow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"3ace9e42351a3c03061d5f927a98ef62\", \"publish\": false}]}, {\"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:44Z\", \"user_mtime\": \"2018-11-21T19:09:44Z\", \"act_type\": \"disseminate\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"1af97188d2703731ac267dea7f52f0ce\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Records embargoed for 10 years after date of creation.\"], \"persistent_id\": \"587cd26259e475266dee794f76532335\", \"publish\": false}]}], \"linked_agents\": [{\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/4\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/5\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/1\"}], \"ancestors\": [{\"ref\": \"/repositories/2/archival_objects/167\", \"level\": \"recordgrp\"}, {\"ref\": \"/repositories/2/resources/1\", \"level\": \"collection\"}], \"instances\": [{\"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/49\"}}], \"notes\": [{\"jsonmodel_type\": \"note_multipart\", \"type\": \"scopecontent\", \"subnotes\": [{\"content\": \"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\", \"publish\": true, \"jsonmodel_type\": \"note_text\"}], \"persistent_id\": \"11ba4a55aa2961afd23bea090c67ee6e\", \"publish\": false}, {\"jsonmodel_type\": \"note_singlepart\", \"type\": \"langmaterial\", \"content\": [\"Materials are in English\"], \"persistent_id\": \"7ac6da764fcc3ddaf15a8f942c0aa554\", \"publish\": false}], \"uri\": \"/repositories/2/archival_objects/169\", \"repository\": {\"ref\": \"/repositories/2\"}, \"resource\": {\"ref\": \"/repositories/2/resources/1\"}, \"parent\": {\"ref\": \"/repositories/2/archival_objects/167\"}, \"has_unpublished_ancestor\": true}",
+                "headers": {
+                    "User-Agent": [
+                        "ArchivesSnake/0.1"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "application/json"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ],
+                    "Content-Length": [
+                        "6310"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:46 GMT"
+                    ],
+                    "Server": [
+                        "Jetty(8.1.5.v20120716)"
+                    ],
+                    "Content-Length": [
+                        "119"
+                    ],
+                    "X-Content-Type-Options": [
+                        "nosniff"
+                    ],
+                    "Cache-Control": [
+                        "private, must-revalidate, max-age=0"
+                    ]
+                },
+                "body": {
+                    "string": "{\"status\":\"Updated\",\"id\":169,\"lock_version\":1,\"stale\":true,\"uri\":\"/repositories/2/archival_objects/169\",\"warnings\":[]}\n"
                 }
             }
         },
@@ -395,34 +395,34 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:46 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "116"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:32 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"status\":\"Created\",\"id\":38,\"lock_version\":0,\"stale\":null,\"uri\":\"/repositories/2/digital_objects/38\",\"warnings\":[]}\n"
+                    "string": "{\"status\":\"Created\",\"id\":50,\"lock_version\":0,\"stale\":null,\"uri\":\"/repositories/2/digital_objects/50\",\"warnings\":[]}\n"
                 }
             }
         },
         {
             "request": {
                 "method": "GET",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/138",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/168",
                 "body": null,
                 "headers": {
                     "User-Agent": [
@@ -445,35 +445,35 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:46 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "6140"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:32 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"lock_version\":1,\"position\":1,\"publish\":false,\"ref_id\":\"5696990bf9d505d838253cacc47d8a64\",\"title\":\"Grant to the Village Green Preservation Society\",\"display_string\":\"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\",\"restrictions_apply\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:30Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"suppressed\":false,\"language\":\"eng\",\"level\":\"file\",\"jsonmodel_type\":\"archival_object\",\"external_ids\":[{\"external_id\":\"http://localhost:8000/api/transfers/21/\",\"source\":\"aurora\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"jsonmodel_type\":\"external_id\"}],\"subjects\":[],\"linked_events\":[],\"extents\":[{\"lock_version\":0,\"number\":\"435255\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"portion\":\"whole\",\"extent_type\":\"bytes\",\"jsonmodel_type\":\"extent\"},{\"lock_version\":0,\"number\":\"8\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"portion\":\"whole\",\"extent_type\":\"files\",\"jsonmodel_type\":\"extent\"}],\"dates\":[{\"lock_version\":0,\"expression\":\"2000 May 14 - 2002 June 22\",\"begin\":\"2000-05-14\",\"end\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"date_type\":\"inclusive\",\"label\":\"creation\",\"jsonmodel_type\":\"date\"}],\"external_documents\":[],\"rights_statements\":[{\"lock_version\":0,\"identifier\":\"15a05e8ec5967494d3cad2e7f2acf20b\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"determination_date\":\"2018-09-18\",\"rights_type\":\"copyright\",\"status\":\"copyrighted\",\"jurisdiction\":\"US\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"act_type\":\"publish\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records under copyright may not be republished without permission from the copyright holder.\"],\"persistent_id\":\"b4a6e39a8b3f49eb247e8de285372d0b\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Work for hire, under copyright until 40 years after creation.\"],\"persistent_id\":\"db61fb64a10732a31ab53b2af5e022ea\",\"publish\":false}]},{\"lock_version\":0,\"identifier\":\"032c3ffa6141cf6552f409d83ace4aab\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"rights_type\":\"other\",\"other_rights_basis\":\"donor\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2010-05-14\",\"end_date\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"act_type\":\"disseminate\",\"restriction\":\"allow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"6c5b4d47c82b3e908c9a5e68412e6605\",\"publish\":false}]},{\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"act_type\":\"disseminate\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"510452f1e4dbb05bc80b071810d134c5\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Records embargoed for 10 years after date of creation.\"],\"persistent_id\":\"869c05029012a9a71f78b9bcc3c56410\",\"publish\":false}]}],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/4\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/5\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/1\"}],\"ancestors\":[{\"ref\":\"/repositories/2/archival_objects/136\",\"level\":\"recordgrp\"},{\"ref\":\"/repositories/2/resources/1\",\"level\":\"collection\"}],\"instances\":[{\"lock_version\":0,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:32Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:32Z\",\"instance_type\":\"digital_object\",\"jsonmodel_type\":\"instance\",\"is_representative\":false,\"digital_object\":{\"ref\":\"/repositories/2/digital_objects/37\"}}],\"notes\":[{\"jsonmodel_type\":\"note_multipart\",\"type\":\"scopecontent\",\"subnotes\":[{\"content\":\"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\",\"publish\":true,\"jsonmodel_type\":\"note_text\"}],\"persistent_id\":\"c231720b2bc1a33250ac20eb158e2eb2\",\"publish\":false},{\"jsonmodel_type\":\"note_singlepart\",\"type\":\"langmaterial\",\"content\":[\"Materials are in English\"],\"persistent_id\":\"9ded40ab0712b7762f0477e3bed3eb92\",\"publish\":false}],\"uri\":\"/repositories/2/archival_objects/138\",\"repository\":{\"ref\":\"/repositories/2\"},\"resource\":{\"ref\":\"/repositories/2/resources/1\"},\"parent\":{\"ref\":\"/repositories/2/archival_objects/136\"},\"has_unpublished_ancestor\":true}\n"
+                    "string": "{\"lock_version\":1,\"position\":0,\"publish\":false,\"ref_id\":\"28e6dcd51a528ac049eb8d76b284e1de\",\"title\":\"Grant to the Village Green Preservation Society\",\"display_string\":\"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\",\"restrictions_apply\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:44Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"suppressed\":false,\"language\":\"eng\",\"level\":\"file\",\"jsonmodel_type\":\"archival_object\",\"external_ids\":[{\"external_id\":\"http://localhost:8000/api/transfers/21/\",\"source\":\"aurora\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"jsonmodel_type\":\"external_id\"}],\"subjects\":[],\"linked_events\":[],\"extents\":[{\"lock_version\":0,\"number\":\"435255\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"portion\":\"whole\",\"extent_type\":\"bytes\",\"jsonmodel_type\":\"extent\"},{\"lock_version\":0,\"number\":\"8\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"portion\":\"whole\",\"extent_type\":\"files\",\"jsonmodel_type\":\"extent\"}],\"dates\":[{\"lock_version\":0,\"expression\":\"2000 May 14 - 2002 June 22\",\"begin\":\"2000-05-14\",\"end\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"date_type\":\"inclusive\",\"label\":\"creation\",\"jsonmodel_type\":\"date\"}],\"external_documents\":[],\"rights_statements\":[{\"lock_version\":0,\"identifier\":\"bc9f086a939d2543766d0e3550e1bf2f\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"determination_date\":\"2018-09-18\",\"rights_type\":\"copyright\",\"status\":\"copyrighted\",\"jurisdiction\":\"US\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"act_type\":\"publish\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records under copyright may not be republished without permission from the copyright holder.\"],\"persistent_id\":\"427ed06417e4794b85b5889550c866f4\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Work for hire, under copyright until 40 years after creation.\"],\"persistent_id\":\"209ecc2711d5481263604ee1d4d188da\",\"publish\":false}]},{\"lock_version\":0,\"identifier\":\"b67a21f23a7f717c0eeffbca42cf68ea\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"rights_type\":\"other\",\"other_rights_basis\":\"donor\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2010-05-14\",\"end_date\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"act_type\":\"disseminate\",\"restriction\":\"allow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"f6c0e92406f7ed6ac10dee51173aa8be\",\"publish\":false}]},{\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"act_type\":\"disseminate\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"de0757812e57e680351a610ff42ae83a\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Records embargoed for 10 years after date of creation.\"],\"persistent_id\":\"d8ab9057373a6ee130a18473a72fe6f0\",\"publish\":false}]}],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/4\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/5\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/1\"}],\"ancestors\":[{\"ref\":\"/repositories/2/archival_objects/167\",\"level\":\"recordgrp\"},{\"ref\":\"/repositories/2/resources/1\",\"level\":\"collection\"}],\"instances\":[{\"lock_version\":0,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"instance_type\":\"digital_object\",\"jsonmodel_type\":\"instance\",\"is_representative\":false,\"digital_object\":{\"ref\":\"/repositories/2/digital_objects/48\"}}],\"notes\":[{\"jsonmodel_type\":\"note_multipart\",\"type\":\"scopecontent\",\"subnotes\":[{\"content\":\"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\",\"publish\":true,\"jsonmodel_type\":\"note_text\"}],\"persistent_id\":\"42a9c5ecfa8a6515881845e8354b06ed\",\"publish\":false},{\"jsonmodel_type\":\"note_singlepart\",\"type\":\"langmaterial\",\"content\":[\"Materials are in English\"],\"persistent_id\":\"972ee931f6bd95ada5c046e0529b78e8\",\"publish\":false}],\"uri\":\"/repositories/2/archival_objects/168\",\"repository\":{\"ref\":\"/repositories/2\"},\"resource\":{\"ref\":\"/repositories/2/resources/1\"},\"parent\":{\"ref\":\"/repositories/2/archival_objects/167\"},\"has_unpublished_ancestor\":true}\n"
                 }
             }
         },
         {
             "request": {
                 "method": "POST",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/138",
-                "body": "{\"lock_version\": 1, \"position\": 1, \"publish\": false, \"ref_id\": \"5696990bf9d505d838253cacc47d8a64\", \"title\": \"Grant to the Village Green Preservation Society\", \"display_string\": \"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\", \"restrictions_apply\": false, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:30Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"suppressed\": false, \"language\": \"eng\", \"level\": \"file\", \"jsonmodel_type\": \"archival_object\", \"external_ids\": [{\"external_id\": \"http://localhost:8000/api/transfers/21/\", \"source\": \"aurora\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"jsonmodel_type\": \"external_id\"}], \"subjects\": [], \"linked_events\": [], \"extents\": [{\"lock_version\": 0, \"number\": \"435255\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"portion\": \"whole\", \"extent_type\": \"bytes\", \"jsonmodel_type\": \"extent\"}, {\"lock_version\": 0, \"number\": \"8\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"portion\": \"whole\", \"extent_type\": \"files\", \"jsonmodel_type\": \"extent\"}], \"dates\": [{\"lock_version\": 0, \"expression\": \"2000 May 14 - 2002 June 22\", \"begin\": \"2000-05-14\", \"end\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"date_type\": \"inclusive\", \"label\": \"creation\", \"jsonmodel_type\": \"date\"}], \"external_documents\": [], \"rights_statements\": [{\"lock_version\": 0, \"identifier\": \"15a05e8ec5967494d3cad2e7f2acf20b\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"determination_date\": \"2018-09-18\", \"rights_type\": \"copyright\", \"status\": \"copyrighted\", \"jurisdiction\": \"US\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"act_type\": \"publish\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records under copyright may not be republished without permission from the copyright holder.\"], \"persistent_id\": \"b4a6e39a8b3f49eb247e8de285372d0b\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Work for hire, under copyright until 40 years after creation.\"], \"persistent_id\": \"db61fb64a10732a31ab53b2af5e022ea\", \"publish\": false}]}, {\"lock_version\": 0, \"identifier\": \"032c3ffa6141cf6552f409d83ace4aab\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"rights_type\": \"other\", \"other_rights_basis\": \"donor\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2010-05-14\", \"end_date\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"act_type\": \"disseminate\", \"restriction\": \"allow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"6c5b4d47c82b3e908c9a5e68412e6605\", \"publish\": false}]}, {\"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"act_type\": \"disseminate\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"510452f1e4dbb05bc80b071810d134c5\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Records embargoed for 10 years after date of creation.\"], \"persistent_id\": \"869c05029012a9a71f78b9bcc3c56410\", \"publish\": false}]}], \"linked_agents\": [{\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/4\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/5\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/1\"}], \"ancestors\": [{\"ref\": \"/repositories/2/archival_objects/136\", \"level\": \"recordgrp\"}, {\"ref\": \"/repositories/2/resources/1\", \"level\": \"collection\"}], \"instances\": [{\"lock_version\": 0, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:32Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:32Z\", \"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"is_representative\": false, \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/37\"}}, {\"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/38\"}}], \"notes\": [{\"jsonmodel_type\": \"note_multipart\", \"type\": \"scopecontent\", \"subnotes\": [{\"content\": \"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\", \"publish\": true, \"jsonmodel_type\": \"note_text\"}], \"persistent_id\": \"c231720b2bc1a33250ac20eb158e2eb2\", \"publish\": false}, {\"jsonmodel_type\": \"note_singlepart\", \"type\": \"langmaterial\", \"content\": [\"Materials are in English\"], \"persistent_id\": \"9ded40ab0712b7762f0477e3bed3eb92\", \"publish\": false}], \"uri\": \"/repositories/2/archival_objects/138\", \"repository\": {\"ref\": \"/repositories/2\"}, \"resource\": {\"ref\": \"/repositories/2/resources/1\"}, \"parent\": {\"ref\": \"/repositories/2/archival_objects/136\"}, \"has_unpublished_ancestor\": true}",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/168",
+                "body": "{\"lock_version\": 1, \"position\": 0, \"publish\": false, \"ref_id\": \"28e6dcd51a528ac049eb8d76b284e1de\", \"title\": \"Grant to the Village Green Preservation Society\", \"display_string\": \"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\", \"restrictions_apply\": false, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:44Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"suppressed\": false, \"language\": \"eng\", \"level\": \"file\", \"jsonmodel_type\": \"archival_object\", \"external_ids\": [{\"external_id\": \"http://localhost:8000/api/transfers/21/\", \"source\": \"aurora\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"jsonmodel_type\": \"external_id\"}], \"subjects\": [], \"linked_events\": [], \"extents\": [{\"lock_version\": 0, \"number\": \"435255\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"portion\": \"whole\", \"extent_type\": \"bytes\", \"jsonmodel_type\": \"extent\"}, {\"lock_version\": 0, \"number\": \"8\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"portion\": \"whole\", \"extent_type\": \"files\", \"jsonmodel_type\": \"extent\"}], \"dates\": [{\"lock_version\": 0, \"expression\": \"2000 May 14 - 2002 June 22\", \"begin\": \"2000-05-14\", \"end\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"date_type\": \"inclusive\", \"label\": \"creation\", \"jsonmodel_type\": \"date\"}], \"external_documents\": [], \"rights_statements\": [{\"lock_version\": 0, \"identifier\": \"bc9f086a939d2543766d0e3550e1bf2f\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"determination_date\": \"2018-09-18\", \"rights_type\": \"copyright\", \"status\": \"copyrighted\", \"jurisdiction\": \"US\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"act_type\": \"publish\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records under copyright may not be republished without permission from the copyright holder.\"], \"persistent_id\": \"427ed06417e4794b85b5889550c866f4\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Work for hire, under copyright until 40 years after creation.\"], \"persistent_id\": \"209ecc2711d5481263604ee1d4d188da\", \"publish\": false}]}, {\"lock_version\": 0, \"identifier\": \"b67a21f23a7f717c0eeffbca42cf68ea\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"rights_type\": \"other\", \"other_rights_basis\": \"donor\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2010-05-14\", \"end_date\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"act_type\": \"disseminate\", \"restriction\": \"allow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"f6c0e92406f7ed6ac10dee51173aa8be\", \"publish\": false}]}, {\"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"act_type\": \"disseminate\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"de0757812e57e680351a610ff42ae83a\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Records embargoed for 10 years after date of creation.\"], \"persistent_id\": \"d8ab9057373a6ee130a18473a72fe6f0\", \"publish\": false}]}], \"linked_agents\": [{\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/4\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/5\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/1\"}], \"ancestors\": [{\"ref\": \"/repositories/2/archival_objects/167\", \"level\": \"recordgrp\"}, {\"ref\": \"/repositories/2/resources/1\", \"level\": \"collection\"}], \"instances\": [{\"lock_version\": 0, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"is_representative\": false, \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/48\"}}, {\"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/50\"}}], \"notes\": [{\"jsonmodel_type\": \"note_multipart\", \"type\": \"scopecontent\", \"subnotes\": [{\"content\": \"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\", \"publish\": true, \"jsonmodel_type\": \"note_text\"}], \"persistent_id\": \"42a9c5ecfa8a6515881845e8354b06ed\", \"publish\": false}, {\"jsonmodel_type\": \"note_singlepart\", \"type\": \"langmaterial\", \"content\": [\"Materials are in English\"], \"persistent_id\": \"972ee931f6bd95ada5c046e0529b78e8\", \"publish\": false}], \"uri\": \"/repositories/2/archival_objects/168\", \"repository\": {\"ref\": \"/repositories/2\"}, \"resource\": {\"ref\": \"/repositories/2/resources/1\"}, \"parent\": {\"ref\": \"/repositories/2/archival_objects/167\"}, \"has_unpublished_ancestor\": true}",
                 "headers": {
                     "User-Agent": [
                         "ArchivesSnake/0.1"
@@ -498,27 +498,27 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:46 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "119"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:32 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"status\":\"Updated\",\"id\":138,\"lock_version\":2,\"stale\":true,\"uri\":\"/repositories/2/archival_objects/138\",\"warnings\":[]}\n"
+                    "string": "{\"status\":\"Updated\",\"id\":168,\"lock_version\":2,\"stale\":true,\"uri\":\"/repositories/2/archival_objects/168\",\"warnings\":[]}\n"
                 }
             }
         },
@@ -551,34 +551,34 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:47 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "116"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:33 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"status\":\"Created\",\"id\":39,\"lock_version\":0,\"stale\":null,\"uri\":\"/repositories/2/digital_objects/39\",\"warnings\":[]}\n"
+                    "string": "{\"status\":\"Created\",\"id\":51,\"lock_version\":0,\"stale\":null,\"uri\":\"/repositories/2/digital_objects/51\",\"warnings\":[]}\n"
                 }
             }
         },
         {
             "request": {
                 "method": "GET",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/139",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/170",
                 "body": null,
                 "headers": {
                     "User-Agent": [
@@ -601,35 +601,35 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:47 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "5814"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:33 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"lock_version\":0,\"position\":2,\"publish\":false,\"ref_id\":\"f6fffa268884c94a1a34335c29cffbad\",\"title\":\"Grant to the Village Green Preservation Society\",\"display_string\":\"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\",\"restrictions_apply\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:32Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"suppressed\":false,\"language\":\"eng\",\"level\":\"file\",\"jsonmodel_type\":\"archival_object\",\"external_ids\":[{\"external_id\":\"http://localhost:8000/api/transfers/37/\",\"source\":\"aurora\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"jsonmodel_type\":\"external_id\"}],\"subjects\":[],\"linked_events\":[],\"extents\":[{\"lock_version\":0,\"number\":\"435255\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"portion\":\"whole\",\"extent_type\":\"bytes\",\"jsonmodel_type\":\"extent\"},{\"lock_version\":0,\"number\":\"8\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"portion\":\"whole\",\"extent_type\":\"files\",\"jsonmodel_type\":\"extent\"}],\"dates\":[{\"lock_version\":0,\"expression\":\"2000 May 14 - 2002 June 22\",\"begin\":\"2000-05-14\",\"end\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"date_type\":\"inclusive\",\"label\":\"creation\",\"jsonmodel_type\":\"date\"}],\"external_documents\":[],\"rights_statements\":[{\"lock_version\":0,\"identifier\":\"412a097f930360168fab2c23b45aeda2\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"determination_date\":\"2018-09-18\",\"rights_type\":\"copyright\",\"status\":\"copyrighted\",\"jurisdiction\":\"US\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"act_type\":\"publish\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records under copyright may not be republished without permission from the copyright holder.\"],\"persistent_id\":\"18b1c4e9f5591cd07cd5a71e4ff648ab\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Work for hire, under copyright until 40 years after creation.\"],\"persistent_id\":\"b115f689e157e61fcbfd3231a0e3425e\",\"publish\":false}]},{\"lock_version\":0,\"identifier\":\"dd92a57305fc0c4794c69934fcab9ccb\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"rights_type\":\"other\",\"other_rights_basis\":\"donor\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2010-05-14\",\"end_date\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"act_type\":\"disseminate\",\"restriction\":\"allow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"cd7fa9a1f199aa468a1c604b598ebfb3\",\"publish\":false}]},{\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-14T18:13:31Z\",\"system_mtime\":\"2018-11-14T18:13:31Z\",\"user_mtime\":\"2018-11-14T18:13:31Z\",\"act_type\":\"disseminate\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"f8785ac36ffbb4a0736346c0fa4a89d7\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Records embargoed for 10 years after date of creation.\"],\"persistent_id\":\"d7f201f1dbba0ebe7d4ff12af0e7d7c8\",\"publish\":false}]}],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/4\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/5\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/1\"}],\"ancestors\":[{\"ref\":\"/repositories/2/archival_objects/136\",\"level\":\"recordgrp\"},{\"ref\":\"/repositories/2/resources/1\",\"level\":\"collection\"}],\"instances\":[],\"notes\":[{\"jsonmodel_type\":\"note_multipart\",\"type\":\"scopecontent\",\"subnotes\":[{\"content\":\"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\",\"publish\":true,\"jsonmodel_type\":\"note_text\"}],\"persistent_id\":\"7093656d315c30db4c6d2abda56b227e\",\"publish\":false},{\"jsonmodel_type\":\"note_singlepart\",\"type\":\"langmaterial\",\"content\":[\"Materials are in English\"],\"persistent_id\":\"a884f33b66e276d23500dc12b9936fb2\",\"publish\":false}],\"uri\":\"/repositories/2/archival_objects/139\",\"repository\":{\"ref\":\"/repositories/2\"},\"resource\":{\"ref\":\"/repositories/2/resources/1\"},\"parent\":{\"ref\":\"/repositories/2/archival_objects/136\"},\"has_unpublished_ancestor\":true}\n"
+                    "string": "{\"lock_version\":0,\"position\":2,\"publish\":false,\"ref_id\":\"f14132ce1845b724ac565605bfe93b85\",\"title\":\"Grant to the Village Green Preservation Society\",\"display_string\":\"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\",\"restrictions_apply\":false,\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:47Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"suppressed\":false,\"language\":\"eng\",\"level\":\"file\",\"jsonmodel_type\":\"archival_object\",\"external_ids\":[{\"external_id\":\"http://localhost:8000/api/transfers/37/\",\"source\":\"aurora\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"jsonmodel_type\":\"external_id\"}],\"subjects\":[],\"linked_events\":[],\"extents\":[{\"lock_version\":0,\"number\":\"435255\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"portion\":\"whole\",\"extent_type\":\"bytes\",\"jsonmodel_type\":\"extent\"},{\"lock_version\":0,\"number\":\"8\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"portion\":\"whole\",\"extent_type\":\"files\",\"jsonmodel_type\":\"extent\"}],\"dates\":[{\"lock_version\":0,\"expression\":\"2000 May 14 - 2002 June 22\",\"begin\":\"2000-05-14\",\"end\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"date_type\":\"inclusive\",\"label\":\"creation\",\"jsonmodel_type\":\"date\"}],\"external_documents\":[],\"rights_statements\":[{\"lock_version\":0,\"identifier\":\"2839ddbba673bba3a2bcf12e143e545e\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"determination_date\":\"2018-09-18\",\"rights_type\":\"copyright\",\"status\":\"copyrighted\",\"jurisdiction\":\"US\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2000-05-14\",\"end_date\":\"2042-06-21\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"act_type\":\"publish\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records under copyright may not be republished without permission from the copyright holder.\"],\"persistent_id\":\"fbca16758bd9bd26d1fd94d3275e08af\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Work for hire, under copyright until 40 years after creation.\"],\"persistent_id\":\"7783ad301ce936046e04db91c29b92c2\",\"publish\":false}]},{\"lock_version\":0,\"identifier\":\"4001324d95437923c5b6546e16534329\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"rights_type\":\"other\",\"other_rights_basis\":\"donor\",\"jsonmodel_type\":\"rights_statement\",\"external_documents\":[],\"acts\":[{\"start_date\":\"2010-05-14\",\"end_date\":\"2002-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"act_type\":\"disseminate\",\"restriction\":\"allow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"f39c81c8ce696393125634260fb012b8\",\"publish\":false}]},{\"start_date\":\"2000-05-14\",\"end_date\":\"2012-06-22\",\"created_by\":\"admin\",\"last_modified_by\":\"admin\",\"create_time\":\"2018-11-21T19:09:45Z\",\"system_mtime\":\"2018-11-21T19:09:45Z\",\"user_mtime\":\"2018-11-21T19:09:45Z\",\"act_type\":\"disseminate\",\"restriction\":\"disallow\",\"jsonmodel_type\":\"rights_statement_act\",\"notes\":[{\"jsonmodel_type\":\"note_rights_statement_act\",\"type\":\"additional_information\",\"content\":[\"Records are open for research after expiration of embargo period.\"],\"persistent_id\":\"65e9b357800eedff8a05ae41d53d6fc2\",\"publish\":false}]}],\"linked_agents\":[],\"notes\":[{\"jsonmodel_type\":\"note_rights_statement\",\"type\":\"type_note\",\"content\":[\"Records embargoed for 10 years after date of creation.\"],\"persistent_id\":\"79481954a0909ce0fb20ad4296fa4391\",\"publish\":false}]}],\"linked_agents\":[{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/4\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/5\"},{\"role\":\"creator\",\"terms\":[],\"ref\":\"/agents/corporate_entities/1\"}],\"ancestors\":[{\"ref\":\"/repositories/2/archival_objects/167\",\"level\":\"recordgrp\"},{\"ref\":\"/repositories/2/resources/1\",\"level\":\"collection\"}],\"instances\":[],\"notes\":[{\"jsonmodel_type\":\"note_multipart\",\"type\":\"scopecontent\",\"subnotes\":[{\"content\":\"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\",\"publish\":true,\"jsonmodel_type\":\"note_text\"}],\"persistent_id\":\"d90c893a736d70823d40b897e784198c\",\"publish\":false},{\"jsonmodel_type\":\"note_singlepart\",\"type\":\"langmaterial\",\"content\":[\"Materials are in English\"],\"persistent_id\":\"8e62509bf8b880e77274c6917a527f92\",\"publish\":false}],\"uri\":\"/repositories/2/archival_objects/170\",\"repository\":{\"ref\":\"/repositories/2\"},\"resource\":{\"ref\":\"/repositories/2/resources/1\"},\"parent\":{\"ref\":\"/repositories/2/archival_objects/167\"},\"has_unpublished_ancestor\":true}\n"
                 }
             }
         },
         {
             "request": {
                 "method": "POST",
-                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/139",
-                "body": "{\"lock_version\": 0, \"position\": 2, \"publish\": false, \"ref_id\": \"f6fffa268884c94a1a34335c29cffbad\", \"title\": \"Grant to the Village Green Preservation Society\", \"display_string\": \"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\", \"restrictions_apply\": false, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:32Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"suppressed\": false, \"language\": \"eng\", \"level\": \"file\", \"jsonmodel_type\": \"archival_object\", \"external_ids\": [{\"external_id\": \"http://localhost:8000/api/transfers/37/\", \"source\": \"aurora\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"jsonmodel_type\": \"external_id\"}], \"subjects\": [], \"linked_events\": [], \"extents\": [{\"lock_version\": 0, \"number\": \"435255\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"portion\": \"whole\", \"extent_type\": \"bytes\", \"jsonmodel_type\": \"extent\"}, {\"lock_version\": 0, \"number\": \"8\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"portion\": \"whole\", \"extent_type\": \"files\", \"jsonmodel_type\": \"extent\"}], \"dates\": [{\"lock_version\": 0, \"expression\": \"2000 May 14 - 2002 June 22\", \"begin\": \"2000-05-14\", \"end\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"date_type\": \"inclusive\", \"label\": \"creation\", \"jsonmodel_type\": \"date\"}], \"external_documents\": [], \"rights_statements\": [{\"lock_version\": 0, \"identifier\": \"412a097f930360168fab2c23b45aeda2\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"determination_date\": \"2018-09-18\", \"rights_type\": \"copyright\", \"status\": \"copyrighted\", \"jurisdiction\": \"US\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"act_type\": \"publish\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records under copyright may not be republished without permission from the copyright holder.\"], \"persistent_id\": \"18b1c4e9f5591cd07cd5a71e4ff648ab\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Work for hire, under copyright until 40 years after creation.\"], \"persistent_id\": \"b115f689e157e61fcbfd3231a0e3425e\", \"publish\": false}]}, {\"lock_version\": 0, \"identifier\": \"dd92a57305fc0c4794c69934fcab9ccb\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"rights_type\": \"other\", \"other_rights_basis\": \"donor\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2010-05-14\", \"end_date\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"act_type\": \"disseminate\", \"restriction\": \"allow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"cd7fa9a1f199aa468a1c604b598ebfb3\", \"publish\": false}]}, {\"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-14T18:13:31Z\", \"system_mtime\": \"2018-11-14T18:13:31Z\", \"user_mtime\": \"2018-11-14T18:13:31Z\", \"act_type\": \"disseminate\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"f8785ac36ffbb4a0736346c0fa4a89d7\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Records embargoed for 10 years after date of creation.\"], \"persistent_id\": \"d7f201f1dbba0ebe7d4ff12af0e7d7c8\", \"publish\": false}]}], \"linked_agents\": [{\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/4\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/5\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/1\"}], \"ancestors\": [{\"ref\": \"/repositories/2/archival_objects/136\", \"level\": \"recordgrp\"}, {\"ref\": \"/repositories/2/resources/1\", \"level\": \"collection\"}], \"instances\": [{\"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/39\"}}], \"notes\": [{\"jsonmodel_type\": \"note_multipart\", \"type\": \"scopecontent\", \"subnotes\": [{\"content\": \"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\", \"publish\": true, \"jsonmodel_type\": \"note_text\"}], \"persistent_id\": \"7093656d315c30db4c6d2abda56b227e\", \"publish\": false}, {\"jsonmodel_type\": \"note_singlepart\", \"type\": \"langmaterial\", \"content\": [\"Materials are in English\"], \"persistent_id\": \"a884f33b66e276d23500dc12b9936fb2\", \"publish\": false}], \"uri\": \"/repositories/2/archival_objects/139\", \"repository\": {\"ref\": \"/repositories/2\"}, \"resource\": {\"ref\": \"/repositories/2/resources/1\"}, \"parent\": {\"ref\": \"/repositories/2/archival_objects/136\"}, \"has_unpublished_ancestor\": true}",
+                "uri": "http://dev.aspace.rac.marist.cloud:8089/repositories/2/archival_objects/170",
+                "body": "{\"lock_version\": 0, \"position\": 2, \"publish\": false, \"ref_id\": \"f14132ce1845b724ac565605bfe93b85\", \"title\": \"Grant to the Village Green Preservation Society\", \"display_string\": \"Grant to the Village Green Preservation Society, 2000 May 14 - 2002 June 22\", \"restrictions_apply\": false, \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:47Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"suppressed\": false, \"language\": \"eng\", \"level\": \"file\", \"jsonmodel_type\": \"archival_object\", \"external_ids\": [{\"external_id\": \"http://localhost:8000/api/transfers/37/\", \"source\": \"aurora\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"jsonmodel_type\": \"external_id\"}], \"subjects\": [], \"linked_events\": [], \"extents\": [{\"lock_version\": 0, \"number\": \"435255\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"portion\": \"whole\", \"extent_type\": \"bytes\", \"jsonmodel_type\": \"extent\"}, {\"lock_version\": 0, \"number\": \"8\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"portion\": \"whole\", \"extent_type\": \"files\", \"jsonmodel_type\": \"extent\"}], \"dates\": [{\"lock_version\": 0, \"expression\": \"2000 May 14 - 2002 June 22\", \"begin\": \"2000-05-14\", \"end\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"date_type\": \"inclusive\", \"label\": \"creation\", \"jsonmodel_type\": \"date\"}], \"external_documents\": [], \"rights_statements\": [{\"lock_version\": 0, \"identifier\": \"2839ddbba673bba3a2bcf12e143e545e\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"determination_date\": \"2018-09-18\", \"rights_type\": \"copyright\", \"status\": \"copyrighted\", \"jurisdiction\": \"US\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2000-05-14\", \"end_date\": \"2042-06-21\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"act_type\": \"publish\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records under copyright may not be republished without permission from the copyright holder.\"], \"persistent_id\": \"fbca16758bd9bd26d1fd94d3275e08af\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Work for hire, under copyright until 40 years after creation.\"], \"persistent_id\": \"7783ad301ce936046e04db91c29b92c2\", \"publish\": false}]}, {\"lock_version\": 0, \"identifier\": \"4001324d95437923c5b6546e16534329\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"rights_type\": \"other\", \"other_rights_basis\": \"donor\", \"jsonmodel_type\": \"rights_statement\", \"external_documents\": [], \"acts\": [{\"start_date\": \"2010-05-14\", \"end_date\": \"2002-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"act_type\": \"disseminate\", \"restriction\": \"allow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"f39c81c8ce696393125634260fb012b8\", \"publish\": false}]}, {\"start_date\": \"2000-05-14\", \"end_date\": \"2012-06-22\", \"created_by\": \"admin\", \"last_modified_by\": \"admin\", \"create_time\": \"2018-11-21T19:09:45Z\", \"system_mtime\": \"2018-11-21T19:09:45Z\", \"user_mtime\": \"2018-11-21T19:09:45Z\", \"act_type\": \"disseminate\", \"restriction\": \"disallow\", \"jsonmodel_type\": \"rights_statement_act\", \"notes\": [{\"jsonmodel_type\": \"note_rights_statement_act\", \"type\": \"additional_information\", \"content\": [\"Records are open for research after expiration of embargo period.\"], \"persistent_id\": \"65e9b357800eedff8a05ae41d53d6fc2\", \"publish\": false}]}], \"linked_agents\": [], \"notes\": [{\"jsonmodel_type\": \"note_rights_statement\", \"type\": \"type_note\", \"content\": [\"Records embargoed for 10 years after date of creation.\"], \"persistent_id\": \"79481954a0909ce0fb20ad4296fa4391\", \"publish\": false}]}], \"linked_agents\": [{\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/4\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/5\"}, {\"role\": \"creator\", \"terms\": [], \"ref\": \"/agents/corporate_entities/1\"}], \"ancestors\": [{\"ref\": \"/repositories/2/archival_objects/167\", \"level\": \"recordgrp\"}, {\"ref\": \"/repositories/2/resources/1\", \"level\": \"collection\"}], \"instances\": [{\"instance_type\": \"digital_object\", \"jsonmodel_type\": \"instance\", \"digital_object\": {\"ref\": \"/repositories/2/digital_objects/51\"}}], \"notes\": [{\"jsonmodel_type\": \"note_multipart\", \"type\": \"scopecontent\", \"subnotes\": [{\"content\": \"Grant awarded to the Village Green Preservation Society for the purpose of \\\"preserving the old ways from being abused, protecting the new ways for me and for you\\\"\", \"publish\": true, \"jsonmodel_type\": \"note_text\"}], \"persistent_id\": \"d90c893a736d70823d40b897e784198c\", \"publish\": false}, {\"jsonmodel_type\": \"note_singlepart\", \"type\": \"langmaterial\", \"content\": [\"Materials are in English\"], \"persistent_id\": \"8e62509bf8b880e77274c6917a527f92\", \"publish\": false}], \"uri\": \"/repositories/2/archival_objects/170\", \"repository\": {\"ref\": \"/repositories/2\"}, \"resource\": {\"ref\": \"/repositories/2/resources/1\"}, \"parent\": {\"ref\": \"/repositories/2/archival_objects/167\"}, \"has_unpublished_ancestor\": true}",
                 "headers": {
                     "User-Agent": [
                         "ArchivesSnake/0.1"
@@ -654,27 +654,27 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Date": [
+                        "Wed, 21 Nov 2018 19:09:47 GMT"
+                    ],
                     "Server": [
                         "Jetty(8.1.5.v20120716)"
-                    ],
-                    "X-Content-Type-Options": [
-                        "nosniff"
                     ],
                     "Content-Length": [
                         "119"
                     ],
-                    "Date": [
-                        "Wed, 14 Nov 2018 18:13:33 GMT"
+                    "X-Content-Type-Options": [
+                        "nosniff"
                     ],
                     "Cache-Control": [
                         "private, must-revalidate, max-age=0"
-                    ],
-                    "Content-Type": [
-                        "application/json"
                     ]
                 },
                 "body": {
-                    "string": "{\"status\":\"Updated\",\"id\":139,\"lock_version\":1,\"stale\":true,\"uri\":\"/repositories/2/archival_objects/139\",\"warnings\":[]}\n"
+                    "string": "{\"status\":\"Updated\",\"id\":170,\"lock_version\":1,\"stale\":true,\"uri\":\"/repositories/2/archival_objects/170\",\"warnings\":[]}\n"
                 }
             }
         }

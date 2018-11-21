@@ -1,6 +1,7 @@
 from datetime import datetime
 import logging
 from structlog import wrap_logger
+import urllib
 from uuid import uuid4
 
 from rest_framework.views import APIView
@@ -8,7 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
 from .models import Package
-from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine
+from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine, UpdateRequester
 from .serializers import PackageSerializer, PackageListSerializer
 
 logger = logging.getLogger(__name__)
@@ -58,8 +59,9 @@ class PackageViewSet(ModelViewSet):
 class ProcessView(APIView):
     def post(self, request, format=None):
         log = logger.new(transaction_id=str(uuid4()))
+
         try:
-            message = self.routine
+            message = self.routine().run()
             return Response({"detail": message}, status=200)
         except Exception as e:
             return Response({"detail": str(e)}, status=500)
@@ -68,22 +70,35 @@ class ProcessView(APIView):
 class ProcessAccessionsView(ProcessView):
     """Runs the AccessionRoutine. Accepts POST requests only."""
     def __init__(self):
-        self.routine = AccessionRoutine().run()
+        self.routine = AccessionRoutine
 
 
 class ProcessGroupingComponentsView(ProcessView):
     """Runs the GroupingComponentRoutine. Accepts POST requests only."""
     def __init__(self):
-        self.routine = GroupingComponentRoutine().run()
+        self.routine = GroupingComponentRoutine
 
 
 class ProcessTransferComponentsView(ProcessView):
     """Runs the TransferComponentRoutine. Accepts POST requests only."""
     def __init__(self):
-        self.routine = TransferComponentRoutine().run()
+        self.routine = TransferComponentRoutine
 
 
 class ProcessDigitalObjectsView(ProcessView):
     """Runs the DigitalObjectRoutine. Accepts POST requests only."""
     def __init__(self):
-        self.routine = DigitalObjectRoutine().run()
+        self.routine = DigitalObjectRoutine
+
+
+class UpdateRequestView(APIView):
+    """Sends request with updated information to Aurora. Accepts POST requests only."""
+
+    def post(self, request):
+        log = logger.new(transaction_id=str(uuid4()))
+
+        try:
+            update = UpdateRequester().run()
+            return Response({"detail": update}, status=200)
+        except Exception as e:
+            return Response({"detail": str(e)}, status=500)

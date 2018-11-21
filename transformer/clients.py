@@ -12,6 +12,12 @@ logger = logging.getLogger(__name__)
 logger = wrap_logger(logger)
 
 
+class ArchivesSpaceClientError(Exception): pass
+class ArchivesSpaceClientAccessionNumberError(Exception): pass
+class UrsaMajorClientError(Exception): pass
+class AuroraClientError(Exception): pass
+
+
 class ArchivesSpaceClient(object):
     """Client to get and receive data from ArchivesSpace."""
 
@@ -22,8 +28,8 @@ class ArchivesSpaceClient(object):
         if not self.client.authorize():
             self.log.error(
                 "Couldn't authenticate user credentials for ArchivesSpace",
-                object=settings.ARCHIVESSPACE['username'])
-            return False
+                object=username)
+            raise ArchivesSpaceClientError("Couldn't authenticate user credentials for ArchivesSpace")
 
     def create(self, data, type, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
@@ -35,17 +41,16 @@ class ArchivesSpaceClient(object):
             'organization': 'agents/corporate_entities',
             'family': 'agents/families',
         }
-        try:
-            resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
-            if resp.status_code == 200:
-                self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
-                return resp.json()['uri']
+        resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
+        if resp.status_code == 200:
+            self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
+            return resp.json()['uri']
+        else:
+            self.log.error('Error creating object in ArchivesSpace: {}'.format(resp.json()['error']))
+            if resp.json()['error'].get('id_0'):
+                raise ArchivesSpaceClientAccessionNumberError(resp.json()['error'])
             else:
-                self.log.error('Error creating object in ArchivesSpace: {}'.format(resp.json()['error']))
-                return False
-        except Exception as e:
-            self.log.error('Error creating object in ArchivesSpace: {}'.format(e))
-            return False
+                raise ArchivesSpaceClientError(resp.json()['error'])
 
     def update(self, uri, data, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
@@ -56,10 +61,10 @@ class ArchivesSpaceClient(object):
                 return resp.json()['uri']
             else:
                 self.log.error('Error updating object in ArchivesSpace: {}'.format(resp.json()['error']))
-                return False
+                raise ArchivesSpaceClientError('Error updating object in ArchivesSpace: {}'.format(resp.json()['error']))
         except Exception as e:
             self.log.error('Error updating object in ArchivesSpace: {}'.format(e))
-            return False
+            raise ArchivesSpaceClientError('Error updating object in ArchivesSpace: {}'.format(e))
 
     def get_or_create(self, type, field, value, last_updated, consumer_data):
         self.log = self.log.bind(request_id=str(uuid4()))
@@ -87,7 +92,7 @@ class ArchivesSpaceClient(object):
             return resp.json()['results'][0]['uri']
         except Exception as e:
             self.log.error('Error finding or creating object in ArchivesSpace: {}'.format(e))
-            return False
+            raise ArchivesSpaceClientError('Error finding or creating object in ArchivesSpace: {}'.format(e))
 
     def retrieve(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
@@ -98,10 +103,10 @@ class ArchivesSpaceClient(object):
                 return resp.json()
             else:
                 self.log.error('Error retrieving object from ArchivesSpace: {}'.format(resp.json()['error']))
-                return False
+                raise ArchivesSpaceClientError('Error retrieving object from ArchivesSpace: {}'.format(resp.json()['error']))
         except Exception as e:
             self.log.error('Error retrieving object from ArchivesSpace: {}'.format(e))
-            return False
+            raise ArchivesSpaceClientError('Error retrieving object from ArchivesSpace: {}'.format(e))
 
     def next_accession_number(self):
         current_year = str(date.today().year)
@@ -120,7 +125,7 @@ class ArchivesSpaceClient(object):
                     return [current_year, "001"]
         except Exception as e:
             self.log.error('Error retrieving next accession number from ArchivesSpace: {}'.format(e))
-            return False
+            raise ArchivesSpaceClientError('Error retrieving next accession number from ArchivesSpace: {}'.format(e))
 
 
 class UrsaMajorClient(object):
@@ -138,7 +143,7 @@ class UrsaMajorClient(object):
             return resp.json()
         except Exception as e:
             self.log.error("Error retrieving data from Ursa Major: {}".format(e))
-            return False
+            raise UrsaMajorClientError("Error retrieving data from Ursa Major: {}".format(e))
 
     def retrieve_paged(self, url, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
@@ -148,7 +153,7 @@ class UrsaMajorClient(object):
             return resp
         except Exception as e:
             self.log.error("Error retrieving list from Ursa Major: {}".format(e))
-            return False
+            raise UrsaMajorClientError("Error retrieving list from Ursa Major: {}".format(e))
 
     def update(self, url, data, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
@@ -158,7 +163,7 @@ class UrsaMajorClient(object):
             return resp.json()
         except Exception as e:
             self.log.error("Error updating object in Ursa Major: {}".format(e))
-            return False
+            raise UrsaMajorClientError("Error updating object in Ursa Major: {}".format(e))
 
     def find_bag_by_id(self, identifier, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
@@ -166,11 +171,30 @@ class UrsaMajorClient(object):
             bag_resp = self.client.get("bags/", params={"id": identifier})
             if len(bag_resp.json()) < 1:
                 self.log.error("No bags matching id {} found".format(identifier))
-                return False
+                raise UrsaMajorClientError("No bags matching id {} found".format(identifier))
             bag_url = bag_resp.json()[0]['url']
             resp = self.client.get(bag_url, *args, **kwargs)
             self.log.debug("Object retrieved from Ursa Major", object=bag_url)
             return resp.json()
         except Exception as e:
             self.log.error("Error finding bag by id: {}".format(e))
-            return False
+            raise UrsaMajorClientError("Error finding bag by id: {}".format(e))
+
+
+class AuroraClient:
+
+    def __init__(self, baseurl, username, password):
+        self.log = logger.bind(transaction_id=str(uuid4()))
+        self.client = ElectronBond(baseurl=baseurl, username=username, password=password)
+        if not self.client.authorize():
+            raise AuroraClientError("Could not authorize {} in Aurora".format(username))
+
+    def update(self, url, data, *args, **kwargs):
+        self.log = self.log.bind(request_id=str(uuid4()))
+        try:
+            resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
+            self.log.debug("Object saved in Ursa Major", object=url)
+            if resp.status_code == 200:
+                return resp.json()
+        except Exception as e:
+            raise AuroraClientError("Error updating object in Aurora: {}".format(e))

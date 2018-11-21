@@ -10,3 +10,9 @@ ARCHIVESSPACE = {
 URSA_MAJOR = {
   "baseurl": "http://ursa-major-web:8005/",
 }
+
+AURORA = {
+  "baseurl": "http://web:8000/api/",
+  "username": "admin",
+  "password": "password"
+}

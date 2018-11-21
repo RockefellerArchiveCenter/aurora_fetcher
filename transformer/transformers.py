@@ -101,13 +101,16 @@ class DataTransformer:
                 "external_documents": [],
                 "linked_agents": [],
             }
-            field_keys = ["status", "determination_date", "license_terms",
-                          "jurisdiction", "other_rights_basis"]
+            field_keys = ["status", "determination_date", "license_terms"]
             for k in field_keys:
                 if k in r:
                     statement[k] = r[k]
             if 'citation' in r:
                 statement["statute_citation"] = r['citation']
+            if 'other_rights_basis' in r:
+                statement["other_rights_basis"] = r['other_rights_basis'].lower()
+            if 'jurisdiction' in r:
+                statement["jurisdiction"] = r['jurisdiction'].upper()
             rights_statements.append(statement)
         return rights_statements
 
@@ -135,7 +138,6 @@ class DataTransformer:
     def transform_component(self):
         data = self.package.transfer_data['data']
         resource = self.package.accession_data['data']['resource']
-        parent = self.package.transfer_data['archivesspace_parent_identifier']
         metadata = data['metadata']
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
@@ -159,8 +161,8 @@ class DataTransformer:
                 "notes": [
                     self.transform_note_multipart(metadata['internal_sender_description'], "scopecontent"),
                     self.transform_langnote(metadata['language'])]}
-            if parent:
-                consumer_data = {**consumer_data, "parent": {"ref": parent}}
+            if data['archivesspace_parent_identifier']:
+                consumer_data = {**consumer_data, "parent": {"ref": data['archivesspace_parent_identifier']}}
             return consumer_data
         except Exception as e:
             raise TransformError('Error transforming component: {}'.format(e))
