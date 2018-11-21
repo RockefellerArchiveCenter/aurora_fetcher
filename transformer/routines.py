@@ -134,7 +134,6 @@ class TransferComponentRoutine(Routine):
                     self.update_siblings(package)
                     transfer_count += 1
                 package.process_status = Package.TRANSFER_COMPONENT_CREATED
-                print(package.transfer_data['data']['archivesspace_identifier'])
                 package.save()
             except Exception as e:
                 raise RoutineError("Transfer component error: {}".format(e))
