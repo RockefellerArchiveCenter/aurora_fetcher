@@ -131,6 +131,7 @@ STATIC_URL = '/static/'
 
 ARCHIVESSPACE = CF.ARCHIVESSPACE
 URSA_MAJOR = CF.URSA_MAJOR
+AURORA = CF.AURORA
 
 structlog.configure(
     processors=[

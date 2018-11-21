@@ -101,13 +101,16 @@ class DataTransformer:
                 "external_documents": [],
                 "linked_agents": [],
             }
-            field_keys = ["status", "determination_date", "license_terms",
-                          "jurisdiction", "other_rights_basis"]
+            field_keys = ["status", "determination_date", "license_terms"]
             for k in field_keys:
                 if k in r:
                     statement[k] = r[k]
             if 'citation' in r:
                 statement["statute_citation"] = r['citation']
+            if 'other_rights_basis' in r:
+                statement["other_rights_basis"] = r['other_rights_basis'].lower()
+            if 'jurisdiction' in r:
+                statement["jurisdiction"] = r['jurisdiction'].upper()
             rights_statements.append(statement)
         return rights_statements
 

@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from aquarius import settings
 
-from .clients import ArchivesSpaceClient, UrsaMajorClient
+from .clients import ArchivesSpaceClient, ArchivesSpaceClientError, UrsaMajorClient, AuroraClient
 from .models import Package
 from .transformers import DataTransformer
 
@@ -16,8 +16,6 @@ logger = wrap_logger(logger)
 
 
 class RoutineError(Exception): pass
-
-
 class UpdateRequestError(Exception): pass
 
 
@@ -53,7 +51,8 @@ class AccessionRoutine(Routine):
                 package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
                 if not package.accession_data['data'].get('archivesspace_identifier'):
                     self.transformer.package = package
-                    self.save_new_accession()
+                    transformed_data = self.transformer.transform_accession()
+                    self.save_new_accession(transformed_data)
                     accession_count += 1
                 package.process_status = Package.ACCESSION_CREATED
                 package.save()
@@ -61,14 +60,19 @@ class AccessionRoutine(Routine):
                 raise RoutineError("Accession error: {}".format(e))
         return "{} accessions saved.".format(accession_count)
 
-    def save_new_accession(self):
-        transformed_data = self.transformer.transform_accession()
-        accession_identifier = self.aspace_client.create(transformed_data, 'accession')
-        self.transformer.package.accession_data['data']['archivesspace_identifier'] = accession_identifier
-        for p in self.transformer.package.accession_data['data']['transfers']:
-            for sibling in Package.objects.filter(identifier=p['identifier']):
-                sibling.accession_data = self.transformer.package.accession_data
-                sibling.save()
+    def save_new_accession(self, data):
+        try:
+            accession_identifier = self.aspace_client.create(data, 'accession')
+            self.transformer.package.accession_data['data']['archivesspace_identifier'] = accession_identifier
+            for p in self.transformer.package.accession_data['data']['transfers']:
+                for sibling in Package.objects.filter(identifier=p['identifier']):
+                    sibling.accession_data = self.transformer.package.accession_data
+                    sibling.save()
+        except ArchivesSpaceClientError:
+            id_1 = int(data['id_1'])
+            id_1 += 1
+            data['id_1'] = str(id_1).zfill(3)
+            self.save_new_accession(data)
 
 
 class GroupingComponentRoutine(Routine):
@@ -180,6 +184,9 @@ class DigitalObjectRoutine(Routine):
 class UpdateRequester:
     def __init__(self, url):
         self.url = url
+        self.client = AuroraClient(baseurl=settings.AURORA['baseurl'],
+                                   username=settings.AURORA['username'],
+                                   password=settings.AURORA['password'])
 
     def run(self):
         package_count = 0
@@ -188,14 +195,8 @@ class UpdateRequester:
                 data = package.transfer_data['data']
                 data['process_status'] = 80
                 identifier = data['url'].rstrip('/').split('/')[-1]
-                url = "/".join([self.url.rstrip('/'), "{}/".format(identifier.lstrip('/'))])
-                r = requests.post(
-                    url,
-                    data=json.dumps(data),
-                    headers={"Content-Type": "application/json"},
-                )
-                if r.status_code != 200:
-                    raise RoutineError(r.status_code, r.reason)
+                url = "/".join([self.url.rstrip('/'), "transfers", "{}/".format(identifier.lstrip('/'))])
+                r = self.client.update(url, data=json.dumps(data))
                 package.process_status = Package.UPDATE_SENT
                 package.save()
                 package_count += 1
