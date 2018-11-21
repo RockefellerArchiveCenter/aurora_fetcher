@@ -28,7 +28,7 @@ class TransformTest(TestCase):
         self.factory = APIRequestFactory()
         self.transfer_data = []
         self.transfer_count = 0
-        for file in listdir(join(settings.BASE_DIR, 'fixtures/data')):
+        for file in sorted(listdir(join(settings.BASE_DIR, 'fixtures/data'))):
             with open(join(settings.BASE_DIR, 'fixtures/data/{}'.format(file)), 'r') as json_file:
                 data = json.load(json_file)
                 self.transfer_data.append(data)
@@ -75,7 +75,7 @@ class TransformTest(TestCase):
 
         with transformer_vcr.use_cassette('send_update.json'):
             print('*** Sending update request ***')
-            update = UpdateRequester('http://web:8000/api/').run()
+            update = UpdateRequester().run()
             self.assertNotEqual(False, update)
             for transfer in Package.objects.all():
                 self.assertEqual(int(transfer.process_status), Package.UPDATE_SENT)
