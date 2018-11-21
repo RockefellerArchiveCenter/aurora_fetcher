@@ -134,6 +134,7 @@ class TransferComponentRoutine(Routine):
                     self.update_siblings(package)
                     transfer_count += 1
                 package.process_status = Package.TRANSFER_COMPONENT_CREATED
+                print(package.transfer_data['data']['archivesspace_identifier'])
                 package.save()
             except Exception as e:
                 raise RoutineError("Transfer component error: {}".format(e))
@@ -158,9 +159,9 @@ class DigitalObjectRoutine(Routine):
         packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED)
         digital_count = 0
 
-        for p in packages:
+        for package in packages:
             try:
-                package = Package.objects.get(id=p.pk)
+                package.refresh_from_db()
                 self.transformer.package = package
                 self.do_identifier = self.save_new_digital_object()
                 self.update_instance(package)
