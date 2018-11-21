@@ -41,7 +41,7 @@ class AccessionRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.SAVED)
+        packages = Package.objects.filter(process_status=Package.SAVED).order_by('pk')
         accession_count = 0
 
         for package in packages:
@@ -86,7 +86,7 @@ class GroupingComponentRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
+        packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED).order_by('pk')
         grouping_count = 0
 
         for package in packages:
@@ -121,7 +121,7 @@ class TransferComponentRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
+        packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED).order_by('pk')
         transfer_count = 0
 
         for package in packages:
@@ -156,7 +156,7 @@ class DigitalObjectRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED)
+        packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED).order_by('pk')
         digital_count = 0
 
         for package in packages:
