@@ -13,6 +13,7 @@ logger = wrap_logger(logger)
 
 
 class ArchivesSpaceClientError(Exception): pass
+class ArchivesSpaceClientAccessionNumberError(Exception): pass
 class UrsaMajorClientError(Exception): pass
 class AuroraClientError(Exception): pass
 
@@ -40,17 +41,16 @@ class ArchivesSpaceClient(object):
             'organization': 'agents/corporate_entities',
             'family': 'agents/families',
         }
-        try:
-            resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
-            if resp.status_code == 200:
-                self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
-                return resp.json()['uri']
+        resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
+        if resp.status_code == 200:
+            self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
+            return resp.json()['uri']
+        else:
+            self.log.error('Error creating object in ArchivesSpace: {}'.format(resp.json()['error']))
+            if resp.json()['error'].get('id_0'):
+                raise ArchivesSpaceClientAccessionNumberError(resp.json()['error'])
             else:
-                self.log.error('Error creating object in ArchivesSpace: {}'.format(resp.json()['error']))
-                raise ArchivesSpaceClientError('Error creating object in ArchivesSpace: {}'.format(resp.json()['error']))
-        except Exception as e:
-            self.log.error('Error creating object in ArchivesSpace: {}'.format(e))
-            raise ArchivesSpaceClientError('Error creating object in ArchivesSpace: {}'.format(e))
+                raise ArchivesSpaceClientError(resp.json()['error'])
 
     def update(self, uri, data, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))

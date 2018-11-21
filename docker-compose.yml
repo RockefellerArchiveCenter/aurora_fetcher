@@ -17,3 +17,8 @@ services:
 
 volumes:
   aquariusdb:
+
+networks:
+  default:
+    external:
+      name: aurora_default

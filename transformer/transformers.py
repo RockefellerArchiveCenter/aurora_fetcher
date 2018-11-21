@@ -138,7 +138,6 @@ class DataTransformer:
     def transform_component(self):
         data = self.package.transfer_data['data']
         resource = self.package.accession_data['data']['resource']
-        parent = self.package.transfer_data['archivesspace_parent_identifier']
         metadata = data['metadata']
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
@@ -162,8 +161,8 @@ class DataTransformer:
                 "notes": [
                     self.transform_note_multipart(metadata['internal_sender_description'], "scopecontent"),
                     self.transform_langnote(metadata['language'])]}
-            if parent:
-                consumer_data = {**consumer_data, "parent": {"ref": parent}}
+            if data['archivesspace_parent_identifier']:
+                consumer_data = {**consumer_data, "parent": {"ref": data['archivesspace_parent_identifier']}}
             return consumer_data
         except Exception as e:
             raise TransformError('Error transforming component: {}'.format(e))

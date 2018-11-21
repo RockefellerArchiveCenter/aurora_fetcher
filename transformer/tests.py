@@ -17,7 +17,7 @@ transformer_vcr = vcr.VCR(
     serializer='json',
     cassette_library_dir=join(settings.BASE_DIR, 'fixtures/cassettes'),
     record_mode='once',
-    match_on=['path', 'method'],
+    match_on=['path', 'method', 'query', 'body'],
     filter_query_parameters=['username', 'password'],
     filter_headers=['Authorization', 'X-ArchivesSpace-Session'],
 )
@@ -73,14 +73,14 @@ class TransformTest(TestCase):
             for transfer in Package.objects.all():
                 self.assertEqual(int(transfer.process_status), Package.DIGITAL_OBJECT_CREATED)
 
-        # with transformer_vcr.use_cassette('send_update.json'):
-        #     print('*** Sending update request ***')
-        #     update = UpdateRequester('http://web:8000/api/transfers/').run()
-        #     self.assertNotEqual(False, update)
-        #     for transfer in Package.objects.all():
-        #         self.assertEqual(int(transfer.process_status), Package.UPDATE_SENT)
+        with transformer_vcr.use_cassette('send_update.json'):
+            print('*** Sending update request ***')
+            update = UpdateRequester('http://web:8000/api/').run()
+            self.assertNotEqual(False, update)
+            for transfer in Package.objects.all():
+                self.assertEqual(int(transfer.process_status), Package.UPDATE_SENT)
 
-            self.assertEqual(len(Package.objects.all()), self.transfer_count)
+        self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
     def search_objects(self):
         print('*** Searching for objects ***')
@@ -111,10 +111,10 @@ class TransformTest(TestCase):
             response = ProcessAccessionsView.as_view()(request)
             self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
-        # with transformer_vcr.use_cassette('send_update.json'):
-        #     request = self.factory.post(reverse('send-update'))
-        #     response = UpdateRequestView.as_view()(request)
-        #     self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+        with transformer_vcr.use_cassette('send_update.json'):
+            request = self.factory.post(reverse('send-update'))
+            response = UpdateRequestView.as_view()(request)
+            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):
         print('*** Getting schema view ***')

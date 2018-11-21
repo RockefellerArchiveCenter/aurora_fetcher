@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from aquarius import settings
 
-from .clients import ArchivesSpaceClient, ArchivesSpaceClientError, UrsaMajorClient, AuroraClient
+from .clients import ArchivesSpaceClient, ArchivesSpaceClientAccessionNumberError, UrsaMajorClient, AuroraClient
 from .models import Package
 from .transformers import DataTransformer
 
@@ -47,8 +47,10 @@ class AccessionRoutine(Routine):
         for package in packages:
             self.log.debug("Running AccessionTransferRoutine", object=package)
             try:
+                package.refresh_from_db()
                 package.transfer_data = self.ursa_major_client.find_bag_by_id(package.identifier)
-                package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
+                if not package.accession_data:
+                    package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
                 if not package.accession_data['data'].get('archivesspace_identifier'):
                     self.transformer.package = package
                     transformed_data = self.transformer.transform_accession()
@@ -68,11 +70,13 @@ class AccessionRoutine(Routine):
                 for sibling in Package.objects.filter(identifier=p['identifier']):
                     sibling.accession_data = self.transformer.package.accession_data
                     sibling.save()
-        except ArchivesSpaceClientError:
+        except ArchivesSpaceClientAccessionNumberError:
             id_1 = int(data['id_1'])
             id_1 += 1
             data['id_1'] = str(id_1).zfill(3)
             self.save_new_accession(data)
+        except Exception as e:
+            raise RoutineError("Error saving data in ArchivesSpace: {}".format(e))
 
 
 class GroupingComponentRoutine(Routine):
@@ -85,9 +89,9 @@ class GroupingComponentRoutine(Routine):
         packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
         grouping_count = 0
 
-        for p in packages:
+        for package in packages:
             try:
-                package = Package.objects.get(id=p.pk)
+                package.refresh_from_db()
                 if not package.transfer_data['data'].get('archivesspace_parent_identifier'):
                     self.transformer.package = package
                     self.parent = self.save_new_grouping_component()
@@ -120,9 +124,9 @@ class TransferComponentRoutine(Routine):
         packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
         transfer_count = 0
 
-        for p in packages:
+        for package in packages:
             try:
-                package = Package.objects.get(id=p.pk)
+                package.refresh_from_db()
                 if not package.transfer_data['data'].get('archivesspace_identifier'):
                     self.transformer.package = package
                     self.transfer_identifier = self.save_new_transfer_component()
