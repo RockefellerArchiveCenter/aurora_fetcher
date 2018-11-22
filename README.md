@@ -59,6 +59,7 @@ Aquarius has six services, all of which are exposed via endpoints (see [Routes](
 |POST|/digital-objects| |200|Runs the DigitalObjectRoutine process|
 |POST|/send-update| |200|Sends updated data to Aurora|
 |GET|/status||200|Return the status of the microservice|
+|GET|/schema.json||200|Returns the OpenAPI schema for this application|
 
 
 ### Logging
