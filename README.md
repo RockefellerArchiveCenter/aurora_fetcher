@@ -34,7 +34,7 @@ You will need to edit configuration values in `aquarius/config.py` to point to y
 
 ## Services
 
-Aquarius has six services, all of which are exposed via endpoints (see [Routes](#routes) section below).
+Aquarius has six services, all of which are exposed via HTTP endpoints (see [Routes](#routes) section below):
 
 * Store Packages - saves package data received via a POST request. For an example of the package data aquarius expects see `fixtures/data/`.
 * Transform Accessions - transforms accession data and delivers it to ArchivesSpace as an accession.
