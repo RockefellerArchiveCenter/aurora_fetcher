@@ -32,11 +32,18 @@ Or, if you want to remove all data
 You will need to edit configuration values in `aquarius/config.py` to point to your instance of ArchivesSpace.
 
 
-## Usage
+## Services
 
-![TransferRoutine diagram](transformer.png)
+aquarius has six services, all of which are exposed via HTTP endpoints (see [Routes](#routes) section below):
 
-For an example of the data aquarius expects from Aurora, see `fixtures/data/accession.json`.
+* Store Packages - saves package data received via a POST request. For an example of the package data aquarius expects, see `fixtures/data/`.
+* Transform Accessions - transforms accession data and delivers it to ArchivesSpace as an accession.
+* Transform Grouping Components - transforms accession data into a grouping component and delivers it to ArchivesSpace as an archival object.
+* Transform Transfer Component - transforms transfer data and delivers it to ArchivesSpace as an archival object.
+* Transform Digital Component - transforms transfer data and delivers it to ArchivesSpace as a digital object.
+* Update Status - sends updated data to Aurora.
+
+![TransferRoutine diagram](aquarius-services.png)
 
 
 ### Routes
@@ -45,12 +52,14 @@ For an example of the data aquarius expects from Aurora, see `fixtures/data/acce
 |--------|-----|---|---|---|
 |POST|/packages| |200|Saves new package objects|
 |GET|/packages| |200|Returns a list of packages|
-|GET|/packages/{id}| |200|Returns data about an individual transfer|
+|GET|/packages/{id}| |200|Returns data about an individual package|
 |POST|/accessions| |200|Runs the AccessionRoutine process|
 |POST|/grouping-components| |200|Runs the GroupingComponentRoutine process|
 |POST|/transfer-components| |200|Runs the TransferComponentRoutine process|
 |POST|/digital-objects| |200|Runs the DigitalObjectRoutine process|
+|POST|/send-update| |200|Sends updated data to Aurora|
 |GET|/status||200|Return the status of the microservice|
+|GET|/schema.json||200|Returns the OpenAPI schema for this application|
 
 
 ### Logging
