@@ -43,7 +43,7 @@ Aquarius has six services, all of which are exposed via HTTP endpoints (see [Rou
 * Transform Digital Component - transforms transfer data and delivers it to ArchivesSpace as a digital object.
 * Update Status - sends updated data to Aurora.
 
-![TransferRoutine diagram](transformer.png)
+![TransferRoutine diagram](aquarius-services.png)
 
 
 ### Routes
