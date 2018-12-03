@@ -49,6 +49,7 @@ class AccessionRoutine(Routine):
             try:
                 package.refresh_from_db()
                 package.transfer_data = self.ursa_major_client.find_bag_by_id(package.identifier)
+                self.discover_sibling_data(package)
                 if not package.accession_data:
                     package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
                 if not package.accession_data['data'].get('archivesspace_identifier'):
@@ -61,6 +62,12 @@ class AccessionRoutine(Routine):
             except Exception as e:
                 raise RoutineError("Accession error: {}".format(e))
         return "{} accessions saved.".format(accession_count)
+
+    def discover_sibling_data(self, package):
+        if Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False).exists():
+            sibling = Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False)[0]
+            package.accession_data = sibling.accession_data
+            package.transfer_data['data']['archivesspace_parent_identifier'] = sibling.transfer_data['data'].get('archivesspace_parent_identifier')
 
     def save_new_accession(self, data):
         try:
@@ -196,7 +203,7 @@ class UpdateRequester:
         for package in Package.objects.filter(process_status=Package.DIGITAL_OBJECT_CREATED):
             try:
                 data = package.transfer_data['data']
-                data['process_status'] = 80
+                data['process_status'] = 90
                 identifier = data['url'].rstrip('/').split('/')[-1]
                 url = "/".join(["transfers", "{}/".format(identifier.lstrip('/'))])
                 r = self.client.update(url, data=data)
