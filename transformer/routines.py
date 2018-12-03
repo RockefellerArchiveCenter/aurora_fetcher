@@ -67,7 +67,7 @@ class AccessionRoutine(Routine):
         if Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False).exists():
             sibling = Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False)[0]
             package.accession_data = sibling.accession_data
-            package.transfer_data['data']['archivesspace_parent_identifier'] = sibling.transfer_data['data']['archivesspace_parent_identifier']
+            package.transfer_data['data']['archivesspace_parent_identifier'] = sibling.transfer_data['data']['archivesspace_parent_identifier'] if sibling.transfer_data['data']['archivesspace_parent_identifier'] else None
 
     def save_new_accession(self, data):
         try:
