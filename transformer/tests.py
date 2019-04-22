@@ -17,7 +17,7 @@ transformer_vcr = vcr.VCR(
     serializer='json',
     cassette_library_dir=join(settings.BASE_DIR, 'fixtures/cassettes'),
     record_mode='once',
-    match_on=['path', 'method', 'query'],
+    match_on=['path', 'method'],
     filter_query_parameters=['username', 'password'],
     filter_headers=['Authorization', 'X-ArchivesSpace-Session'],
 )
