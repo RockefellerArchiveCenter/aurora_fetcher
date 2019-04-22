@@ -9,12 +9,12 @@ colorama==0.3.9
 colorlog==3.1.4
 coreapi==2.3.3
 coreschema==0.0.4
-Django==2.0.8
+Django==2.0.13
 django-common-helpers==0.9.1
 django-cron==0.5.0
 drf-yasg==1.11.0
 ElectronBonder==0.5
-flex==6.13.2
+flex==6.14
 future==0.16.0
 gitdb2==2.0.3
 GitPython==2.1.9
@@ -23,7 +23,7 @@ idna==2.6
 inflection==0.3.1
 iso8601==0.1.12
 itypes==1.1.0
-Jinja2==2.10
+Jinja2==2.10.1
 jsonpointer==1.14
 jsonschema==2.6.0
 MarkupSafe==1.0
@@ -32,7 +32,7 @@ openapi-codec==1.3.2
 psycopg2-binary==2.7.4
 pycountry==18.2.23
 pytz==2018.4
-PyYAML==3.12
+PyYAML==4.2b4
 requests==2.20.0
 rfc3987==1.3.7
 ruamel.yaml==0.15.37
@@ -42,7 +42,7 @@ strict-rfc3339==0.7
 structlog==18.1.0
 swagger-spec-validator==2.1.0
 uritemplate==3.0.0
-urllib3==1.23
+urllib3==1.24.2
 uuid==1.30
 validate-email==1.3
 vcrpy==1.11.1
