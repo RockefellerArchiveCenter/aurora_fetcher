@@ -34,14 +34,17 @@ class PackageViewSet(ModelViewSet):
     serializer_class = PackageSerializer
 
     def create(self, request):
-        source_object = Package.objects.create(
-            fedora_uri=request.data['uri'],
-            identifier=request.data['identifier'],
-            package_type=request.data['package_type'],
-            process_status=Package.SAVED
-        )
-        serializer = PackageSerializer(source_object, context={'request': request})
-        return Response(serializer.data)
+        try:
+            source_object = Package.objects.create(
+                fedora_uri=request.data['uri'],
+                identifier=request.data['identifier'],
+                package_type=request.data['package_type'],
+                process_status=Package.SAVED
+            )
+            serializer = PackageSerializer(source_object, context={'request': request})
+            return Response(serializer.data)
+        except Exception as e:
+            return Response("Error creating package: {}".format(str(e)))
 
     def get_queryset(self):
         queryset = Package.objects.all()
