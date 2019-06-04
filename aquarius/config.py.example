@@ -2,7 +2,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
-        'USER': 'postgress',
+        'USER': 'postgres',
         'HOST': 'aquarius-db',
         'PORT': 5432,
     }
