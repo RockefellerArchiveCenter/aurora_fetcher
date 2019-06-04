@@ -1,4 +1,14 @@
-# Local config file - rename to config.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgress',
+        'HOST': 'aquarius-db',
+        'PORT': 5432,
+    }
+}
+
+ALLOWED_HOSTS = ['aquarius-web', 'localhost']
 
 ARCHIVESSPACE = {
   "baseurl": "http://localhost:8089/",
@@ -8,7 +18,7 @@ ARCHIVESSPACE = {
 }
 
 URSA_MAJOR = {
-  "baseurl": "http://ursa-major-web:8005/",
+  "baseurl": "http://localhost:8005/",
 }
 
 AURORA = {
@@ -16,3 +26,5 @@ AURORA = {
   "username": "admin",
   "password": "password"
 }
+
+STATIC_ROOT = '/static'
