@@ -244,8 +244,11 @@ class DataTransformer:
                 if ', ' in data['name']:
                     name = data['name'].rsplit(', ', 1)
                 # Name in direct order
-                else:
+                elif ' ' in data['name']:
                     name = data['name'].rsplit(' ', 1).reverse()
+                # Name is a single string
+                else:
+                    name = [data['name'], '']
                 consumer_data = {
                     "agent_type": "agent_person",
                     "names": [{"primary_name": name[0], "rest_of_name": name[1],
