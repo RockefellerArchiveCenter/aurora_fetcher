@@ -76,15 +76,17 @@ class DataTransformer:
     def transform_rights_acts(self, rights_granted):
         acts = []
         for granted in rights_granted:
-            acts.append({
-                "notes": [
-                    {"jsonmodel_type": "note_rights_statement_act",
-                     "type": "additional_information", "content": [granted['note']]}],
+            act_data = {
                 "act_type": granted['act'],
                 "restriction": granted['restriction'],
                 "start_date": granted['start_date'],
                 "end_date": granted['end_date'],
-            })
+            }
+            if granted['note'] != "":
+                act_data["notes"] = [
+                    {"jsonmodel_type": "note_rights_statement_act",
+                     "type": "additional_information", "content": [granted['note']]}]
+            acts.append(act_data)
         return acts
 
     def transform_rights(self, statements):
@@ -94,13 +96,14 @@ class DataTransformer:
                 "rights_type": r['rights_basis'].lower(),
                 "start_date": r['start_date'],
                 "end_date": r['end_date'],
-                "notes": [
-                    {"jsonmodel_type": "note_rights_statement",
-                     "type": "type_note", "content": [r['note']]}],
                 "acts": self.transform_rights_acts(r['rights_granted']),
                 "external_documents": [],
                 "linked_agents": [],
             }
+            if r['note'] != "":
+                statement['notes'] = [
+                    {"jsonmodel_type": "note_rights_statement",
+                     "type": "type_note", "content": [r['note']]}]
             field_keys = ["status", "determination_date", "license_terms"]
             for k in field_keys:
                 if r.get(k):
