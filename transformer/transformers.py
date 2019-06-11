@@ -77,9 +77,6 @@ class DataTransformer:
         acts = []
         for granted in rights_granted:
             act_data = {
-                "notes": [
-                    {"jsonmodel_type": "note_rights_statement_act",
-                     "type": "additional_information", "content": [granted['note']]}],
                 "act_type": granted['act'],
                 "restriction": granted['restriction'],
                 "start_date": granted['start_date'],
@@ -87,8 +84,8 @@ class DataTransformer:
             }
             if granted['note'] != "":
                 act_data["notes"] = [
-                    {"jsonmodel_type": "note_rights_statement",
-                     "type": "type_note", "content": [r['note']]}]
+                    {"jsonmodel_type": "note_rights_statement_act",
+                     "type": "additional_information", "content": [granted['note']]}]
             acts.append(act_data)
         return acts
 
