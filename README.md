@@ -74,6 +74,7 @@ In order to successfully save data to ArchivesSpace, you will have to make some 
 * Accession Acquisition Type: add `donation`
 * Extent Extent Type: add `bytes` and `files`
 * File Version Use Statement: add `master` and `service-edited`
+* Rights Statement Acts: add `publish`
 
 
 ## License
