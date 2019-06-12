@@ -248,7 +248,7 @@ class DataTransformer:
                     name = data['name'].rsplit(', ', 1)
                 # Name in direct order
                 elif ' ' in data['name']:
-                    name = data['name'].rsplit(' ', 1).reverse()
+                    name = data['name'].rsplit(' ', 1)[::-1]
                 # Name is a single string
                 else:
                     name = [data['name'], '']
