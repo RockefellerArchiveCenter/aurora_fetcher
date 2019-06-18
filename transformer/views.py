@@ -47,7 +47,7 @@ class PackageViewSet(ModelViewSet):
             return Response("Error creating package: {}".format(str(e)))
 
     def get_queryset(self):
-        queryset = Package.objects.all()
+        queryset = Package.objects.all().order_by('-last_modified')
         updated_since = self.request.GET.get('updated_since', "")
         if updated_since != "":
             queryset = queryset.filter(last_modified__gte=datetime.fromtimestamp(int(updated_since)))
