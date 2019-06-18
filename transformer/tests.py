@@ -10,8 +10,8 @@ from rest_framework.test import APIRequestFactory
 
 from aquarius import settings
 from .models import Package
-from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine, UpdateRequester
-from .views import PackageViewSet, ProcessAccessionsView, UpdateRequestView
+from .routines import *
+from .views import *
 
 transformer_vcr = vcr.VCR(
     serializer='json',
@@ -70,14 +70,14 @@ class TransformTest(TestCase):
             print('*** Processing Digital Objects ***')
             digital = DigitalObjectRoutine().run()
             self.assertNotEqual(False, digital)
-            for transfer in Package.objects.all():
+            for transfer in Package.objects.all().order_by('-last_modified')[:2]:
                 self.assertEqual(int(transfer.process_status), Package.DIGITAL_OBJECT_CREATED)
 
         with transformer_vcr.use_cassette('send_update.json'):
             print('*** Sending update request ***')
             update = UpdateRequester().run()
             self.assertNotEqual(False, update)
-            for transfer in Package.objects.all():
+            for transfer in Package.objects.all().order_by('-last_modified')[:2]:
                 self.assertEqual(int(transfer.process_status), Package.UPDATE_SENT)
 
         self.assertEqual(len(Package.objects.all()), self.transfer_count)
@@ -98,17 +98,17 @@ class TransformTest(TestCase):
 
         with transformer_vcr.use_cassette('process_grouping.json'):
             request = self.factory.post(reverse('grouping-components'))
-            response = ProcessAccessionsView.as_view()(request)
+            response = ProcessGroupingComponentsView.as_view()(request)
             self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
         with transformer_vcr.use_cassette('process_transfers.json'):
             request = self.factory.post(reverse('transfer-components'))
-            response = ProcessAccessionsView.as_view()(request)
+            response = ProcessTransferComponentsView.as_view()(request)
             self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
         with transformer_vcr.use_cassette('process_digital.json'):
             request = self.factory.post(reverse('digital-objects'))
-            response = ProcessAccessionsView.as_view()(request)
+            response = ProcessDigitalObjectsView.as_view()(request)
             self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
         with transformer_vcr.use_cassette('send_update.json'):
