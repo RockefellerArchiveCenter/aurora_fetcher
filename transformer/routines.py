@@ -162,7 +162,7 @@ class DigitalObjectRoutine(Routine):
 
     def run(self):
         self.bind_log()
-        packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED)
+        packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED).order_by('last_modified')[:2]
         digital_count = 0
 
         for package in packages:
