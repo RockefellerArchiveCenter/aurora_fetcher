@@ -13,6 +13,7 @@ before_install:
   - cp aquarius/config.py.example aquarius/config.py
   - docker-compose up -d
   - sleep 20s
+  - docker-compose exec aquarius-web pip install coverage
 install: true
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
