@@ -1,6 +1,6 @@
+from iso639 import languages as langz
 import iso8601
 import json
-from pycountry import languages as langz
 import time
 
 from aquarius import settings
@@ -51,7 +51,7 @@ class DataTransformer:
         return 'mul' if len(languages) > 1 else languages[0]
 
     def transform_langnote(self, languages):
-        language = "multiple languages" if (len(languages)>1) else langz.get(alpha_3=languages[0]).name
+        language = "multiple languages" if (len(languages)>1) else langz.get(part2b=languages[0]).name
         return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
                 "publish": False, "content": ["Materials are in {}".format(language)]}
 
