@@ -103,7 +103,7 @@
                     ]
                 },
                 "body": {
-                    "string": "[{\"url\":\"http://ursa-major-web:8005/bags/8/\",\"bag_identifier\":\"286e977d-ff33-4345-a532-4d6d85c25b3a\",\"accession\":\"http://ursa-major-web:8005/accessions/1/\",\"created\":\"2018-11-21T14:40:42.152370Z\",\"last_modified\":\"2018-11-21T14:31:55.382543Z\"}]"
+                    "string": "{\"count\":1,\"next\":null,\"previous\":null,\"results\":[{\"url\":\"http://ursa-major-web:8005/bags/8/\",\"bag_identifier\":\"286e977d-ff33-4345-a532-4d6d85c25b3a\",\"accession\":\"http://ursa-major-web:8005/accessions/1/\",\"created\":\"2018-11-21T14:40:42.152370Z\",\"last_modified\":\"2018-11-21T14:31:55.382543Z\"}]}"
                 }
             }
         },
@@ -515,7 +515,7 @@
                     ]
                 },
                 "body": {
-                    "string": "[{\"url\":\"http://ursa-major-web:8005/bags/7/\",\"bag_identifier\":\"abcbcf60-d197-4c54-bf67-42f80b10f190\",\"accession\":\"http://ursa-major-web:8005/accessions/1/\",\"created\":\"2018-11-21T14:40:42.127646Z\",\"last_modified\":\"2018-11-21T14:31:55.378331Z\"}]"
+                    "string": "{\"count\":1,\"next\":null,\"previous\":null,\"results\": [{\"url\":\"http://ursa-major-web:8005/bags/7/\",\"bag_identifier\":\"abcbcf60-d197-4c54-bf67-42f80b10f190\",\"accession\":\"http://ursa-major-web:8005/accessions/1/\",\"created\":\"2018-11-21T14:40:42.127646Z\",\"last_modified\":\"2018-11-21T14:31:55.378331Z\"}]}"
                 }
             }
         },
@@ -621,7 +621,7 @@
                     ]
                 },
                 "body": {
-                    "string": "[{\"url\":\"http://ursa-major-web:8005/bags/8/\",\"bag_identifier\":\"286e977d-ff33-4345-a532-4d6d85c25b3a\",\"accession\":\"http://ursa-major-web:8005/accessions/1/\",\"created\":\"2018-11-21T14:40:42.152370Z\",\"last_modified\":\"2018-11-21T14:31:55.382543Z\"}]"
+                    "string": "{\"count\":1,\"next\":null,\"previous\":null,\"results\":[{\"url\":\"http://ursa-major-web:8005/bags/8/\",\"bag_identifier\":\"286e977d-ff33-4345-a532-4d6d85c25b3a\",\"accession\":\"http://ursa-major-web:8005/accessions/1/\",\"created\":\"2018-11-21T14:40:42.152370Z\",\"last_modified\":\"2018-11-21T14:31:55.382543Z\"}]}"
                 }
             }
         },
@@ -727,7 +727,7 @@
                     ]
                 },
                 "body": {
-                    "string": "[{\"url\":\"http://ursa-major-web:8005/bags/6/\",\"bag_identifier\":\"ea245504-ea90-404e-b515-86cc53c4957c\",\"accession\":\"http://ursa-major-web:8005/accessions/1/\",\"created\":\"2018-11-21T18:17:59.540799Z\",\"last_modified\":\"2018-11-21T14:31:55.374934Z\"}]"
+                    "string": "{\"count\":1,\"next\":null,\"previous\":null,\"results\":[{\"url\":\"http://ursa-major-web:8005/bags/6/\",\"bag_identifier\":\"ea245504-ea90-404e-b515-86cc53c4957c\",\"accession\":\"http://ursa-major-web:8005/accessions/1/\",\"created\":\"2018-11-21T18:17:59.540799Z\",\"last_modified\":\"2018-11-21T14:31:55.374934Z\"}]}"
                 }
             }
         },
