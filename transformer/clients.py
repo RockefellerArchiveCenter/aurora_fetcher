@@ -168,14 +168,15 @@ class UrsaMajorClient(object):
     def find_bag_by_id(self, identifier, *args, **kwargs):
         self.log = self.log.bind(request_id=str(uuid4()))
         try:
-            bag_resp = self.client.get("bags/", params={"id": identifier})
-            if len(bag_resp.json()) < 1:
-                self.log.error("No bags matching id {} found".format(identifier))
-                raise UrsaMajorClientError("No bags matching id {} found".format(identifier))
-            bag_url = bag_resp.json()[0]['url']
-            resp = self.client.get(bag_url, *args, **kwargs)
+            bag_resp = self.client.get("bags/", params={"id": identifier}).json()
+            count = bag_resp.get('count')
+            if count != 1:
+                self.log.error("Found {} bags matching id {}, expected 1".format(count, identifier))
+                raise UrsaMajorClientError("Found {} bags matching id {}, expected 1".format(count, identifier))
+            bag_url = bag_resp.get('results')[0]['url']
+            resp = self.client.get(bag_url, *args, **kwargs).json()
             self.log.debug("Object retrieved from Ursa Major", object=bag_url)
-            return resp.json()
+            return resp
         except Exception as e:
             self.log.error("Error finding bag by id: {}".format(e))
             raise UrsaMajorClientError("Error finding bag by id: {}".format(e))
