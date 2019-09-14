@@ -19,22 +19,14 @@ from django.urls import include, re_path
 from transformer.models import Package
 from transformer.views import *
 from rest_framework import routers
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
+from rest_framework.schemas import get_schema_view
 
 router = routers.DefaultRouter()
 router.register(r'packages', PackageViewSet, 'package')
 
 schema_view = get_schema_view(
-   openapi.Info(
       title="Aquarius API",
-      default_version='v1',
-      description="API for Aquarius.",
-      contact=openapi.Contact(email="archive@rockarch.org"),
-      license=openapi.License(name="MIT License"),
-   ),
-   validators=['flex', 'ssv'],
-   public=True,
+      description="Endpoints for Aquarius microservice application."
 )
 
 urlpatterns = [
@@ -46,5 +38,5 @@ urlpatterns = [
     url(r'^send-update/', UpdateRequestView.as_view(), name="send-update"),
     url(r'^status/', include('health_check.api.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^schema(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),
+    url(r'^schema/', schema_view, name='schema'),
 ]
