@@ -1,6 +1,3 @@
-import json
-import requests
-
 from aquarius import settings
 
 from .clients import ArchivesSpaceClient, ArchivesSpaceClientAccessionNumberError, UrsaMajorClient, AuroraClient

@@ -1,8 +1,7 @@
-from asnake.client import *
-from electronbonder.client import *
+from asnake.client import ASnakeClient
+from electronbonder.client import ElectronBond
 from datetime import date
 import json
-import requests
 
 
 class ArchivesSpaceClientError(Exception): pass
