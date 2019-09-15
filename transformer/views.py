@@ -1,8 +1,5 @@
 from datetime import datetime
-import logging
-from structlog import wrap_logger
 import urllib
-from uuid import uuid4
 
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -11,10 +8,6 @@ from rest_framework.response import Response
 from .models import Package
 from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine, UpdateRequester
 from .serializers import PackageSerializer, PackageListSerializer
-
-logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
-logger = wrap_logger(logger)
 
 
 def tuple_to_dict(data):
@@ -70,8 +63,6 @@ class PackageViewSet(ModelViewSet):
 
 class ProcessView(APIView):
     def post(self, request, format=None):
-        log = logger.new(transaction_id=str(uuid4()))
-
         try:
             response = self.routine().run()
             return Response(tuple_to_dict(response), status=200)

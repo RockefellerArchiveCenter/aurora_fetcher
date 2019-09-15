@@ -1,18 +1,11 @@
 import json
-import logging
 import requests
-from structlog import wrap_logger
-from uuid import uuid4
 
 from aquarius import settings
 
 from .clients import ArchivesSpaceClient, ArchivesSpaceClientAccessionNumberError, UrsaMajorClient, AuroraClient
 from .models import Package
 from .transformers import DataTransformer
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger = wrap_logger(logger)
 
 
 class RoutineError(Exception): pass
@@ -29,10 +22,6 @@ class Routine:
                                                  settings.ARCHIVESSPACE['repo_id'])
         self.ursa_major_client = UrsaMajorClient(settings.URSA_MAJOR['baseurl'])
         self.transformer = DataTransformer(aspace_client=self.aspace_client)
-        self.log = logger
-
-    def bind_log(self):
-        self.log.bind(request_id=str(uuid4()))
 
 
 class AccessionRoutine(Routine):
@@ -40,13 +29,11 @@ class AccessionRoutine(Routine):
        transformed data to ArchivesSpace where it is saved as an accession record."""
 
     def run(self):
-        self.bind_log()
         packages = Package.objects.filter(process_status=Package.SAVED)
         package_ids = []
         accession_created = False
 
         for package in packages:
-            self.log.debug("Running AccessionTransferRoutine", object=package)
             try:
                 package.refresh_from_db()
                 package.transfer_data = self.ursa_major_client.find_bag_by_id(package.identifier)
@@ -96,7 +83,6 @@ class GroupingComponentRoutine(Routine):
        as an archival object record."""
 
     def run(self):
-        self.bind_log()
         packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
         package_ids = []
         grouping_created = False
@@ -134,7 +120,6 @@ class TransferComponentRoutine(Routine):
        transformed data to ArchivesSpace where it is saved as an archival object record."""
 
     def run(self):
-        self.bind_log()
         packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
         package_ids = []
         transfer_created = False
@@ -171,7 +156,6 @@ class DigitalObjectRoutine(Routine):
        transformed data to ArchivesSpace where it is saved as a digital object record."""
 
     def run(self):
-        self.bind_log()
         packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED).order_by('last_modified')[:2]
         digital_ids = []
 
