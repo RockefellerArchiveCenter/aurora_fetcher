@@ -42,7 +42,8 @@ class AccessionRoutine(Routine):
     def run(self):
         self.bind_log()
         packages = Package.objects.filter(process_status=Package.SAVED)
-        accession_count = 0
+        package_ids = []
+        accession_created = False
 
         for package in packages:
             self.log.debug("Running AccessionTransferRoutine", object=package)
@@ -56,12 +57,14 @@ class AccessionRoutine(Routine):
                     self.transformer.package = package
                     transformed_data = self.transformer.transform_accession()
                     self.save_new_accession(transformed_data)
-                    accession_count += 1
+                    accession_created = True
                 package.process_status = Package.ACCESSION_CREATED
                 package.save()
+                package_ids.append(package.identifier)
             except Exception as e:
-                raise RoutineError("Accession error: {}".format(e))
-        return "{} accessions saved.".format(accession_count)
+                raise RoutineError("Accession error: {}".format(e), package.identifier)
+        message = "Accession created." if accession_created else "Accession updated."
+        return (message, package_ids)
 
     def discover_sibling_data(self, package):
         if Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False).exists():
@@ -78,12 +81,13 @@ class AccessionRoutine(Routine):
                     sibling.accession_data = self.transformer.package.accession_data
                     sibling.save()
         except ArchivesSpaceClientAccessionNumberError:
+            """Account for indexing delays by bumping up to the next accession number."""
             id_1 = int(data['id_1'])
             id_1 += 1
             data['id_1'] = str(id_1).zfill(3)
             self.save_new_accession(data)
         except Exception as e:
-            raise RoutineError("Error saving data in ArchivesSpace: {}".format(e))
+            raise RoutineError("Error saving data in ArchivesSpace: {}".format(e), self.transformer.package.identifier)
 
 
 class GroupingComponentRoutine(Routine):
@@ -94,7 +98,8 @@ class GroupingComponentRoutine(Routine):
     def run(self):
         self.bind_log()
         packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
-        grouping_count = 0
+        package_ids = []
+        grouping_created = False
 
         for package in packages:
             try:
@@ -104,12 +109,14 @@ class GroupingComponentRoutine(Routine):
                     self.parent = self.save_new_grouping_component()
                     package.transfer_data['data']['archivesspace_parent_identifier'] = self.parent
                     self.update_siblings(package)
-                    grouping_count += 1
+                    grouping_created = True
                 package.process_status = package.GROUPING_COMPONENT_CREATED
                 package.save()
+                package_ids.append(package.identifier)
             except Exception as e:
-                raise RoutineError("Grouping component error: {}".format(e))
-        return "{} grouping components saved.".format(grouping_count)
+                raise RoutineError("Grouping component error: {}".format(e), package.identifier)
+        message = "Grouping component created." if grouping_created else "Grouping component updated."
+        return (message, package_ids)
 
     def save_new_grouping_component(self):
         transformed_data = self.transformer.transform_grouping_component()
@@ -129,7 +136,8 @@ class TransferComponentRoutine(Routine):
     def run(self):
         self.bind_log()
         packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
-        transfer_count = 0
+        package_ids = []
+        transfer_created = False
 
         for package in packages:
             try:
@@ -139,12 +147,14 @@ class TransferComponentRoutine(Routine):
                     self.transfer_identifier = self.save_new_transfer_component()
                     package.transfer_data['data']['archivesspace_identifier'] = self.transfer_identifier
                     self.update_siblings(package)
-                    transfer_count += 1
+                    transfer_created = True
                 package.process_status = Package.TRANSFER_COMPONENT_CREATED
                 package.save()
+                package_ids.append(package.identifier)
             except Exception as e:
-                raise RoutineError("Transfer component error: {}".format(e))
-        return "{} transfer components created.".format(transfer_count)
+                raise RoutineError("Transfer component error: {}".format(e), package.identifier)
+        message = "Transfer component created." if transfer_created else "Transfer component updated."
+        return (message, package_ids)
 
     def save_new_transfer_component(self):
         transformed_data = self.transformer.transform_component()
@@ -163,7 +173,7 @@ class DigitalObjectRoutine(Routine):
     def run(self):
         self.bind_log()
         packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED).order_by('last_modified')[:2]
-        digital_count = 0
+        digital_ids = []
 
         for package in packages:
             try:
@@ -171,12 +181,12 @@ class DigitalObjectRoutine(Routine):
                 self.transformer.package = package
                 self.do_identifier = self.save_new_digital_object()
                 self.update_instance(package)
-                digital_count += 1
                 package.process_status = Package.DIGITAL_OBJECT_CREATED
                 package.save()
+                digital_ids.append(package.identifier)
             except Exception as e:
-                raise RoutineError("Digital object error: {}".format(e))
-        return "{} digital objects saved.".format(digital_count)
+                raise RoutineError("Digital object error: {}".format(e), package.identifier)
+        return ("Digital objects created.", digital_ids)
 
     def save_new_digital_object(self):
         transformed_data = self.transformer.transform_digital_object()
@@ -199,7 +209,7 @@ class UpdateRequester:
                                    password=settings.AURORA['password'])
 
     def run(self):
-        package_count = 0
+        update_ids = []
         for package in Package.objects.filter(process_status=Package.DIGITAL_OBJECT_CREATED):
             try:
                 data = package.transfer_data['data']
@@ -209,7 +219,7 @@ class UpdateRequester:
                 r = self.client.update(url, data=data)
                 package.process_status = Package.UPDATE_SENT
                 package.save()
-                package_count += 1
+                update_ids.append(package.identifier)
             except Exception as e:
                 raise UpdateRequestError(e)
-        return "Update requests sent for {} packages.".format(package_count)
+        return ("Update requests sent.", update_ids)

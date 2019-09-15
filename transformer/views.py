@@ -17,6 +17,15 @@ logger = logging.getLogger(__name__)
 logger = wrap_logger(logger)
 
 
+def tuple_to_dict(data):
+    detail = data[0]
+    objects = data[1] if len(data) > 1 else None
+    if objects and not isinstance(objects, list):
+        objects = [objects]
+    count = len(objects) if objects else 0
+    return {"detail": detail, "objects": objects, "count": count}
+
+
 class PackageViewSet(ModelViewSet):
     """
     Endpoint for packages.
@@ -64,44 +73,32 @@ class ProcessView(APIView):
         log = logger.new(transaction_id=str(uuid4()))
 
         try:
-            message = self.routine().run()
-            return Response({"detail": message}, status=200)
+            response = self.routine().run()
+            return Response(tuple_to_dict(response), status=200)
         except Exception as e:
-            return Response({"detail": str(e)}, status=500)
+            return Response(tuple_to_dict(e.args), status=500)
 
 
 class ProcessAccessionsView(ProcessView):
     """Runs the AccessionRoutine. Accepts POST requests only."""
-    def __init__(self):
-        self.routine = AccessionRoutine
+    routine = AccessionRoutine
 
 
 class ProcessGroupingComponentsView(ProcessView):
     """Runs the GroupingComponentRoutine. Accepts POST requests only."""
-    def __init__(self):
-        self.routine = GroupingComponentRoutine
+    routine = GroupingComponentRoutine
 
 
 class ProcessTransferComponentsView(ProcessView):
     """Runs the TransferComponentRoutine. Accepts POST requests only."""
-    def __init__(self):
-        self.routine = TransferComponentRoutine
+    routine = TransferComponentRoutine
 
 
 class ProcessDigitalObjectsView(ProcessView):
     """Runs the DigitalObjectRoutine. Accepts POST requests only."""
-    def __init__(self):
-        self.routine = DigitalObjectRoutine
+    routine = DigitalObjectRoutine
 
 
-class UpdateRequestView(APIView):
+class UpdateRequestView(ProcessView):
     """Sends request with updated information to Aurora. Accepts POST requests only."""
-
-    def post(self, request):
-        log = logger.new(transaction_id=str(uuid4()))
-
-        try:
-            update = UpdateRequester().run()
-            return Response({"detail": update}, status=200)
-        except Exception as e:
-            return Response({"detail": str(e)}, status=500)
+    routine = UpdateRequester
