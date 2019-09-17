@@ -34,7 +34,7 @@ class PackageViewSet(ModelViewSet):
                 package_type=request.data['package_type'],
                 process_status=Package.SAVED
             )
-            return Response(prepare_response("Package created", source_object.identifier))
+            return Response(prepare_response(("Package created", source_object.identifier)))
         except Exception as e:
             return Response(prepare_response("Error creating package: {}".format(str(e))))
 
