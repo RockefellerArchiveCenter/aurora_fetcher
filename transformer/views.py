@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from asterism.views import prepare_response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
@@ -7,15 +8,6 @@ from rest_framework.response import Response
 from .models import Package
 from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine, UpdateRequester
 from .serializers import PackageSerializer, PackageListSerializer
-
-
-def tuple_to_dict(data):
-    detail = str(data[0])
-    objects = data[1] if len(data) > 1 else []
-    if objects and not isinstance(objects, list):
-        objects = [objects]
-    count = len(objects) if objects else 0
-    return {"detail": detail, "objects": objects, "count": count}
 
 
 class PackageViewSet(ModelViewSet):
@@ -42,10 +34,9 @@ class PackageViewSet(ModelViewSet):
                 package_type=request.data['package_type'],
                 process_status=Package.SAVED
             )
-            serializer = PackageSerializer(source_object, context={'request': request})
-            return Response(serializer.data)
+            return Response(prepare_response("Package created", source_object.identifier))
         except Exception as e:
-            return Response("Error creating package: {}".format(str(e)))
+            return Response(prepare_response("Error creating package: {}".format(str(e))))
 
     def get_queryset(self):
         queryset = Package.objects.all().order_by('-last_modified')
@@ -64,9 +55,9 @@ class ProcessView(APIView):
     def post(self, request, format=None):
         try:
             response = self.routine().run()
-            return Response(tuple_to_dict(response), status=200)
+            return Response(prepare_response(response), status=200)
         except Exception as e:
-            return Response(tuple_to_dict(e.args), status=500)
+            return Response(prepare_response(e), status=500)
 
 
 class ProcessAccessionsView(ProcessView):
