@@ -19,8 +19,8 @@ class Routine:
     The `apply_transformations` method in the `run` function is intended to be
     overriden by routines which interact with specific types of objects.
     Requires the following variables to be overriden as well:
-        package - a queryset of Package objects
-        update_status - the status to be applied to Package objects once the
+        start_status - the status of the objects to be acted on.
+        end_status - the status to be applied to Package objects once the
                         routine has completed successfully.
         object_type = a string containing the object type of the routine.
     """
@@ -36,7 +36,7 @@ class Routine:
     def run(self):
         package_ids = []
 
-        for package in self.packages:
+        for package in Package.objects.filter(process_status=self.start_status)
             try:
                 package.refresh_from_db()
                 self.apply_transformations(package)
@@ -54,8 +54,8 @@ class AccessionRoutine(Routine):
     """Transforms accession data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as an accession record."""
 
-    packages = Package.objects.filter(process_status=Package.SAVED)
-    update_status = Package.ACCESSION_CREATED
+    start_status = Package.objects.filter(process_status=Package.SAVED)
+    end_status = Package.ACCESSION_CREATED
     object_type = "Accession"
 
     def apply_transformations(self, package):
@@ -67,6 +67,7 @@ class AccessionRoutine(Routine):
             self.transformer.package = package
             transformed_data = self.transformer.transform_accession()
             self.save_new_accession(transformed_data)
+        package.save()
 
     def discover_sibling_data(self, package):
         if Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False).exists():
@@ -106,8 +107,8 @@ class GroupingComponentRoutine(Routine):
        and delivers the transformed data to ArchivesSpace where it is saved
        as an archival object record."""
 
-    packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
-    update_status = Package.GROUPING_COMPONENT_CREATED
+    start_status = Package.ACCESSION_CREATED
+    end_status = Package.GROUPING_COMPONENT_CREATED
     object_type = "Grouping component"
 
     def apply_transformations(self, package):
@@ -132,8 +133,8 @@ class TransferComponentRoutine(Routine):
     """Transforms transfer data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as an archival object record."""
 
-    packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
-    update_status = Package.TRANSFER_COMPONENT_CREATED
+    start_status=Package.GROUPING_COMPONENT_CREATED
+    end_status = Package.TRANSFER_COMPONENT_CREATED
     object_type = "Transfer component"
 
     def apply_transformations(self, package):
@@ -157,8 +158,8 @@ class DigitalObjectRoutine(Routine):
     """Transforms transfer data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as a digital object record."""
 
-    packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED).order_by('last_modified')[:2]
-    update_status = Package.DIGITAL_OBJECT_CREATED
+    start_status = Package.TRANSFER_COMPONENT_CREATED
+    end_status = Package.DIGITAL_OBJECT_CREATED
     object_type = "Digital object"
 
     def apply_transformations(self, package):
