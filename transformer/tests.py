@@ -90,7 +90,6 @@ class TransformTest(TestCase):
             with transformer_vcr.use_cassette(v[0]):
                 request = self.factory.post(reverse(v[1]))
                 response = v[2].as_view()(request)
-                print(response.data)
                 self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):
