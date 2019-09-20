@@ -18,8 +18,17 @@ class ArchivesSpaceClient(object):
         self.repo_id = repo_id
         if not self.client.authorize():
             raise ArchivesSpaceClientError("Couldn't authenticate user credentials for ArchivesSpace")
+        self.TYPE_LIST = {
+            'family': ['agent_family', 'agents/families'],
+            'organization': ['agent_corporate_entity', 'agents/corporate_entities'],
+            'person': ['agent_person', 'agents/people'],
+            'component': ['archival_object', 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id)],
+            'accession': ['accession', 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id)],
+            'digital object': ['digital_objects', 'repositories/{repo_id}/digital_objects'.format(repo_id=self.repo_id)]
+        }
 
     def send_request(self, method, url, data=None, *args, **kwargs):
+        """Base method for sending requests to ArchivesSpace."""
         r = getattr(self.client, method)(url, data=json.dumps(data), *args, **kwargs)
         if r.status_code == 200:
             return r.json()
@@ -30,30 +39,18 @@ class ArchivesSpaceClient(object):
         return self.send_request('get', url, *args, **kwargs)
 
     def create(self, data, type, *args, **kwargs):
-        ENDPOINTS = {
-            'component': 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id),
-            'accession': 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id),
-            'digital object': 'repositories/{repo_id}/digital_objects'.format(repo_id=self.repo_id),
-            'person': 'agents/people',
-            'organization': 'agents/corporate_entities',
-            'family': 'agents/families',
-        }
-        return self.send_request('post', ENDPOINTS[type], data, *args, **kwargs)
+        return self.send_request('post', self.TYPE_LIST[type][1], data, *args, **kwargs)
 
     def update(self, uri, data, *args, **kwargs):
         return self.send_request('post', uri, data, *args, *kwargs)
 
     def get_or_create(self, type, field, value, last_updated, consumer_data):
-        TYPE_LIST = (
-            ('family', 'agent_family', 'agents/families'),
-            ('organization', 'agent_corporate_entity', 'agents/corporate_entities'),
-            ('person', 'agent_person', 'agents/people'),
-            ('component', 'archival_object', 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id)),
-            ('grouping_component', 'archival_object', 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id)),
-            ('accession', 'accession', 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id))
-        )
-        model_type = [t[1] for t in TYPE_LIST if t[0] == type][0]
-        endpoint = [t[2] for t in TYPE_LIST if t[0] == type][0]
+        """
+        Attempts to find and return an object in ArchivesSpace.
+        If the object is not found, creates and returns a new object.
+        """
+        model_type = self.TYPE_LIST[type][0]
+        endpoint = self.TYPE_LIST[type][1]
         query = json.dumps({"query": {"field": field, "value": value, "jsonmodel_type": "field_query"}})
         try:
             r = self.client.get('search', params={"page": 1, "type[]": model_type, "aq": query}).json()
@@ -69,6 +66,13 @@ class ArchivesSpaceClient(object):
             raise ArchivesSpaceClientError('Error finding or creating object in ArchivesSpace: {}'.format(e))
 
     def next_accession_number(self):
+        """
+        Finds the next available accession number by searching for accession
+        numbers with the current year, and then incrementing.
+
+        Assumes that accession numbers are in the format YYYY NNN, where YYYY
+        is the current year and NNN is a zero-padded integer.
+        """
         current_year = str(date.today().year)
         try:
             query = json.dumps({"query": {"field": "four_part_id", "value": current_year, "jsonmodel_type": "field_query"}})
@@ -88,12 +92,13 @@ class ArchivesSpaceClient(object):
 
 
 class UrsaMajorClient(object):
-    """Client to get and receive data from UrsaMajor."""
+    """Client to get and receive data from Ursa Major."""
 
     def __init__(self, baseurl):
         self.client = ElectronBond(baseurl=baseurl)
 
     def send_request(self, method, url, data=None, *args, **kwargs):
+        """Base class for sending requests to Ursa Major"""
         try:
             return getattr(self.client, method)(url, data=json.dumps(data), *args, **kwargs).json()
         except Exception as e:
@@ -113,6 +118,7 @@ class UrsaMajorClient(object):
             raise UrsaMajorClientError("Error retrieving list from Ursa Major: {}".format(e))
 
     def find_bag_by_id(self, identifier, *args, **kwargs):
+        """Finds a bag by its id."""
         try:
             bag_resp = self.client.get("bags/", params={"id": identifier}).json()
             count = bag_resp.get('count')

@@ -10,7 +10,20 @@ class UpdateRequestError(Exception): pass
 
 
 class Routine:
-    """Base class which is inherited by all other routines."""
+    """
+    Base class which is inherited by all other routines.
+
+    Provides default clients for ArchivesSpace and Ursa Major, and instantiates
+    a DataTransformer class.
+
+    The `apply_transformations` method in the `run` function is intended to be
+    overriden by routines which interact with specific types of objects.
+    Requires the following variables to be overriden as well:
+        package - a queryset of Package objects
+        update_status - the status to be applied to Package objects once the
+                        routine has completed successfully.
+        object_type = a string containing the object type of the routine.
+    """
 
     def __init__(self):
         self.aspace_client = ArchivesSpaceClient(settings.ARCHIVESSPACE['baseurl'],
