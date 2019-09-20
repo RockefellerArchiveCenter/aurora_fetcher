@@ -36,7 +36,7 @@ class Routine:
     def run(self):
         package_ids = []
 
-        for package in Package.objects.filter(process_status=self.start_status)
+        for package in Package.objects.filter(process_status=self.start_status):
             try:
                 package.refresh_from_db()
                 self.apply_transformations(package)
