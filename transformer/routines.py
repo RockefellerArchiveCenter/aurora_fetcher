@@ -40,7 +40,7 @@ class Routine:
             try:
                 package.refresh_from_db()
                 self.apply_transformations(package)
-                package.process_status = self.update_status
+                package.process_status = self.end_status
                 package.save()
                 package_ids.append(package.identifier)
             except Exception as e:
@@ -54,7 +54,7 @@ class AccessionRoutine(Routine):
     """Transforms accession data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as an accession record."""
 
-    start_status = Package.objects.filter(process_status=Package.SAVED)
+    start_status = Package.SAVED
     end_status = Package.ACCESSION_CREATED
     object_type = "Accession"
 
@@ -189,14 +189,14 @@ class AuroraUpdater:
 
     def run(self):
         update_ids = []
-        for obj in self.queryset:
+        for obj in Package.objects.filter(process_status=self.start_status):
             try:
                 data = self.update_data(obj)
                 identifier = data['url'].rstrip('/').split('/')[-1]
                 prefix = data['url'].rstrip('/').split('/')[-2]
                 url = "/".join([prefix, "{}/".format(identifier.lstrip('/'))])
                 r = self.client.update(url, data=data)
-                obj.process_status = self.update_status
+                obj.process_status = self.end_status
                 obj.save()
                 update_ids.append(obj.identifier)
             except Exception as e:
@@ -205,8 +205,8 @@ class AuroraUpdater:
 
 
 class UpdateRequester(AuroraUpdater):
-    queryset = Package.objects.filter(process_status=Package.DIGITAL_OBJECT_CREATED)
-    update_status = Package.UPDATE_SENT
+    start_status = Package.DIGITAL_OBJECT_CREATED
+    end_status = Package.UPDATE_SENT
 
     def update_data(self, obj):
         data = obj.transfer_data['data']
@@ -215,8 +215,8 @@ class UpdateRequester(AuroraUpdater):
 
 
 class AccessionUpdateRequester(AuroraUpdater):
-    queryset = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
-    update_status = Package.ACCESSION_UPDATE_SENT
+    start_status = Package.ACCESSION_CREATED
+    end_status = Package.ACCESSION_UPDATE_SENT
 
     def update_data(self, obj):
         data = obj.accession_data['data']
