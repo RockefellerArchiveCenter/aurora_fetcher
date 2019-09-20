@@ -83,12 +83,14 @@ class TransformTest(TestCase):
             ('process_grouping.json', 'grouping-components', ProcessGroupingComponentsView),
             ('process_transfers.json', 'transfer-components', ProcessTransferComponentsView),
             ('process_digital.json', 'digital-objects', ProcessDigitalObjectsView),
-            ('send_update.json', 'send-update', UpdateRequestView)
+            ('send_update.json', 'send-update', UpdateRequestView),
+            ('send_accession_update.json', 'send-accession-update', AccessionUpdateRequestView),
         )
         for v in VIEWS:
             with transformer_vcr.use_cassette(v[0]):
                 request = self.factory.post(reverse(v[1]))
                 response = v[2].as_view()(request)
+                print(response.data)
                 self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):

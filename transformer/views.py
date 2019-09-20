@@ -6,7 +6,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
 from .models import Package
-from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine, UpdateRequester
+from .routines import (AccessionRoutine, GroupingComponentRoutine,
+                       TransferComponentRoutine, DigitalObjectRoutine,
+                       UpdateRequester, AccessionUpdateRequester)
 from .serializers import PackageSerializer, PackageListSerializer
 
 
@@ -83,3 +85,8 @@ class ProcessDigitalObjectsView(ProcessView):
 class UpdateRequestView(ProcessView):
     """Sends request with updated information to Aurora. Accepts POST requests only."""
     routine = UpdateRequester
+
+
+class AccessionUpdateRequestView(ProcessView):
+    """Sends request with updated information to Aurora. Accepts POST requests only."""
+    routine = AccessionUpdateRequester

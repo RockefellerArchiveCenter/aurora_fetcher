@@ -1,0 +1,64 @@
+{
+    "version": 1,
+    "interactions": [
+        {
+            "request": {
+                "method": "POST",
+                "uri": "http://web:8000/api/get-token/",
+                "body": "password=password&username=admin",
+                "headers": {
+                    "User-Agent": [
+                        "ElectronBond/0.1"
+                    ],
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ],
+                    "Accept": [
+                        "application/json"
+                    ],
+                    "Connection": [
+                        "keep-alive"
+                    ],
+                    "Content-Length": [
+                        "32"
+                    ],
+                    "Content-Type": [
+                        "application/x-www-form-urlencoded"
+                    ]
+                }
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "X-Frame-Options": [
+                        "SAMEORIGIN"
+                    ],
+                    "Server": [
+                        "WSGIServer/0.1 Python/2.7.15"
+                    ],
+                    "Content-Length": [
+                        "196"
+                    ],
+                    "Date": [
+                        "Fri, 20 Sep 2019 01:36:35 GMT"
+                    ],
+                    "Content-Type": [
+                        "application/json"
+                    ],
+                    "Allow": [
+                        "POST, OPTIONS"
+                    ],
+                    "Vary": [
+                        "Accept"
+                    ]
+                },
+                "body": {
+                    "string": "{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwidXNlcl9pZCI6MSwiZW1haWwiOiJhZG1pbkBleGFtcGxlLm9yZyIsImV4cCI6MTU2ODk0MzY5NX0.sDSTyLawSKh8qMiMLf8CNrrBZL39hFJotxAUgG7GKSE\"}"
+                }
+            }
+        }
+    ]
+}

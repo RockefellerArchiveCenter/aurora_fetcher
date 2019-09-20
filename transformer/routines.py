@@ -20,35 +20,40 @@ class Routine:
         self.ursa_major_client = UrsaMajorClient(settings.URSA_MAJOR['baseurl'])
         self.transformer = DataTransformer(aspace_client=self.aspace_client)
 
+    def run(self):
+        package_ids = []
+
+        for package in self.packages:
+            try:
+                package.refresh_from_db()
+                self.apply_transformations(package)
+                package.process_status = self.update_status
+                package.save()
+                package_ids.append(package.identifier)
+            except Exception as e:
+                raise RoutineError("{} error: {}".format(self.object_type, e), package.identifier)
+        message = ("{} created.".format(self.object_type) if (len(package_ids) > 0)
+                   else "{} updated.".format(self.object_type))
+        return (message, package_ids)
+
 
 class AccessionRoutine(Routine):
     """Transforms accession data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as an accession record."""
 
-    def run(self):
-        packages = Package.objects.filter(process_status=Package.SAVED)
-        package_ids = []
-        accession_created = False
+    packages = Package.objects.filter(process_status=Package.SAVED)
+    update_status = Package.ACCESSION_CREATED
+    object_type = "Accession"
 
-        for package in packages:
-            try:
-                package.refresh_from_db()
-                package.transfer_data = self.ursa_major_client.find_bag_by_id(package.identifier)
-                self.discover_sibling_data(package)
-                if not package.accession_data:
-                    package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
-                if not package.accession_data['data'].get('archivesspace_identifier'):
-                    self.transformer.package = package
-                    transformed_data = self.transformer.transform_accession()
-                    self.save_new_accession(transformed_data)
-                    accession_created = True
-                package.process_status = Package.ACCESSION_CREATED
-                package.save()
-                package_ids.append(package.identifier)
-            except Exception as e:
-                raise RoutineError("Accession error: {}".format(e), package.identifier)
-        message = "Accession created." if accession_created else "Accession updated."
-        return (message, package_ids)
+    def apply_transformations(self, package):
+        package.transfer_data = self.ursa_major_client.find_bag_by_id(package.identifier)
+        self.discover_sibling_data(package)
+        if not package.accession_data:
+            package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
+        if not package.accession_data['data'].get('archivesspace_identifier'):
+            self.transformer.package = package
+            transformed_data = self.transformer.transform_accession()
+            self.save_new_accession(transformed_data)
 
     def discover_sibling_data(self, package):
         if Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False).exists():
@@ -56,10 +61,19 @@ class AccessionRoutine(Routine):
             package.accession_data = sibling.accession_data
             package.transfer_data['data']['archivesspace_parent_identifier'] = sibling.transfer_data['data'].get('archivesspace_parent_identifier')
 
+    def parse_accession_number(self, data):
+        number = "{}".format(data['id_0'])
+        if data.get('id_1'):
+            number += ":{}".format(data['id_1'])
+        if data.get('id_2'):
+            number += ":{}".format(data['id_2'])
+        return number
+
     def save_new_accession(self, data):
         try:
-            accession_identifier = self.aspace_client.create(data, 'accession')
-            self.transformer.package.accession_data['data']['archivesspace_identifier'] = accession_identifier
+            accession_uri = self.aspace_client.create(data, 'accession').get('uri')
+            self.transformer.package.accession_data['data']['archivesspace_identifier'] = accession_uri
+            self.transformer.package.accession_data['data']['accession_number'] = self.parse_accession_number(data)
             for p in self.transformer.package.accession_data['data']['transfers']:
                 for sibling in Package.objects.filter(identifier=p['identifier']):
                     sibling.accession_data = self.transformer.package.accession_data
@@ -79,31 +93,20 @@ class GroupingComponentRoutine(Routine):
        and delivers the transformed data to ArchivesSpace where it is saved
        as an archival object record."""
 
-    def run(self):
-        packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
-        package_ids = []
-        grouping_created = False
+    packages = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
+    update_status = Package.GROUPING_COMPONENT_CREATED
+    object_type = "Grouping component"
 
-        for package in packages:
-            try:
-                package.refresh_from_db()
-                if not package.transfer_data['data'].get('archivesspace_parent_identifier'):
-                    self.transformer.package = package
-                    self.parent = self.save_new_grouping_component()
-                    package.transfer_data['data']['archivesspace_parent_identifier'] = self.parent
-                    self.update_siblings(package)
-                    grouping_created = True
-                package.process_status = package.GROUPING_COMPONENT_CREATED
-                package.save()
-                package_ids.append(package.identifier)
-            except Exception as e:
-                raise RoutineError("Grouping component error: {}".format(e), package.identifier)
-        message = "Grouping component created." if grouping_created else "Grouping component updated."
-        return (message, package_ids)
+    def apply_transformations(self, package):
+        if not package.transfer_data['data'].get('archivesspace_parent_identifier'):
+            self.transformer.package = package
+            self.parent = self.save_new_grouping_component()
+            package.transfer_data['data']['archivesspace_parent_identifier'] = self.parent
+            self.update_siblings(package)
 
     def save_new_grouping_component(self):
         transformed_data = self.transformer.transform_grouping_component()
-        return self.aspace_client.create(transformed_data, 'component')
+        return self.aspace_client.create(transformed_data, 'component').get('uri')
 
     def update_siblings(self, package):
         for p in package.accession_data['data']['transfers']:
@@ -116,31 +119,20 @@ class TransferComponentRoutine(Routine):
     """Transforms transfer data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as an archival object record."""
 
-    def run(self):
-        packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
-        package_ids = []
-        transfer_created = False
+    packages = Package.objects.filter(process_status=Package.GROUPING_COMPONENT_CREATED)
+    update_status = Package.TRANSFER_COMPONENT_CREATED
+    object_type = "Transfer component"
 
-        for package in packages:
-            try:
-                package.refresh_from_db()
-                if not package.transfer_data['data'].get('archivesspace_identifier'):
-                    self.transformer.package = package
-                    self.transfer_identifier = self.save_new_transfer_component()
-                    package.transfer_data['data']['archivesspace_identifier'] = self.transfer_identifier
-                    self.update_siblings(package)
-                    transfer_created = True
-                package.process_status = Package.TRANSFER_COMPONENT_CREATED
-                package.save()
-                package_ids.append(package.identifier)
-            except Exception as e:
-                raise RoutineError("Transfer component error: {}".format(e), package.identifier)
-        message = "Transfer component created." if transfer_created else "Transfer component updated."
-        return (message, package_ids)
+    def apply_transformations(self, package):
+        if not package.transfer_data['data'].get('archivesspace_identifier'):
+            self.transformer.package = package
+            self.transfer_identifier = self.save_new_transfer_component()
+            package.transfer_data['data']['archivesspace_identifier'] = self.transfer_identifier
+            self.update_siblings(package)
 
     def save_new_transfer_component(self):
         transformed_data = self.transformer.transform_component()
-        return self.aspace_client.create(transformed_data, 'component')
+        return self.aspace_client.create(transformed_data, 'component').get('uri')
 
     def update_siblings(self, package):
         for sibling in Package.objects.filter(identifier=package.identifier):
@@ -152,26 +144,18 @@ class DigitalObjectRoutine(Routine):
     """Transforms transfer data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as a digital object record."""
 
-    def run(self):
-        packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED).order_by('last_modified')[:2]
-        digital_ids = []
+    packages = Package.objects.filter(process_status=Package.TRANSFER_COMPONENT_CREATED).order_by('last_modified')[:2]
+    update_status = Package.DIGITAL_OBJECT_CREATED
+    object_type = "Digital object"
 
-        for package in packages:
-            try:
-                package.refresh_from_db()
-                self.transformer.package = package
-                self.do_identifier = self.save_new_digital_object()
-                self.update_instance(package)
-                package.process_status = Package.DIGITAL_OBJECT_CREATED
-                package.save()
-                digital_ids.append(package.identifier)
-            except Exception as e:
-                raise RoutineError("Digital object error: {}".format(e), package.identifier)
-        return ("Digital objects created.", digital_ids)
+    def apply_transformations(self, package):
+        self.transformer.package = package
+        self.do_identifier = self.save_new_digital_object()
+        self.update_instance(package)
 
     def save_new_digital_object(self):
         transformed_data = self.transformer.transform_digital_object()
-        return self.aspace_client.create(transformed_data, 'digital object')
+        return self.aspace_client.create(transformed_data, 'digital object').get('uri')
 
     def update_instance(self, package):
         transfer_component = self.aspace_client.retrieve(package.transfer_data['data']['archivesspace_identifier'])
@@ -183,7 +167,7 @@ class DigitalObjectRoutine(Routine):
         updated_component = self.aspace_client.update(package.transfer_data['data']['archivesspace_identifier'], transfer_component)
 
 
-class UpdateRequester:
+class AuroraUpdater:
     def __init__(self):
         self.client = AuroraClient(baseurl=settings.AURORA['baseurl'],
                                    username=settings.AURORA['username'],
@@ -191,16 +175,37 @@ class UpdateRequester:
 
     def run(self):
         update_ids = []
-        for package in Package.objects.filter(process_status=Package.DIGITAL_OBJECT_CREATED):
+        for obj in self.queryset:
             try:
-                data = package.transfer_data['data']
-                data['process_status'] = 90
+                data = self.update_data(obj)
                 identifier = data['url'].rstrip('/').split('/')[-1]
-                url = "/".join(["transfers", "{}/".format(identifier.lstrip('/'))])
+                prefix = data['url'].rstrip('/').split('/')[-2]
+                url = "/".join([prefix, "{}/".format(identifier.lstrip('/'))])
                 r = self.client.update(url, data=data)
-                package.process_status = Package.UPDATE_SENT
-                package.save()
-                update_ids.append(package.identifier)
+                obj.process_status = self.update_status
+                obj.save()
+                update_ids.append(obj.identifier)
             except Exception as e:
                 raise UpdateRequestError(e)
         return ("Update requests sent.", update_ids)
+
+
+class UpdateRequester(AuroraUpdater):
+    queryset = Package.objects.filter(process_status=Package.DIGITAL_OBJECT_CREATED)
+    update_status = Package.UPDATE_SENT
+
+    def update_data(self, obj):
+        data = obj.transfer_data['data']
+        data['process_status'] = 90
+        return data
+
+
+class AccessionUpdateRequester(AuroraUpdater):
+    queryset = Package.objects.filter(process_status=Package.ACCESSION_CREATED)
+    update_status = Package.ACCESSION_UPDATE_SENT
+
+    def update_data(self, obj):
+        data = obj.accession_data['data']
+        data['process_status'] = 30
+        data['accession_number'] = package.accession_data['accession_number']
+        return data
