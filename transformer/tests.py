@@ -58,7 +58,7 @@ class TransformTest(TestCase):
 
         DIGITAL_ROUTINES = (
             ('process_digital.json', DigitalObjectRoutine, Package.DIGITAL_OBJECT_CREATED),
-            ('send_update.json', UpdateRequester, Package.UPDATE_SENT)
+            ('send_update.json', TransferUpdateRequester, Package.UPDATE_SENT)
         )
         for d in DIGITAL_ROUTINES:
             with transformer_vcr.use_cassette(d[0]):
@@ -83,7 +83,7 @@ class TransformTest(TestCase):
             ('process_grouping.json', 'grouping-components', ProcessGroupingComponentsView),
             ('process_transfers.json', 'transfer-components', ProcessTransferComponentsView),
             ('process_digital.json', 'digital-objects', ProcessDigitalObjectsView),
-            ('send_update.json', 'send-update', UpdateRequestView),
+            ('send_update.json', 'send-update', TransferUpdateRequestView),
             ('send_accession_update.json', 'send-accession-update', AccessionUpdateRequestView),
         )
         for v in VIEWS:

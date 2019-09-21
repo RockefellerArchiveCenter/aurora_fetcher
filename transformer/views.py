@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from .models import Package
 from .routines import (AccessionRoutine, GroupingComponentRoutine,
                        TransferComponentRoutine, DigitalObjectRoutine,
-                       UpdateRequester, AccessionUpdateRequester)
+                       TransferUpdateRequester, AccessionUpdateRequester)
 from .serializers import PackageSerializer, PackageListSerializer
 
 
@@ -82,9 +82,9 @@ class ProcessDigitalObjectsView(ProcessView):
     routine = DigitalObjectRoutine
 
 
-class UpdateRequestView(ProcessView):
+class TransferUpdateRequestView(ProcessView):
     """Sends request with updated information to Aurora. Accepts POST requests only."""
-    routine = UpdateRequester
+    routine = TransferUpdateRequester
 
 
 class AccessionUpdateRequestView(ProcessView):

@@ -107,7 +107,7 @@ class GroupingComponentRoutine(Routine):
        and delivers the transformed data to ArchivesSpace where it is saved
        as an archival object record."""
 
-    start_status = Package.ACCESSION_CREATED
+    start_status = Package.ACCESSION_UPDATE_SENT
     end_status = Package.GROUPING_COMPONENT_CREATED
     object_type = "Grouping component"
 
@@ -182,6 +182,16 @@ class DigitalObjectRoutine(Routine):
 
 
 class AuroraUpdater:
+    """
+    Base class for routines that interact with Aurora. Provides a web client
+    and a `run` method.
+
+    To use this class, override the `update_data` method. This method specifies
+    the data object to be delivered to Aurora, as well as any changes to that
+    object. Classes inheriting this class should also specify a `start_status`
+    and an `end_status`, which determine the queryset of objects acted on and
+    the status to which those objects are updated, respectively.
+    """
     def __init__(self):
         self.client = AuroraClient(baseurl=settings.AURORA['baseurl'],
                                    username=settings.AURORA['username'],
@@ -204,7 +214,8 @@ class AuroraUpdater:
         return ("Update requests sent.", update_ids)
 
 
-class UpdateRequester(AuroraUpdater):
+class TransferUpdateRequester(AuroraUpdater):
+    """Updates transfer data in Aurora."""
     start_status = Package.DIGITAL_OBJECT_CREATED
     end_status = Package.UPDATE_SENT
 
@@ -215,6 +226,7 @@ class UpdateRequester(AuroraUpdater):
 
 
 class AccessionUpdateRequester(AuroraUpdater):
+    """Updates accession data in Aurora."""
     start_status = Package.ACCESSION_CREATED
     end_status = Package.ACCESSION_UPDATE_SENT
 
