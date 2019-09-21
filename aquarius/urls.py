@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^grouping-components/', ProcessGroupingComponentsView.as_view(), name="grouping-components"),
     url(r'^transfer-components/', ProcessTransferComponentsView.as_view(), name="transfer-components"),
     url(r'^digital-objects/', ProcessDigitalObjectsView.as_view(), name="digital-objects"),
-    url(r'^send-update/', UpdateRequestView.as_view(), name="send-update"),
+    url(r'^send-update/', TransferUpdateRequestView.as_view(), name="send-update"),
     url(r'^send-accession-update/', AccessionUpdateRequestView.as_view(), name="send-accession-update"),
     url(r'^status/', include('health_check.api.urls')),
     url(r'^admin/', admin.site.urls),
