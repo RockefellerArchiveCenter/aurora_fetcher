@@ -138,9 +138,8 @@ class AuroraClient:
             raise AuroraClientError("Could not authorize {} in Aurora".format(username))
 
     def update(self, url, data, *args, **kwargs):
-        try:
-            resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
-            if resp.status_code == 200:
-                return resp.json()
-        except Exception as e:
-            raise AuroraClientError("Error updating object in Aurora: {}".format(e))
+        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
+        if resp.status_code == 200:
+            return resp.json()
+        else:
+            raise AuroraClientError("Error sending request {} to Aurora: {}".format(url, resp.json()))

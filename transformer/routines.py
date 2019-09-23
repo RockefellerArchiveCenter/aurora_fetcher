@@ -67,7 +67,6 @@ class AccessionRoutine(Routine):
             self.transformer.package = package
             transformed_data = self.transformer.transform_accession()
             self.save_new_accession(transformed_data)
-        package.save()
 
     def discover_sibling_data(self, package):
         if Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False).exists():
@@ -233,5 +232,4 @@ class AccessionUpdateRequester(AuroraUpdater):
     def update_data(self, obj):
         data = obj.accession_data['data']
         data['process_status'] = 30
-        data['accession_number'] = package.accession_data['accession_number']
         return data

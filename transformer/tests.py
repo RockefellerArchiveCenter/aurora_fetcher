@@ -46,6 +46,7 @@ class TransformTest(TestCase):
     def process_transfers(self):
         ROUTINES = (
             ('process_accessions.json', AccessionRoutine, Package.ACCESSION_CREATED),
+            ('send_accession_update.json', AccessionUpdateRequester, Package.ACCESSION_UPDATE_SENT),
             ('process_grouping.json', GroupingComponentRoutine, Package.GROUPING_COMPONENT_CREATED),
             ('process_transfers.json', TransferComponentRoutine, Package.TRANSFER_COMPONENT_CREATED),
         )
