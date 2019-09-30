@@ -33,6 +33,8 @@ class ArchivesSpaceClient(object):
         if r.status_code == 200:
             return r.json()
         else:
+            if resp.json()['error'].get('id_0'):
+                raise ArchivesSpaceClientAccessionNumberError(resp.json()['error'])
             raise ArchivesSpaceClientError('Error sending {} request to {}: {}'.format(method, url, r.json()['error']))
 
     def retrieve(self, url, *args, **kwargs):
@@ -77,16 +79,14 @@ class ArchivesSpaceClient(object):
         try:
             query = json.dumps({"query": {"field": "four_part_id", "value": current_year, "jsonmodel_type": "field_query"}})
             r = self.client.get('search', params={"page": 1, "type[]": "accession", "sort": "identifier desc", "aq": query}).json()
-            if r.get('total_hits') < 1:
-                return [current_year, "001"]
-            else:
+            number = '001'
+            if r.get('total_hits') >= 1:
                 if r['results'][0]['identifier'].split("-")[0] == current_year:
                     id_1 = int(r['results'][0]['identifier'].split("-")[1])
                     id_1 += 1
                     updated = str(id_1).zfill(3)
-                    return [current_year, updated]
-                else:
-                    return [current_year, "001"]
+                    number = updated
+            return [current_year, number]
         except Exception as e:
             raise ArchivesSpaceClientError('Error retrieving next accession number from ArchivesSpace: {}'.format(e))
 
