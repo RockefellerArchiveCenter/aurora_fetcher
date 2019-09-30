@@ -33,8 +33,8 @@ class ArchivesSpaceClient(object):
         if r.status_code == 200:
             return r.json()
         else:
-            if resp.json()['error'].get('id_0'):
-                raise ArchivesSpaceClientAccessionNumberError(resp.json()['error'])
+            if r.json()['error'].get('id_0'):
+                raise ArchivesSpaceClientAccessionNumberError(r.json()['error'])
             raise ArchivesSpaceClientError('Error sending {} request to {}: {}'.format(method, url, r.json()['error']))
 
     def retrieve(self, url, *args, **kwargs):
