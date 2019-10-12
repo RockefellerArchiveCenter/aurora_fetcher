@@ -22,6 +22,24 @@ transformer_vcr = vcr.VCR(
     filter_headers=['Authorization', 'X-ArchivesSpace-Session'],
 )
 
+ROUTINES = (
+    ('process_accessions.json', AccessionRoutine, Package.ACCESSION_CREATED),
+    ('send_accession_update.json', AccessionUpdateRequester, Package.ACCESSION_UPDATE_SENT),
+    ('process_grouping.json', GroupingComponentRoutine, Package.GROUPING_COMPONENT_CREATED),
+    ('process_transfers.json', TransferComponentRoutine, Package.TRANSFER_COMPONENT_CREATED),
+    ('process_digital.json', DigitalObjectRoutine, Package.DIGITAL_OBJECT_CREATED),
+    ('send_update.json', TransferUpdateRequester, Package.UPDATE_SENT),
+)
+
+VIEWS = (
+    ('process_accessions.json', 'accessions', ProcessAccessionsView),
+    ('process_grouping.json', 'grouping-components', ProcessGroupingComponentsView),
+    ('process_transfers.json', 'transfer-components', ProcessTransferComponentsView),
+    ('process_digital.json', 'digital-objects', ProcessDigitalObjectsView),
+    ('send_update.json', 'send-update', TransferUpdateRequestView),
+    ('send_accession_update.json', 'send-accession-update', AccessionUpdateRequestView),
+)
+
 
 class TransformTest(TestCase):
     def setUp(self):
@@ -44,30 +62,12 @@ class TransformTest(TestCase):
         self.assertEqual(len(self.transfer_data), len(Package.objects.all()))
 
     def process_transfers(self):
-        ROUTINES = (
-            ('process_accessions.json', AccessionRoutine, Package.ACCESSION_CREATED),
-            ('send_accession_update.json', AccessionUpdateRequester, Package.ACCESSION_UPDATE_SENT),
-            ('process_grouping.json', GroupingComponentRoutine, Package.GROUPING_COMPONENT_CREATED),
-            ('process_transfers.json', TransferComponentRoutine, Package.TRANSFER_COMPONENT_CREATED),
-        )
         for r in ROUTINES:
             with transformer_vcr.use_cassette(r[0]):
                 accessions = r[1]().run()
                 self.assertNotEqual(False, accessions)
                 for transfer in Package.objects.all():
                     self.assertEqual(int(transfer.process_status), r[2])
-
-        DIGITAL_ROUTINES = (
-            ('process_digital.json', DigitalObjectRoutine, Package.DIGITAL_OBJECT_CREATED),
-            ('send_update.json', TransferUpdateRequester, Package.UPDATE_SENT)
-        )
-        for d in DIGITAL_ROUTINES:
-            with transformer_vcr.use_cassette(d[0]):
-                digital = d[1]().run()
-                self.assertNotEqual(False, digital)
-                for transfer in Package.objects.all().order_by('-last_modified')[:2]:
-                    self.assertEqual(int(transfer.process_status), d[2])
-
         self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
     def search_objects(self):
@@ -79,14 +79,6 @@ class TransformTest(TestCase):
 
     def process_views(self):
         print('*** Test ProcessAccessionsView ***')
-        VIEWS = (
-            ('process_accessions.json', 'accessions', ProcessAccessionsView),
-            ('process_grouping.json', 'grouping-components', ProcessGroupingComponentsView),
-            ('process_transfers.json', 'transfer-components', ProcessTransferComponentsView),
-            ('process_digital.json', 'digital-objects', ProcessDigitalObjectsView),
-            ('send_update.json', 'send-update', TransferUpdateRequestView),
-            ('send_accession_update.json', 'send-accession-update', AccessionUpdateRequestView),
-        )
         for v in VIEWS:
             with transformer_vcr.use_cassette(v[0]):
                 request = self.factory.post(reverse(v[1]))
