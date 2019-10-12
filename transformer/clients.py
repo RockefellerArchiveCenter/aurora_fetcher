@@ -27,9 +27,9 @@ class ArchivesSpaceClient(object):
             'digital object': ['digital_objects', 'repositories/{repo_id}/digital_objects'.format(repo_id=self.repo_id)]
         }
 
-    def send_request(self, method, url, data=None, *args, **kwargs):
+    def send_request(self, method, url, data=None, **kwargs):
         """Base method for sending requests to ArchivesSpace."""
-        r = getattr(self.client, method)(url, data=json.dumps(data), *args, **kwargs)
+        r = getattr(self.client, method)(url, data=json.dumps(data), **kwargs)
         if r.status_code == 200:
             return r.json()
         else:
@@ -37,14 +37,14 @@ class ArchivesSpaceClient(object):
                 raise ArchivesSpaceClientAccessionNumberError(r.json()['error'])
             raise ArchivesSpaceClientError('Error sending {} request to {}: {}'.format(method, url, r.json()['error']))
 
-    def retrieve(self, url, *args, **kwargs):
-        return self.send_request('get', url, *args, **kwargs)
+    def retrieve(self, url, **kwargs):
+        return self.send_request('get', url, **kwargs)
 
-    def create(self, data, type, *args, **kwargs):
-        return self.send_request('post', self.TYPE_LIST[type][1], data, *args, **kwargs)
+    def create(self, data, type, **kwargs):
+        return self.send_request('post', self.TYPE_LIST[type][1], data, **kwargs)
 
-    def update(self, uri, data, *args, **kwargs):
-        return self.send_request('post', uri, data, *args, *kwargs)
+    def update(self, uri, data, **kwargs):
+        return self.send_request('post', uri, data, **kwargs)
 
     def get_or_create(self, type, field, value, last_updated, consumer_data):
         """
@@ -97,27 +97,27 @@ class UrsaMajorClient(object):
     def __init__(self, baseurl):
         self.client = ElectronBond(baseurl=baseurl)
 
-    def send_request(self, method, url, data=None, *args, **kwargs):
+    def send_request(self, method, url, data=None, **kwargs):
         """Base class for sending requests to Ursa Major"""
         try:
-            return getattr(self.client, method)(url, data=json.dumps(data), *args, **kwargs).json()
+            return getattr(self.client, method)(url, data=json.dumps(data), **kwargs).json()
         except Exception as e:
             raise UrsaMajorClientError("Error sending {} request to {}: {}".format(method, url, e))
 
     def retrieve(self, url, *args, **kwargs):
-        return self.send_request('get', url, *args, **kwargs)
+        return self.send_request('get', url, **kwargs)
 
-    def update(self, url, data, *args, **kwargs):
-        return self.send_request('put', url, data, headers={"Content-Type":"application/json"}, *args, **kwargs)
+    def update(self, url, data, **kwargs):
+        return self.send_request('put', url, data, headers={"Content-Type":"application/json"}, **kwargs)
 
-    def retrieve_paged(self, url, *args, **kwargs):
+    def retrieve_paged(self, url, **kwargs):
         try:
-            resp = self.client.get_paged(url, *args, **kwargs)
+            resp = self.client.get_paged(url, **kwargs)
             return resp
         except Exception as e:
             raise UrsaMajorClientError("Error retrieving list from Ursa Major: {}".format(e))
 
-    def find_bag_by_id(self, identifier, *args, **kwargs):
+    def find_bag_by_id(self, identifier, **kwargs):
         """Finds a bag by its id."""
         try:
             bag_resp = self.client.get("bags/", params={"id": identifier}).json()
@@ -137,8 +137,8 @@ class AuroraClient:
         if not self.client.authorize():
             raise AuroraClientError("Could not authorize {} in Aurora".format(username))
 
-    def update(self, url, data, *args, **kwargs):
-        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
+    def update(self, url, data, **kwargs):
+        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, **kwargs)
         if resp.status_code == 200:
             return resp.json()
         else:
