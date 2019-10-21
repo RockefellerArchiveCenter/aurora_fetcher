@@ -22,7 +22,7 @@ MarkupSafe==1.0
 more-itertools==7.2.0
 multidict==4.5.2
 psycopg2-binary==2.7.4
-pytz==2019.2
+pytz==2019.3
 PyYAML==5.1.2
 requests==2.22.0
 rfc3987==1.3.7
