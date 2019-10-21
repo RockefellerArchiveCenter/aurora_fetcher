@@ -7,7 +7,7 @@ click==6.7
 clinner==1.12.3
 colorlog==3.1.4
 Django==2.2.6
-djangorestframework==3.10.2
+djangorestframework==3.10.3
 ElectronBonder==0.5
 git+https://github.com/RockefellerArchiveCenter/asterism@v0.1#egg=asterism
 gitdb2==2.0.3
