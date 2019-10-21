@@ -1,6 +1,5 @@
 from iso639 import languages as langz
 import iso8601
-import json
 import time
 
 from aquarius import settings
@@ -133,7 +132,7 @@ class DataTransformer:
                 "file_versions": [{
                     "file_uri": data.fedora_uri,
                     "use_statement": data.get_use_statement()}],
-                "repository": {"ref": "/repositories/2"}
+                "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])}
                 }
         except Exception as e:
             raise TransformError('Error transforming digital object: {}'.format(e))

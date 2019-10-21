@@ -1,15 +1,7 @@
-from asnake.client import *
-from electronbonder.client import *
+from asnake.client import ASnakeClient
+from electronbonder.client import ElectronBond
 from datetime import date
 import json
-import logging
-import requests
-from structlog import wrap_logger
-from uuid import uuid4
-
-logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
-logger = wrap_logger(logger)
 
 
 class ArchivesSpaceClientError(Exception): pass
@@ -22,180 +14,132 @@ class ArchivesSpaceClient(object):
     """Client to get and receive data from ArchivesSpace."""
 
     def __init__(self, baseurl, username, password, repo_id):
-        self.log = logger.bind(transaction_id=str(uuid4()))
         self.client = ASnakeClient(baseurl=baseurl, username=username, password=password)
         self.repo_id = repo_id
         if not self.client.authorize():
-            self.log.error(
-                "Couldn't authenticate user credentials for ArchivesSpace",
-                object=username)
             raise ArchivesSpaceClientError("Couldn't authenticate user credentials for ArchivesSpace")
-
-    def create(self, data, type, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        ENDPOINTS = {
-            'component': 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id),
-            'accession': 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id),
-            'digital object': 'repositories/{repo_id}/digital_objects'.format(repo_id=self.repo_id),
-            'person': 'agents/people',
-            'organization': 'agents/corporate_entities',
-            'family': 'agents/families',
+        self.TYPE_LIST = {
+            'family': ['agent_family', 'agents/families'],
+            'organization': ['agent_corporate_entity', 'agents/corporate_entities'],
+            'person': ['agent_person', 'agents/people'],
+            'component': ['archival_object', 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id)],
+            'accession': ['accession', 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id)],
+            'digital object': ['digital_objects', 'repositories/{repo_id}/digital_objects'.format(repo_id=self.repo_id)]
         }
-        resp = self.client.post(ENDPOINTS[type], data=json.dumps(data), *args, **kwargs)
-        if resp.status_code == 200:
-            self.log.debug("Object created in Archivesspace", object=resp.json()['uri'])
-            return resp.json()['uri']
-        else:
-            self.log.error('Error creating object in ArchivesSpace: {}'.format(resp.json()['error']))
-            if resp.json()['error'].get('id_0'):
-                raise ArchivesSpaceClientAccessionNumberError(resp.json()['error'])
-            else:
-                raise ArchivesSpaceClientError(resp.json()['error'])
 
-    def update(self, uri, data, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        try:
-            resp = self.client.post(uri, data=json.dumps(data), *args, **kwargs)
-            if resp.status_code == 200:
-                self.log.debug("Object updated in Archivesspace", object=resp.json()['uri'])
-                return resp.json()['uri']
-            else:
-                self.log.error('Error updating object in ArchivesSpace: {}'.format(resp.json()['error']))
-                raise ArchivesSpaceClientError('Error updating object in ArchivesSpace: {}'.format(resp.json()['error']))
-        except Exception as e:
-            self.log.error('Error updating object in ArchivesSpace: {}'.format(e))
-            raise ArchivesSpaceClientError('Error updating object in ArchivesSpace: {}'.format(e))
+    def send_request(self, method, url, data=None, **kwargs):
+        """Base method for sending requests to ArchivesSpace."""
+        r = getattr(self.client, method)(url, data=json.dumps(data), **kwargs)
+        if r.status_code == 200:
+            return r.json()
+        else:
+            if r.json()['error'].get('id_0'):
+                raise ArchivesSpaceClientAccessionNumberError(r.json()['error'])
+            raise ArchivesSpaceClientError('Error sending {} request to {}: {}'.format(method, url, r.json()['error']))
+
+    def retrieve(self, url, **kwargs):
+        return self.send_request('get', url, **kwargs)
+
+    def create(self, data, type, **kwargs):
+        return self.send_request('post', self.TYPE_LIST[type][1], data, **kwargs)
+
+    def update(self, uri, data, **kwargs):
+        return self.send_request('post', uri, data, **kwargs)
 
     def get_or_create(self, type, field, value, last_updated, consumer_data):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        TYPE_LIST = (
-            ('family', 'agent_family', 'agents/families'),
-            ('organization', 'agent_corporate_entity', 'agents/corporate_entities'),
-            ('person', 'agent_person', 'agents/people'),
-            ('component', 'archival_object', 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id)),
-            ('grouping_component', 'archival_object', 'repositories/{repo_id}/archival_objects'.format(repo_id=self.repo_id)),
-            ('accession', 'accession', 'repositories/{repo_id}/accessions'.format(repo_id=self.repo_id))
-        )
-        model_type = [t[1] for t in TYPE_LIST if t[0] == type][0]
-        endpoint = [t[2] for t in TYPE_LIST if t[0] == type][0]
+        """
+        Attempts to find and return an object in ArchivesSpace.
+        If the object is not found, creates and returns a new object.
+        """
+        model_type = self.TYPE_LIST[type][0]
+        endpoint = self.TYPE_LIST[type][1]
         query = json.dumps({"query": {"field": field, "value": value, "jsonmodel_type": "field_query"}})
         try:
-            resp = self.client.get('search', params={"page": 1, "type[]": model_type, "aq": query})
-            if len(resp.json()['results']) == 0:
-                resp = self.client.get(endpoint, params={"all_ids": True, "modified_since": last_updated-120})
-                for ref in resp.json():
-                    resp = self.client.get('{}/{}'.format(endpoint, ref))
-                    if resp.json()[field] == str(value):
-                        return resp.json()['uri']
-                self.log.debug("No match for object found in ArchivesSpace", object=value)
+            r = self.client.get('search', params={"page": 1, "type[]": model_type, "aq": query}).json()
+            if len(r['results']) == 0:
+                r = self.client.get(endpoint, params={"all_ids": True, "modified_since": last_updated-120}).json()
+                for ref in r:
+                    r = self.client.get('{}/{}'.format(endpoint, ref)).json()
+                    if r[field] == str(value):
+                        return r['uri']
                 return self.create(consumer_data, type)
-            return resp.json()['results'][0]['uri']
+            return r['results'][0]['uri']
         except Exception as e:
-            self.log.error('Error finding or creating object in ArchivesSpace: {}'.format(e))
             raise ArchivesSpaceClientError('Error finding or creating object in ArchivesSpace: {}'.format(e))
 
-    def retrieve(self, url, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        try:
-            resp = self.client.get(url, *args, **kwargs)
-            if resp.status_code == 200:
-                self.log.debug("Object retrieved from Archivesspace")
-                return resp.json()
-            else:
-                self.log.error('Error retrieving object from ArchivesSpace: {}'.format(resp.json()['error']))
-                raise ArchivesSpaceClientError('Error retrieving object from ArchivesSpace: {}'.format(resp.json()['error']))
-        except Exception as e:
-            self.log.error('Error retrieving object from ArchivesSpace: {}'.format(e))
-            raise ArchivesSpaceClientError('Error retrieving object from ArchivesSpace: {}'.format(e))
-
     def next_accession_number(self):
+        """
+        Finds the next available accession number by searching for accession
+        numbers with the current year, and then incrementing.
+
+        Assumes that accession numbers are in the format YYYY NNN, where YYYY
+        is the current year and NNN is a zero-padded integer.
+        """
         current_year = str(date.today().year)
         try:
             query = json.dumps({"query": {"field": "four_part_id", "value": current_year, "jsonmodel_type": "field_query"}})
-            resp = self.client.get('search', params={"page": 1, "type[]": "accession", "sort": "identifier desc", "aq": query}).json()
-            if resp.get('total_hits') < 1:
-                return [current_year, "001"]
-            else:
-                if resp['results'][0]['identifier'].split("-")[0] == current_year:
-                    id_1 = int(resp['results'][0]['identifier'].split("-")[1])
+            r = self.client.get('search', params={"page": 1, "type[]": "accession", "sort": "identifier desc", "aq": query}).json()
+            number = '001'
+            if r.get('total_hits') >= 1:
+                if r['results'][0]['identifier'].split("-")[0] == current_year:
+                    id_1 = int(r['results'][0]['identifier'].split("-")[1])
                     id_1 += 1
                     updated = str(id_1).zfill(3)
-                    return [current_year, updated]
-                else:
-                    return [current_year, "001"]
+                    number = updated
+            return [current_year, number]
         except Exception as e:
-            self.log.error('Error retrieving next accession number from ArchivesSpace: {}'.format(e))
             raise ArchivesSpaceClientError('Error retrieving next accession number from ArchivesSpace: {}'.format(e))
 
 
 class UrsaMajorClient(object):
-    """Client to get and receive data from UrsaMajor."""
+    """Client to get and receive data from Ursa Major."""
 
     def __init__(self, baseurl):
-        self.log = logger.bind(transaction_id=str(uuid4()))
         self.client = ElectronBond(baseurl=baseurl)
 
-    def retrieve(self, url, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
+    def send_request(self, method, url, data=None, **kwargs):
+        """Base class for sending requests to Ursa Major"""
         try:
-            resp = self.client.get(url, *args, **kwargs)
-            self.log.debug("Object retrieved from Ursa Major", object=url)
-            return resp.json()
+            return getattr(self.client, method)(url, data=json.dumps(data), **kwargs).json()
         except Exception as e:
-            self.log.error("Error retrieving data from Ursa Major: {}".format(e))
-            raise UrsaMajorClientError("Error retrieving data from Ursa Major: {}".format(e))
+            raise UrsaMajorClientError("Error sending {} request to {}: {}".format(method, url, e))
 
-    def retrieve_paged(self, url, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
+    def retrieve(self, url, *args, **kwargs):
+        return self.send_request('get', url, **kwargs)
+
+    def update(self, url, data, **kwargs):
+        return self.send_request('put', url, data, headers={"Content-Type":"application/json"}, **kwargs)
+
+    def retrieve_paged(self, url, **kwargs):
         try:
-            resp = self.client.get_paged(url, *args, **kwargs)
-            self.log.debug("List retrieved from Ursa Major", object=url)
+            resp = self.client.get_paged(url, **kwargs)
             return resp
         except Exception as e:
-            self.log.error("Error retrieving list from Ursa Major: {}".format(e))
             raise UrsaMajorClientError("Error retrieving list from Ursa Major: {}".format(e))
 
-    def update(self, url, data, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        try:
-            resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
-            self.log.debug("Object saved in Ursa Major", object=url)
-            return resp.json()
-        except Exception as e:
-            self.log.error("Error updating object in Ursa Major: {}".format(e))
-            raise UrsaMajorClientError("Error updating object in Ursa Major: {}".format(e))
-
-    def find_bag_by_id(self, identifier, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
+    def find_bag_by_id(self, identifier, **kwargs):
+        """Finds a bag by its id."""
         try:
             bag_resp = self.client.get("bags/", params={"id": identifier}).json()
             count = bag_resp.get('count')
             if count != 1:
-                self.log.error("Found {} bags matching id {}, expected 1".format(count, identifier))
                 raise UrsaMajorClientError("Found {} bags matching id {}, expected 1".format(count, identifier))
             bag_url = bag_resp.get('results')[0]['url']
-            resp = self.client.get(bag_url, *args, **kwargs).json()
-            self.log.debug("Object retrieved from Ursa Major", object=bag_url)
-            return resp
+            return self.send_request('get', bag_url)
         except Exception as e:
-            self.log.error("Error finding bag by id: {}".format(e))
             raise UrsaMajorClientError("Error finding bag by id: {}".format(e))
 
 
 class AuroraClient:
 
     def __init__(self, baseurl, username, password):
-        self.log = logger.bind(transaction_id=str(uuid4()))
         self.client = ElectronBond(baseurl=baseurl, username=username, password=password)
         if not self.client.authorize():
             raise AuroraClientError("Could not authorize {} in Aurora".format(username))
 
-    def update(self, url, data, *args, **kwargs):
-        self.log = self.log.bind(request_id=str(uuid4()))
-        try:
-            resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, *args, **kwargs)
-            self.log.debug("Object saved in Ursa Major", object=url)
-            if resp.status_code == 200:
-                return resp.json()
-        except Exception as e:
-            raise AuroraClientError("Error updating object in Aurora: {}".format(e))
+    def update(self, url, data, **kwargs):
+        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, **kwargs)
+        if resp.status_code == 200:
+            return resp.json()
+        else:
+            raise AuroraClientError("Error sending request {} to Aurora: {}".format(url, resp.json()))

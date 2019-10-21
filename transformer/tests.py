@@ -22,6 +22,24 @@ transformer_vcr = vcr.VCR(
     filter_headers=['Authorization', 'X-ArchivesSpace-Session'],
 )
 
+ROUTINES = (
+    ('process_accessions.json', AccessionRoutine, Package.ACCESSION_CREATED),
+    ('send_accession_update.json', AccessionUpdateRequester, Package.ACCESSION_UPDATE_SENT),
+    ('process_grouping.json', GroupingComponentRoutine, Package.GROUPING_COMPONENT_CREATED),
+    ('process_transfers.json', TransferComponentRoutine, Package.TRANSFER_COMPONENT_CREATED),
+    ('process_digital.json', DigitalObjectRoutine, Package.DIGITAL_OBJECT_CREATED),
+    ('send_update.json', TransferUpdateRequester, Package.UPDATE_SENT),
+)
+
+VIEWS = (
+    ('process_accessions.json', 'accessions', ProcessAccessionsView),
+    ('process_grouping.json', 'grouping-components', ProcessGroupingComponentsView),
+    ('process_transfers.json', 'transfer-components', ProcessTransferComponentsView),
+    ('process_digital.json', 'digital-objects', ProcessDigitalObjectsView),
+    ('send_update.json', 'send-update', TransferUpdateRequestView),
+    ('send_accession_update.json', 'send-accession-update', AccessionUpdateRequestView),
+)
+
 
 class TransformTest(TestCase):
     def setUp(self):
@@ -40,46 +58,16 @@ class TransformTest(TestCase):
         for transfer in self.transfer_data:
             request = self.factory.post(reverse('package-list'), transfer, format='json')
             response = PackageViewSet.as_view(actions={"post": "create"})(request)
-            print('Created transfer {url}'.format(url=response.data['url']))
             self.assertEqual(response.status_code, 200, "Wrong HTTP code")
         self.assertEqual(len(self.transfer_data), len(Package.objects.all()))
 
     def process_transfers(self):
-        with transformer_vcr.use_cassette('process_accessions.json'):
-            print('*** Processing Accessions ***')
-            accessions = AccessionRoutine().run()
-            self.assertNotEqual(False, accessions)
-            for transfer in Package.objects.all():
-                self.assertEqual(int(transfer.process_status), Package.ACCESSION_CREATED)
-
-        with transformer_vcr.use_cassette('process_grouping.json'):
-            print('*** Processing Grouping Components ***')
-            grouping = GroupingComponentRoutine().run()
-            self.assertNotEqual(False, grouping)
-            for transfer in Package.objects.all():
-                self.assertEqual(int(transfer.process_status), Package.GROUPING_COMPONENT_CREATED)
-
-        with transformer_vcr.use_cassette('process_transfers.json'):
-            print('*** Processing Transfer Components ***')
-            transfers = TransferComponentRoutine().run()
-            self.assertNotEqual(False, transfers)
-            for transfer in Package.objects.all():
-                self.assertEqual(int(transfer.process_status), Package.TRANSFER_COMPONENT_CREATED)
-
-        with transformer_vcr.use_cassette('process_digital.json'):
-            print('*** Processing Digital Objects ***')
-            digital = DigitalObjectRoutine().run()
-            self.assertNotEqual(False, digital)
-            for transfer in Package.objects.all().order_by('-last_modified')[:2]:
-                self.assertEqual(int(transfer.process_status), Package.DIGITAL_OBJECT_CREATED)
-
-        with transformer_vcr.use_cassette('send_update.json'):
-            print('*** Sending update request ***')
-            update = UpdateRequester().run()
-            self.assertNotEqual(False, update)
-            for transfer in Package.objects.all().order_by('-last_modified')[:2]:
-                self.assertEqual(int(transfer.process_status), Package.UPDATE_SENT)
-
+        for r in ROUTINES:
+            with transformer_vcr.use_cassette(r[0]):
+                accessions = r[1]().run()
+                self.assertNotEqual(False, accessions)
+                for transfer in Package.objects.all():
+                    self.assertEqual(int(transfer.process_status), r[2])
         self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
     def search_objects(self):
@@ -91,34 +79,15 @@ class TransformTest(TestCase):
 
     def process_views(self):
         print('*** Test ProcessAccessionsView ***')
-        with transformer_vcr.use_cassette('process_accessions.json'):
-            request = self.factory.post(reverse('accessions'))
-            response = ProcessAccessionsView.as_view()(request)
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-
-        with transformer_vcr.use_cassette('process_grouping.json'):
-            request = self.factory.post(reverse('grouping-components'))
-            response = ProcessGroupingComponentsView.as_view()(request)
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-
-        with transformer_vcr.use_cassette('process_transfers.json'):
-            request = self.factory.post(reverse('transfer-components'))
-            response = ProcessTransferComponentsView.as_view()(request)
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-
-        with transformer_vcr.use_cassette('process_digital.json'):
-            request = self.factory.post(reverse('digital-objects'))
-            response = ProcessDigitalObjectsView.as_view()(request)
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
-
-        with transformer_vcr.use_cassette('send_update.json'):
-            request = self.factory.post(reverse('send-update'))
-            response = UpdateRequestView.as_view()(request)
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+        for v in VIEWS:
+            with transformer_vcr.use_cassette(v[0]):
+                request = self.factory.post(reverse(v[1]))
+                response = v[2].as_view()(request)
+                self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):
         print('*** Getting schema view ***')
-        schema = self.client.get(reverse('schema-json', kwargs={"format": ".json"}))
+        schema = self.client.get(reverse('schema'))
         self.assertEqual(schema.status_code, 200, "Wrong HTTP code")
 
     def health_check(self):

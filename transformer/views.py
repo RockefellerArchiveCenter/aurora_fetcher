@@ -1,20 +1,15 @@
 from datetime import datetime
-import logging
-from structlog import wrap_logger
-import urllib
-from uuid import uuid4
 
+from asterism.views import prepare_response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
 from .models import Package
-from .routines import AccessionRoutine, GroupingComponentRoutine, TransferComponentRoutine, DigitalObjectRoutine, UpdateRequester
+from .routines import (AccessionRoutine, GroupingComponentRoutine,
+                       TransferComponentRoutine, DigitalObjectRoutine,
+                       TransferUpdateRequester, AccessionUpdateRequester)
 from .serializers import PackageSerializer, PackageListSerializer
-
-logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
-logger = wrap_logger(logger)
 
 
 class PackageViewSet(ModelViewSet):
@@ -41,10 +36,9 @@ class PackageViewSet(ModelViewSet):
                 package_type=request.data['package_type'],
                 process_status=Package.SAVED
             )
-            serializer = PackageSerializer(source_object, context={'request': request})
-            return Response(serializer.data)
+            return Response(prepare_response(("Package created", source_object.identifier)))
         except Exception as e:
-            return Response("Error creating package: {}".format(str(e)))
+            return Response(prepare_response("Error creating package: {}".format(str(e))))
 
     def get_queryset(self):
         queryset = Package.objects.all().order_by('-last_modified')
@@ -61,47 +55,38 @@ class PackageViewSet(ModelViewSet):
 
 class ProcessView(APIView):
     def post(self, request, format=None):
-        log = logger.new(transaction_id=str(uuid4()))
-
         try:
-            message = self.routine().run()
-            return Response({"detail": message}, status=200)
+            response = self.routine().run()
+            return Response(prepare_response(response), status=200)
         except Exception as e:
-            return Response({"detail": str(e)}, status=500)
+            return Response(prepare_response(e), status=500)
 
 
 class ProcessAccessionsView(ProcessView):
     """Runs the AccessionRoutine. Accepts POST requests only."""
-    def __init__(self):
-        self.routine = AccessionRoutine
+    routine = AccessionRoutine
 
 
 class ProcessGroupingComponentsView(ProcessView):
     """Runs the GroupingComponentRoutine. Accepts POST requests only."""
-    def __init__(self):
-        self.routine = GroupingComponentRoutine
+    routine = GroupingComponentRoutine
 
 
 class ProcessTransferComponentsView(ProcessView):
     """Runs the TransferComponentRoutine. Accepts POST requests only."""
-    def __init__(self):
-        self.routine = TransferComponentRoutine
+    routine = TransferComponentRoutine
 
 
 class ProcessDigitalObjectsView(ProcessView):
     """Runs the DigitalObjectRoutine. Accepts POST requests only."""
-    def __init__(self):
-        self.routine = DigitalObjectRoutine
+    routine = DigitalObjectRoutine
 
 
-class UpdateRequestView(APIView):
+class TransferUpdateRequestView(ProcessView):
     """Sends request with updated information to Aurora. Accepts POST requests only."""
+    routine = TransferUpdateRequester
 
-    def post(self, request):
-        log = logger.new(transaction_id=str(uuid4()))
 
-        try:
-            update = UpdateRequester().run()
-            return Response({"detail": update}, status=200)
-        except Exception as e:
-            return Response({"detail": str(e)}, status=500)
+class AccessionUpdateRequestView(ProcessView):
+    """Sends request with updated information to Aurora. Accepts POST requests only."""
+    routine = AccessionUpdateRequester

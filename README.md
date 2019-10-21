@@ -62,11 +62,6 @@ aquarius has six services, all of which are exposed via HTTP endpoints (see [Rou
 |GET|/schema.json||200|Returns the OpenAPI schema for this application|
 
 
-### Logging
-
-aquarius uses `structlog` to output structured JSON logs. Logging can be configured in `aquarius/settings.py`.
-
-
 ### ArchivesSpace configuration
 
 In order to successfully save data to ArchivesSpace, you will have to make some changes to some of the default enumerations:
