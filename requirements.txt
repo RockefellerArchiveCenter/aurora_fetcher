@@ -11,7 +11,7 @@ djangorestframework==3.10.3
 ElectronBonder==0.5
 git+https://github.com/RockefellerArchiveCenter/asterism@v0.1#egg=asterism
 gitdb2==2.0.3
-GitPython==2.1.9
+GitPython==3.0.4
 health-check==3.4.1
 idna==2.7
 iso-639==0.4.5
