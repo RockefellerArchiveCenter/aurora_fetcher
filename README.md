@@ -5,6 +5,7 @@ A microservice to transform and deliver Accessions, Archival Objects and Digital
 aquarius is part of [Project Electron](https://github.com/RockefellerArchiveCenter/project_electron), an initiative to build sustainable, open and user-centered infrastructure for the archival management of digital records at the [Rockefeller Archive Center](http://rockarch.org/).
 
 [![Build Status](https://travis-ci.org/RockefellerArchiveCenter/aquarius.svg?branch=master)](https://travis-ci.org/RockefellerArchiveCenter/aquarius)
+![GitHub (pre-)release](https://img.shields.io/github/release/RockefellerArchiveCenter/aquarius/all.svg)
 
 ## Setup
 
