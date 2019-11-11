@@ -16,7 +16,7 @@ health-check==3.4.1
 idna==2.7
 iso-639==0.4.5
 iso8601==0.1.12
-jsonpointer==1.14
+jsonpointer==2.0
 jsonschema==2.6.0
 MarkupSafe==1.1.1
 more-itertools==7.2.0
