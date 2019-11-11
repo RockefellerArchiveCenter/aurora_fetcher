@@ -13,7 +13,7 @@ git+https://github.com/RockefellerArchiveCenter/asterism@v0.1#egg=asterism
 gitdb2==2.0.3
 GitPython==3.0.4
 health-check==3.4.1
-idna==2.7
+idna==2.8
 iso-639==0.4.5
 iso8601==0.1.12
 jsonpointer==1.14
