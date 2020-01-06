@@ -29,16 +29,23 @@ class PackageViewSet(ModelViewSet):
     serializer_class = PackageSerializer
 
     def create(self, request):
+        """Create a package object and based on data supplied with a request. If request
+        data contains `archivesspace_uri`, add that URI to `transfer_data` and set
+        `process_status` to TRANSFER_COMPONENT_CREATED."""
         try:
             source_object = Package.objects.create(
                 fedora_uri=request.data['uri'],
                 identifier=request.data['identifier'],
                 package_type=request.data['package_type'],
+                origin=request.data['origin'],
                 process_status=Package.SAVED
             )
+            if request.data.get('archivesspace_uri'):
+                source_object.transfer_data['data']['archivesspace_identifier'] = request.data['archivesspace_uri']
+                source_object.process_status = Package.TRANSFER_COMPONENT_CREATED
             return Response(prepare_response(("Package created", source_object.identifier)))
         except Exception as e:
-            return Response(prepare_response("Error creating package: {}".format(str(e))))
+            return Response(prepare_response("Error creating package: {}".format(str(e))), status=500)
 
     def get_queryset(self):
         queryset = Package.objects.all().order_by('-last_modified')
