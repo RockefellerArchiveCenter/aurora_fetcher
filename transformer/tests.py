@@ -58,7 +58,7 @@ class TransformTest(TestCase):
         for transfer in self.transfer_data:
             request = self.factory.post(reverse('package-list'), transfer, format='json')
             response = PackageViewSet.as_view(actions={"post": "create"})(request)
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+            self.assertEqual(response.status_code, 200, "Request threw exception: {}".format(response.data))
         self.assertEqual(len(self.transfer_data), len(Package.objects.all()))
 
     def process_transfers(self):
