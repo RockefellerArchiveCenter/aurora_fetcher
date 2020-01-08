@@ -34,15 +34,21 @@ class PackageViewSet(ModelViewSet):
         `process_status` to TRANSFER_COMPONENT_CREATED."""
         try:
             source_object = Package.objects.create(
-                fedora_uri=request.data['uri'],
-                identifier=request.data['identifier'],
-                package_type=request.data['package_type'],
-                origin=request.data['origin'],
+                fedora_uri=request.data.get('uri'),
+                identifier=request.data.get('identifier'),
+                package_type=request.data.get('package_type'),
+                origin=request.data.get('origin'),
                 process_status=Package.SAVED
             )
-            if request.data.get('archivesspace_uri'):
-                source_object.transfer_data['data']['archivesspace_identifier'] = request.data['archivesspace_uri']
+            if request.data.get('origin') in ['digitization', 'legacy_digital']:
+                # TODO: investigate using defaultdict for this
+                source_object.transfer_data = {
+                    'data': {
+                        'archivesspace_identifier': request.data['archivesspace_uri']
+                        }
+                    }
                 source_object.process_status = Package.TRANSFER_COMPONENT_CREATED
+                source_object.save()
             return Response(prepare_response(("Package created", source_object.identifier)))
         except Exception as e:
             return Response(prepare_response("Error creating package: {}".format(str(e))), status=500)
