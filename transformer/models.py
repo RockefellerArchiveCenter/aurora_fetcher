@@ -34,7 +34,7 @@ class Package(models.Model):
         ('legacy_digital', 'Legacy Digital Processing'),
         ('digitization', 'Digitization')
     )
-    origin = models.CharField(max_length=20, choices=ORIGIN_CHOICES, null=True, blank=True)
+    origin = models.CharField(max_length=20, choices=ORIGIN_CHOICES)
     transfer_data = JSONField(null=True, blank=True)
     accession_data = JSONField(null=True, blank=True)
 
