@@ -198,7 +198,7 @@ class AuroraUpdater:
 
     def run(self):
         update_ids = []
-        for obj in Package.objects.filter(process_status=self.start_status):
+        for obj in Package.objects.filter(process_status=self.start_status, origin='aurora'):
             try:
                 data = self.update_data(obj)
                 identifier = data['url'].rstrip('/').split('/')[-1]
