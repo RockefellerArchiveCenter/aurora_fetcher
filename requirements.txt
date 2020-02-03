@@ -19,7 +19,7 @@ iso8601==0.1.12
 jsonpointer==1.14
 jsonschema==2.6.0
 MarkupSafe==1.1.1
-more-itertools==7.2.0
+more-itertools==8.2.0
 multidict==4.5.2
 psycopg2-binary==2.8.4
 pytz==2019.3
