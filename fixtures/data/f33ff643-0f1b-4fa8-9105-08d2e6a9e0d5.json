@@ -2,5 +2,4 @@
     "uri": "http://dev.fedora.marist.edu:8000/fedora/rest/f33ff643-0f1b-4fa8-9105-08d2e6a9e0d5",
     "identifier": "ea245504-ea90-404e-b515-86cc53c4957c",
     "package_type": "dip",
-    "origin": "aurora"
 }

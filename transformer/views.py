@@ -37,7 +37,7 @@ class PackageViewSet(ModelViewSet):
                 fedora_uri=request.data.get('uri'),
                 identifier=request.data.get('identifier'),
                 package_type=request.data.get('package_type'),
-                origin=request.data.get('origin'),
+                origin=request.data.get('origin', 'aurora'),
                 process_status=Package.SAVED
             )
             if request.data.get('origin') in ['digitization', 'legacy_digital']:
