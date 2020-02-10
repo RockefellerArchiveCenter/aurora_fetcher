@@ -37,7 +37,6 @@ class PackageViewSet(ModelViewSet):
                 fedora_uri=request.data.get('uri'),
                 identifier=request.data.get('identifier'),
                 package_type=request.data.get('package_type'),
-                origin=request.data.get('origin'),
                 process_status=Package.SAVED
             )
             if request.data.get('origin') in ['digitization', 'legacy_digital']:
@@ -48,6 +47,7 @@ class PackageViewSet(ModelViewSet):
                         }
                     }
                 source_object.process_status = Package.TRANSFER_COMPONENT_CREATED
+                source_object.origin = request.data.get('origin')
                 source_object.save()
             return Response(prepare_response(("Package created", source_object.identifier)))
         except Exception as e:
