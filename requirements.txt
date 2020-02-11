@@ -6,7 +6,7 @@ chardet==3.0.4
 click==6.7
 clinner==1.12.3
 colorlog==4.0.2
-Django==2.2.6
+Django==2.2.10
 djangorestframework==3.10.3
 ElectronBonder==0.5
 git+https://github.com/RockefellerArchiveCenter/asterism@v0.1#egg=asterism
