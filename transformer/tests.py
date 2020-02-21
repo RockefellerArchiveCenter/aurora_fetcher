@@ -2,16 +2,21 @@ import json
 import time
 from os import listdir
 from os.path import join
-import vcr
 
+import vcr
+from aquarius import settings
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIRequestFactory
 
-from aquarius import settings
 from .models import Package
-from .routines import *
-from .views import *
+from .routines import (AccessionRoutine, AccessionUpdateRequester,
+                       DigitalObjectRoutine, GroupingComponentRoutine,
+                       TransferComponentRoutine, TransferUpdateRequester)
+from .views import (AccessionUpdateRequestView, PackageViewSet,
+                    ProcessAccessionsView, ProcessDigitalObjectsView,
+                    ProcessGroupingComponentsView,
+                    ProcessTransferComponentsView, TransferUpdateRequestView)
 
 transformer_vcr = vcr.VCR(
     serializer='json',
@@ -51,7 +56,7 @@ class TransformTest(TestCase):
                 data = json.load(json_file)
                 self.transfer_data.append(data)
                 self.transfer_count += 1
-        self.updated_time = int(time.time())-(24*3600) # this is the current time minus 24 hours
+        self.updated_time = int(time.time()) - (24 * 3600)  # this is the current time minus 24 hours
 
     def create_transfers(self):
         print('*** Creating Packages ***')

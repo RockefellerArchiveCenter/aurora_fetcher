@@ -1,12 +1,18 @@
 from aquarius import settings
 
-from .clients import ArchivesSpaceClient, ArchivesSpaceClientAccessionNumberError, UrsaMajorClient, AuroraClient
+from .clients import (ArchivesSpaceClient,
+                      ArchivesSpaceClientAccessionNumberError, AuroraClient,
+                      UrsaMajorClient)
 from .models import Package
 from .transformers import DataTransformer
 
 
-class RoutineError(Exception): pass
-class UpdateRequestError(Exception): pass
+class RoutineError(Exception):
+    pass
+
+
+class UpdateRequestError(Exception):
+    pass
 
 
 class Routine:
@@ -132,7 +138,7 @@ class TransferComponentRoutine(Routine):
     """Transforms transfer data stored in Ursa Major and delivers the
        transformed data to ArchivesSpace where it is saved as an archival object record."""
 
-    start_status=Package.GROUPING_COMPONENT_CREATED
+    start_status = Package.GROUPING_COMPONENT_CREATED
     end_status = Package.TRANSFER_COMPONENT_CREATED
     object_type = "Transfer component"
 
@@ -177,7 +183,7 @@ class DigitalObjectRoutine(Routine):
              "jsonmodel_type": "instance",
              "digital_object": {"ref": self.do_identifier}
              })
-        updated_component = self.aspace_client.update(package.transfer_data['data']['archivesspace_identifier'], transfer_component)
+        self.aspace_client.update(package.transfer_data['data']['archivesspace_identifier'], transfer_component)
 
 
 class AuroraUpdater:
@@ -191,6 +197,7 @@ class AuroraUpdater:
     and an `end_status`, which determine the queryset of objects acted on and
     the status to which those objects are updated, respectively.
     """
+
     def __init__(self):
         self.client = AuroraClient(baseurl=settings.AURORA['baseurl'],
                                    username=settings.AURORA['username'],
@@ -205,6 +212,7 @@ class AuroraUpdater:
                 prefix = data['url'].rstrip('/').split('/')[-2]
                 url = "/".join([prefix, "{}/".format(identifier.lstrip('/'))])
                 r = self.client.update(url, data=data)
+                r.raise_for_status()
                 obj.process_status = self.end_status
                 obj.save()
                 update_ids.append(obj.identifier)

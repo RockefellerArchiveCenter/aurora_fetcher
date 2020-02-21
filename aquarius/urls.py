@@ -13,20 +13,24 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.conf.urls import url
-from django.urls import include, re_path
-from transformer.models import Package
-from transformer.views import *
+from django.contrib import admin
+from django.urls import include
 from rest_framework import routers
 from rest_framework.schemas import get_schema_view
+from transformer.views import (AccessionUpdateRequestView, PackageViewSet,
+                               ProcessAccessionsView,
+                               ProcessDigitalObjectsView,
+                               ProcessGroupingComponentsView,
+                               ProcessTransferComponentsView,
+                               TransferUpdateRequestView)
 
 router = routers.DefaultRouter()
 router.register(r'packages', PackageViewSet, 'package')
 
 schema_view = get_schema_view(
-      title="Aquarius API",
-      description="Endpoints for Aquarius microservice application."
+    title="Aquarius API",
+    description="Endpoints for Aquarius microservice application."
 )
 
 urlpatterns = [

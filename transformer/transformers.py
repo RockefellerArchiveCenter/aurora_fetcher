@@ -1,12 +1,14 @@
-from iso639 import languages as langz
-import iso8601
 import time
 
+import iso8601
 from aquarius import settings
+from iso639 import languages as langz
+
 from .clients import ArchivesSpaceClient
 
 
-class TransformError(Exception): pass
+class TransformError(Exception):
+    pass
 
 
 class DataTransformer:
@@ -29,11 +31,11 @@ class DataTransformer:
                 date_start.strftime("%Y %B %e"),
                 date_end.strftime("%Y %B %e"))
             return [{"expression": expression, "begin": date_start.strftime("%Y-%m-%d"), "end": date_end.strftime("%Y-%m-%d"), "date_type": "inclusive",
-                    "label": "creation"}]
+                     "label": "creation"}]
         else:
             expression = date_start.strftime("%Y %B %e")
             return [{"expression": expression, "begin": date_start.strftime("%Y-%m-%d"), "date_type": "single",
-                    "label": "creation"}]
+                     "label": "creation"}]
 
     def transform_extents(self, extent_values):
         return [{"number": v, "portion": "whole", "extent_type": k} for k, v in extent_values.items()]
@@ -50,7 +52,7 @@ class DataTransformer:
         return 'mul' if len(languages) > 1 else languages[0]
 
     def transform_langnote(self, languages):
-        language = "multiple languages" if (len(languages)>1) else langz.get(part2b=languages[0]).name
+        language = "multiple languages" if (len(languages) > 1) else langz.get(part2b=languages[0]).name
         return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
                 "publish": False, "content": ["Materials are in {}".format(language)]}
 
@@ -67,7 +69,7 @@ class DataTransformer:
     def transform_note_multipart(self, text, type):
         if len(text) > 0:
             return {"jsonmodel_type": "note_multipart", "type": type,
-                      "publish": False, "subnotes": [
+                    "publish": False, "subnotes": [
                         {"content": text, "publish": True,
                          "jsonmodel_type": "note_text"}]}
         return ""
@@ -133,7 +135,7 @@ class DataTransformer:
                     "file_uri": data.fedora_uri,
                     "use_statement": data.get_use_statement()}],
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])}
-                }
+            }
         except Exception as e:
             raise TransformError('Error transforming digital object: {}'.format(e))
 
@@ -144,7 +146,7 @@ class DataTransformer:
         defaults = {
             "publish": False, "level": "file", "linked_events": [],
             "external_documents": [], "instances": [], "subjects": []
-            }
+        }
         try:
             consumer_data = {
                 **defaults,
@@ -174,7 +176,7 @@ class DataTransformer:
         defaults = {
             "publish": False, "level": "recordgrp", "linked_events": [],
             "external_documents": [], "instances": [], "subjects": []
-            }
+        }
         try:
             consumer_data = {
                 **defaults,
@@ -187,14 +189,14 @@ class DataTransformer:
                 "dates": self.transform_dates(data['start_date'], data['end_date']),
                 "rights_statements": self.transform_rights(data['rights_statements']),
                 "linked_agents": self.transform_linked_agents(
-                    data['creators']+[{"name": data['organization'], "type": "organization"}]),
+                    data['creators'] + [{"name": data['organization'], "type": "organization"}]),
                 "resource": {'ref': data['resource']},
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "notes": [
                     self.transform_note_multipart(data['access_restrictions'], "accessrestrict"),
                     self.transform_note_multipart(data['use_restrictions'], "userestrict"),
                     self.transform_langnote([data['language']])
-                    ]}
+                ]}
             if 'description' in data:
                 consumer_data['notes'].append(self.transform_note_multipart(data['description'], "scopecontent"))
             if 'appraisal_note' in data:
@@ -210,7 +212,7 @@ class DataTransformer:
             "publish": False, "linked_events": [], "jsonmodel_type": "accession",
             "external_documents": [], "instances": [], "subjects": [],
             "classifications": [], "related_accessions": [], "deaccessions": [],
-            }
+        }
         try:
             consumer_data = {
                 **defaults,
@@ -222,7 +224,7 @@ class DataTransformer:
                 "dates": self.transform_dates(data['start_date'], data['end_date']),
                 "rights_statements": self.transform_rights(data['rights_statements']),
                 "linked_agents": self.transform_linked_agents(
-                    data['creators']+[{"name": data['organization'], "type": "organization"}]),
+                    data['creators'] + [{"name": data['organization'], "type": "organization"}]),
                 "related_resources": [{'ref': data['resource']}],
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
                 "accession_date": data['accession_date'],

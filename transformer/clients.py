@@ -1,13 +1,24 @@
+import json
+from datetime import date
+
 from asnake.client import ASnakeClient
 from electronbonder.client import ElectronBond
-from datetime import date
-import json
 
 
-class ArchivesSpaceClientError(Exception): pass
-class ArchivesSpaceClientAccessionNumberError(Exception): pass
-class UrsaMajorClientError(Exception): pass
-class AuroraClientError(Exception): pass
+class ArchivesSpaceClientError(Exception):
+    pass
+
+
+class ArchivesSpaceClientAccessionNumberError(Exception):
+    pass
+
+
+class UrsaMajorClientError(Exception):
+    pass
+
+
+class AuroraClientError(Exception):
+    pass
 
 
 class ArchivesSpaceClient(object):
@@ -57,7 +68,7 @@ class ArchivesSpaceClient(object):
         try:
             r = self.client.get('search', params={"page": 1, "type[]": model_type, "aq": query}).json()
             if len(r['results']) == 0:
-                r = self.client.get(endpoint, params={"all_ids": True, "modified_since": last_updated-120}).json()
+                r = self.client.get(endpoint, params={"all_ids": True, "modified_since": last_updated - 120}).json()
                 for ref in r:
                     r = self.client.get('{}/{}'.format(endpoint, ref)).json()
                     if r[field] == str(value):
@@ -108,7 +119,7 @@ class UrsaMajorClient(object):
         return self.send_request('get', url, **kwargs)
 
     def update(self, url, data, **kwargs):
-        return self.send_request('put', url, data, headers={"Content-Type":"application/json"}, **kwargs)
+        return self.send_request('put', url, data, headers={"Content-Type": "application/json"}, **kwargs)
 
     def retrieve_paged(self, url, **kwargs):
         try:
@@ -138,7 +149,7 @@ class AuroraClient:
             raise AuroraClientError("Could not authorize {} in Aurora".format(username))
 
     def update(self, url, data, **kwargs):
-        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type":"application/json"}, **kwargs)
+        resp = self.client.put(url, data=json.dumps(data), headers={"Content-Type": "application/json"}, **kwargs)
         if resp.status_code == 200:
             return resp.json()
         else:

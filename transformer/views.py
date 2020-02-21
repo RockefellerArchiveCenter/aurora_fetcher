@@ -1,15 +1,15 @@
 from datetime import datetime
 
 from asterism.views import prepare_response
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
 
 from .models import Package
-from .routines import (AccessionRoutine, GroupingComponentRoutine,
-                       TransferComponentRoutine, DigitalObjectRoutine,
-                       TransferUpdateRequester, AccessionUpdateRequester)
-from .serializers import PackageSerializer, PackageListSerializer
+from .routines import (AccessionRoutine, AccessionUpdateRequester,
+                       DigitalObjectRoutine, GroupingComponentRoutine,
+                       TransferComponentRoutine, TransferUpdateRequester)
+from .serializers import PackageListSerializer, PackageSerializer
 
 
 class PackageViewSet(ModelViewSet):
@@ -44,8 +44,8 @@ class PackageViewSet(ModelViewSet):
                 source_object.transfer_data = {
                     'data': {
                         'archivesspace_identifier': request.data['archivesspace_uri']
-                        }
                     }
+                }
                 source_object.process_status = Package.TRANSFER_COMPONENT_CREATED
                 source_object.origin = request.data.get('origin')
                 source_object.save()
