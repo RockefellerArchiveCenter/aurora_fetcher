@@ -211,8 +211,7 @@ class AuroraUpdater:
                 identifier = data['url'].rstrip('/').split('/')[-1]
                 prefix = data['url'].rstrip('/').split('/')[-2]
                 url = "/".join([prefix, "{}/".format(identifier.lstrip('/'))])
-                r = self.client.update(url, data=data)
-                r.raise_for_status()
+                self.client.update(url, data=data)
                 obj.process_status = self.end_status
                 obj.save()
                 update_ids.append(obj.identifier)
