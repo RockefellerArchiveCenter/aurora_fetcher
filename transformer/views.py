@@ -1,8 +1,7 @@
 from datetime import datetime
 
-from asterism.views import prepare_response
+from asterism.views import RoutineView, prepare_response
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Package
@@ -66,40 +65,31 @@ class PackageViewSet(ModelViewSet):
         return PackageSerializer
 
 
-class ProcessView(APIView):
-    def post(self, request, format=None):
-        try:
-            response = self.routine().run()
-            return Response(prepare_response(response), status=200)
-        except Exception as e:
-            return Response(prepare_response(e), status=500)
-
-
-class ProcessAccessionsView(ProcessView):
+class ProcessAccessionsView(RoutineView):
     """Runs the AccessionRoutine. Accepts POST requests only."""
     routine = AccessionRoutine
 
 
-class ProcessGroupingComponentsView(ProcessView):
+class ProcessGroupingComponentsView(RoutineView):
     """Runs the GroupingComponentRoutine. Accepts POST requests only."""
     routine = GroupingComponentRoutine
 
 
-class ProcessTransferComponentsView(ProcessView):
+class ProcessTransferComponentsView(RoutineView):
     """Runs the TransferComponentRoutine. Accepts POST requests only."""
     routine = TransferComponentRoutine
 
 
-class ProcessDigitalObjectsView(ProcessView):
+class ProcessDigitalObjectsView(RoutineView):
     """Runs the DigitalObjectRoutine. Accepts POST requests only."""
     routine = DigitalObjectRoutine
 
 
-class TransferUpdateRequestView(ProcessView):
+class TransferUpdateRequestView(RoutineView):
     """Sends request with updated information to Aurora. Accepts POST requests only."""
     routine = TransferUpdateRequester
 
 
-class AccessionUpdateRequestView(ProcessView):
+class AccessionUpdateRequestView(RoutineView):
     """Sends request with updated information to Aurora. Accepts POST requests only."""
     routine = AccessionUpdateRequester
