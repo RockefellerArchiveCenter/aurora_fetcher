@@ -58,16 +58,19 @@ class TransformTest(TestCase):
         for transfer in self.transfer_data:
             request = self.factory.post(reverse('package-list'), transfer, format='json')
             response = PackageViewSet.as_view(actions={"post": "create"})(request)
-            self.assertEqual(response.status_code, 200, "Wrong HTTP code")
+            self.assertEqual(response.status_code, 200, "Request threw exception: {}".format(response.data))
+            new_obj = Package.objects.get(fedora_uri=transfer.get('uri'))
+            process_status = Package.SAVED if new_obj.origin == 'aurora' else Package.TRANSFER_COMPONENT_CREATED
+            self.assertEqual(int(new_obj.process_status), process_status, "Package was created with the incorrect process status.")
+            if new_obj.origin in ['digitization', 'legacy_digital']:
+                self.assertEqual(new_obj.transfer_data['data']['archivesspace_identifier'], transfer.get('archivesspace_uri'), "ArchivesSpace Identifier was not created correctly")
         self.assertEqual(len(self.transfer_data), len(Package.objects.all()))
 
     def process_transfers(self):
         for r in ROUTINES:
             with transformer_vcr.use_cassette(r[0]):
-                accessions = r[1]().run()
-                self.assertNotEqual(False, accessions)
-                for transfer in Package.objects.all():
-                    self.assertEqual(int(transfer.process_status), r[2])
+                transfers = r[1]().run()
+                self.assertNotEqual(False, transfers)
         self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
     def search_objects(self):
