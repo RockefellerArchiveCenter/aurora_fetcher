@@ -68,7 +68,7 @@ class TransformTest(TestCase):
             process_status = Package.SAVED if new_obj.origin == 'aurora' else Package.TRANSFER_COMPONENT_CREATED
             self.assertEqual(int(new_obj.process_status), process_status, "Package was created with the incorrect process status.")
             if new_obj.origin in ['digitization', 'legacy_digital']:
-                self.assertEqual(new_obj.transfer_data['data']['archivesspace_identifier'], transfer.get('archivesspace_uri'), "ArchivesSpace Identifier was not created correctly")
+                self.assertEqual(new_obj.data['data']['archivesspace_identifier'], transfer.get('archivesspace_uri'), "ArchivesSpace Identifier was not created correctly")
         self.assertEqual(len(self.transfer_data), len(Package.objects.all()))
 
     def process_transfers(self):

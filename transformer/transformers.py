@@ -133,14 +133,14 @@ class DataTransformer:
                 "digital_object_id": do_id,
                 "file_versions": [{
                     "file_uri": data.fedora_uri,
-                    "use_statement": data.get_use_statement()}],
+                    "use_statement": data.use_statement}],
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])}
             }
         except Exception as e:
             raise TransformError('Error transforming digital object: {}'.format(e))
 
     def transform_component(self):
-        data = self.package.transfer_data['data']
+        data = self.package.data['data']
         resource = self.package.accession_data['data']['resource']
         metadata = data['metadata']
         defaults = {
