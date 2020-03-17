@@ -13,10 +13,12 @@ class TransformError(Exception):
 
 class DataTransformer:
     def __init__(self, aspace_client=None):
-        self.aspace_client = aspace_client if aspace_client else ArchivesSpaceClient(settings.ARCHIVESSPACE['baseurl'],
-                                                                                     settings.ARCHIVESSPACE['username'],
-                                                                                     settings.ARCHIVESSPACE['password'],
-                                                                                     settings.ARCHIVESSPACE['repo_id'])
+        self.aspace_client = aspace_client if aspace_client else \
+            ArchivesSpaceClient(
+                settings.ARCHIVESSPACE['baseurl'],
+                settings.ARCHIVESSPACE['username'],
+                settings.ARCHIVESSPACE['password'],
+                settings.ARCHIVESSPACE['repo_id'])
         self.transform_start_time = int(time.time())
 
     ####################################
@@ -30,11 +32,16 @@ class DataTransformer:
             expression = '{} - {}'.format(
                 date_start.strftime("%Y %B %e"),
                 date_end.strftime("%Y %B %e"))
-            return [{"expression": expression, "begin": date_start.strftime("%Y-%m-%d"), "end": date_end.strftime("%Y-%m-%d"), "date_type": "inclusive",
+            return [{"expression": expression,
+                     "begin": date_start.strftime("%Y-%m-%d"),
+                     "end": date_end.strftime("%Y-%m-%d"),
+                     "date_type": "inclusive",
                      "label": "creation"}]
         else:
             expression = date_start.strftime("%Y %B %e")
-            return [{"expression": expression, "begin": date_start.strftime("%Y-%m-%d"), "date_type": "single",
+            return [{"expression": expression,
+                     "begin": date_start.strftime("%Y-%m-%d"),
+                     "date_type": "single",
                      "label": "creation"}]
 
     def transform_extents(self, extent_values):
@@ -42,11 +49,6 @@ class DataTransformer:
 
     def transform_external_ids(self, identifier):
         return [{"external_id": identifier, "source": "aurora", "jsonmodel_type": "external_id"}]
-
-    def transform_identifier_ref(self, data, key):
-        for identifier in data.get(key, []):
-            if identifier['source'] == 'archivesspace':
-                return identifier['identifier']
 
     def transform_langcode(self, languages):
         return 'mul' if len(languages) > 1 else languages[0]
@@ -133,14 +135,14 @@ class DataTransformer:
                 "digital_object_id": do_id,
                 "file_versions": [{
                     "file_uri": data.fedora_uri,
-                    "use_statement": data.get_use_statement()}],
+                    "use_statement": data.use_statement}],
                 "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])}
             }
         except Exception as e:
             raise TransformError('Error transforming digital object: {}'.format(e))
 
     def transform_component(self):
-        data = self.package.transfer_data['data']
+        data = self.package.data['data']
         resource = self.package.accession_data['data']['resource']
         metadata = data['metadata']
         defaults = {
@@ -198,9 +200,11 @@ class DataTransformer:
                     self.transform_langnote([data['language']])
                 ]}
             if 'description' in data:
-                consumer_data['notes'].append(self.transform_note_multipart(data['description'], "scopecontent"))
+                consumer_data['notes'].append(
+                    self.transform_note_multipart(data['description'], "scopecontent"))
             if 'appraisal_note' in data:
-                consumer_data['notes'].append(self.transform_note_multipart(data['appraisal_note'], "appraisal"))
+                consumer_data['notes'].append(
+                    self.transform_note_multipart(data['appraisal_note'], "appraisal"))
             return consumer_data
         except Exception as e:
             raise TransformError('Error transforming grouping component: {}'.format(e))
@@ -237,7 +241,8 @@ class DataTransformer:
                 consumer_data = {
                     **consumer_data,
                     "id_{}".format(n): accession_number[n]}
-            return {**consumer_data, "general_note": data['appraisal_note']} if ('appraisal_note' in data) else consumer_data
+            return {**consumer_data, "general_note": data['appraisal_note']} if \
+                ('appraisal_note' in data) else consumer_data
         except Exception as e:
             raise TransformError('Error transforming accession: {}'.format(e))
 

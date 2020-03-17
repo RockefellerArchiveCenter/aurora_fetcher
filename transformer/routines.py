@@ -48,9 +48,9 @@ class Routine:
                 self.apply_transformations(package)
                 package.process_status = self.end_status
                 package.save()
-                package_ids.append(package.identifier)
+                package_ids.append(package.bag_identifier)
             except Exception as e:
-                raise RoutineError("{} error: {}".format(self.object_type, e), package.identifier)
+                raise RoutineError("{} error: {}".format(self.object_type, e), package.bag_identifier)
         message = ("{} created.".format(self.object_type) if (len(package_ids) > 0)
                    else "{} updated.".format(self.object_type))
         return (message, package_ids)
@@ -65,20 +65,20 @@ class AccessionRoutine(Routine):
     object_type = "Accession"
 
     def apply_transformations(self, package):
-        package.transfer_data = self.ursa_major_client.find_bag_by_id(package.identifier)
+        package.data = self.ursa_major_client.find_bag_by_id(package.bag_identifier)
         self.discover_sibling_data(package)
         if not package.accession_data:
-            package.accession_data = self.ursa_major_client.retrieve(package.transfer_data['accession'])
+            package.accession_data = self.ursa_major_client.retrieve(package.data['accession'])
         if not package.accession_data['data'].get('archivesspace_identifier'):
             self.transformer.package = package
             transformed_data = self.transformer.transform_accession()
             self.save_new_accession(transformed_data)
 
     def discover_sibling_data(self, package):
-        if Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False).exists():
-            sibling = Package.objects.filter(transfer_data__accession=package.transfer_data['accession'], accession_data__isnull=False)[0]
+        if Package.objects.filter(data__accession=package.data['accession'], accession_data__isnull=False).exists():
+            sibling = Package.objects.filter(data__accession=package.data['accession'], accession_data__isnull=False)[0]
             package.accession_data = sibling.accession_data
-            package.transfer_data['data']['archivesspace_parent_identifier'] = sibling.transfer_data['data'].get('archivesspace_parent_identifier')
+            package.data['data']['archivesspace_parent_identifier'] = sibling.data['data'].get('archivesspace_parent_identifier')
 
     def parse_accession_number(self, data):
         number = "{}".format(data['id_0'])
@@ -94,7 +94,7 @@ class AccessionRoutine(Routine):
             self.transformer.package.accession_data['data']['archivesspace_identifier'] = accession_uri
             self.transformer.package.accession_data['data']['accession_number'] = self.parse_accession_number(data)
             for p in self.transformer.package.accession_data['data']['transfers']:
-                for sibling in Package.objects.filter(identifier=p['identifier']):
+                for sibling in Package.objects.filter(bag_identifier=p['identifier']):
                     sibling.accession_data = self.transformer.package.accession_data
                     sibling.save()
         except ArchivesSpaceClientAccessionNumberError:
@@ -104,7 +104,7 @@ class AccessionRoutine(Routine):
             data['id_1'] = str(id_1).zfill(3)
             self.save_new_accession(data)
         except Exception as e:
-            raise RoutineError("Error saving data in ArchivesSpace: {}".format(e), self.transformer.package.identifier)
+            raise RoutineError("Error saving data in ArchivesSpace: {}".format(e), self.transformer.package.bag_identifier)
 
 
 class GroupingComponentRoutine(Routine):
@@ -117,10 +117,10 @@ class GroupingComponentRoutine(Routine):
     object_type = "Grouping component"
 
     def apply_transformations(self, package):
-        if not package.transfer_data['data'].get('archivesspace_parent_identifier'):
+        if not package.data['data'].get('archivesspace_parent_identifier'):
             self.transformer.package = package
             self.parent = self.save_new_grouping_component()
-            package.transfer_data['data']['archivesspace_parent_identifier'] = self.parent
+            package.data['data']['archivesspace_parent_identifier'] = self.parent
             self.update_siblings(package)
 
     def save_new_grouping_component(self):
@@ -129,8 +129,8 @@ class GroupingComponentRoutine(Routine):
 
     def update_siblings(self, package):
         for p in package.accession_data['data']['transfers']:
-            for sibling in Package.objects.filter(identifier=p['identifier']):
-                sibling.transfer_data['data']['archivesspace_parent_identifier'] = self.parent
+            for sibling in Package.objects.filter(bag_identifier=p['identifier']):
+                sibling.data['data']['archivesspace_parent_identifier'] = self.parent
                 sibling.save()
 
 
@@ -143,10 +143,10 @@ class TransferComponentRoutine(Routine):
     object_type = "Transfer component"
 
     def apply_transformations(self, package):
-        if not package.transfer_data['data'].get('archivesspace_identifier'):
+        if not package.data['data'].get('archivesspace_identifier'):
             self.transformer.package = package
             self.transfer_identifier = self.save_new_transfer_component()
-            package.transfer_data['data']['archivesspace_identifier'] = self.transfer_identifier
+            package.data['data']['archivesspace_identifier'] = self.transfer_identifier
             self.update_siblings(package)
 
     def save_new_transfer_component(self):
@@ -154,8 +154,8 @@ class TransferComponentRoutine(Routine):
         return self.aspace_client.create(transformed_data, 'component').get('uri')
 
     def update_siblings(self, package):
-        for sibling in Package.objects.filter(identifier=package.identifier):
-            sibling.transfer_data['data']['archivesspace_identifier'] = self.transfer_identifier
+        for sibling in Package.objects.filter(bag_identifier=package.bag_identifier):
+            sibling.data['data']['archivesspace_identifier'] = self.transfer_identifier
             sibling.save()
 
 
@@ -177,13 +177,13 @@ class DigitalObjectRoutine(Routine):
         return self.aspace_client.create(transformed_data, 'digital object').get('uri')
 
     def update_instance(self, package):
-        transfer_component = self.aspace_client.retrieve(package.transfer_data['data']['archivesspace_identifier'])
+        transfer_component = self.aspace_client.retrieve(package.data['data']['archivesspace_identifier'])
         transfer_component['instances'].append(
             {"instance_type": "digital_object",
              "jsonmodel_type": "instance",
              "digital_object": {"ref": self.do_identifier}
              })
-        self.aspace_client.update(package.transfer_data['data']['archivesspace_identifier'], transfer_component)
+        self.aspace_client.update(package.data['data']['archivesspace_identifier'], transfer_component)
 
 
 class AuroraUpdater:
@@ -214,7 +214,7 @@ class AuroraUpdater:
                 self.client.update(url, data=data)
                 obj.process_status = self.end_status
                 obj.save()
-                update_ids.append(obj.identifier)
+                update_ids.append(obj.bag_identifier)
             except Exception as e:
                 raise UpdateRequestError(e)
         return ("Update requests sent.", update_ids)
@@ -226,7 +226,7 @@ class TransferUpdateRequester(AuroraUpdater):
     end_status = Package.UPDATE_SENT
 
     def update_data(self, obj):
-        data = obj.transfer_data['data']
+        data = obj.data['data']
         data['process_status'] = 90
         return data
 

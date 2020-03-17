@@ -29,18 +29,18 @@ class PackageViewSet(ModelViewSet):
 
     def create(self, request):
         """Create a package object and based on data supplied with a request. If request
-        data contains `archivesspace_uri`, add that URI to `transfer_data` and set
+        data contains `archivesspace_uri`, add that URI to `data` and set
         `process_status` to TRANSFER_COMPONENT_CREATED."""
         try:
             source_object = Package.objects.create(
                 fedora_uri=request.data.get('uri'),
-                identifier=request.data.get('identifier'),
-                package_type=request.data.get('package_type'),
+                bag_identifier=request.data.get('identifier'),
+                type=request.data.get('package_type'),
                 process_status=Package.SAVED
             )
             if request.data.get('origin') in ['digitization', 'legacy_digital']:
                 # TODO: investigate using defaultdict for this
-                source_object.transfer_data = {
+                source_object.data = {
                     'data': {
                         'archivesspace_identifier': request.data['archivesspace_uri']
                     }
@@ -48,7 +48,7 @@ class PackageViewSet(ModelViewSet):
                 source_object.process_status = Package.TRANSFER_COMPONENT_CREATED
                 source_object.origin = request.data.get('origin')
                 source_object.save()
-            return Response(prepare_response(("Package created", source_object.identifier)))
+            return Response(prepare_response(("Package created", source_object.bag_identifier)))
         except Exception as e:
             return Response(prepare_response("Error creating package: {}".format(str(e))), status=500)
 
