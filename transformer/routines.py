@@ -70,8 +70,8 @@ class AccessionRoutine(Routine):
         if not package.accession_data:
             package.accession_data = self.ursa_major_client.retrieve(package.data['accession'])
         if not package.accession_data['data'].get('archivesspace_identifier'):
-            self.transformer.package = package
-            transformed_data = self.transformer.transform_accession()
+            # self.transformer.package = package
+            transformed_data = self.transformer.transform_accession(package.accession_data['data'])
             self.save_new_accession(transformed_data)
 
     def discover_sibling_data(self, package):

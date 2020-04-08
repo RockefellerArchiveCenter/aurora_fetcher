@@ -1,10 +1,17 @@
+import json
 import time
 
 import iso8601
 from aquarius import settings
 from iso639 import languages as langz
+from odin.codecs import json_codec
 
 from .clients import ArchivesSpaceClient
+from .mappings import (SourceAccessionToArchivesSpaceAccession,
+                       SourceAgentToArchivesSpaceAgentCorporateEntity,
+                       SourceAgentToArchivesSpaceAgentFamily,
+                       SourceAgentToArchivesSpaceAgentPerson)
+from .resources.source import SourceAccession, SourceAgent
 
 
 class TransformError(Exception):
@@ -209,70 +216,52 @@ class DataTransformer:
         except Exception as e:
             raise TransformError('Error transforming grouping component: {}'.format(e))
 
-    def transform_accession(self):
-        data = self.package.accession_data['data']
-        accession_number = self.aspace_client.next_accession_number()
-        defaults = {
-            "publish": False, "linked_events": [], "jsonmodel_type": "accession",
-            "external_documents": [], "instances": [], "subjects": [],
-            "classifications": [], "related_accessions": [], "deaccessions": [],
-        }
-        try:
-            consumer_data = {
-                **defaults,
-                "title": data['title'],
-                "external_ids": self.transform_external_ids(data['url']),
-                "extents": self.transform_extents(
-                    {"bytes": str(data['extent_size']),
-                     "files": str(data['extent_files'])}),
-                "dates": self.transform_dates(data['start_date'], data['end_date']),
-                "rights_statements": self.transform_rights(data['rights_statements']),
-                "linked_agents": self.transform_linked_agents(
-                    data['creators'] + [{"name": data['organization'], "type": "organization"}]),
-                "related_resources": [{'ref': data['resource']}],
-                "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
-                "accession_date": data['accession_date'],
-                "access_restrictions_note": data['access_restrictions'],
-                "use_restrictions_note": data['use_restrictions'],
-                "acquisition_type": data['acquisition_type'],
-                "content_description": data['description']}
+    def transform_accession(self, data):
+        from_obj = json_codec.loads(json.dumps(data), resource=SourceAccession)
+        return json.loads(json_codec.dumps(SourceAccessionToArchivesSpaceAccession.apply(from_obj)))
 
-            for n, segment in enumerate(accession_number):
-                consumer_data = {
-                    **consumer_data,
-                    "id_{}".format(n): accession_number[n]}
-            return {**consumer_data, "general_note": data['appraisal_note']} if \
-                ('appraisal_note' in data) else consumer_data
-        except Exception as e:
-            raise TransformError('Error transforming accession: {}'.format(e))
+        # data = self.package.accession_data['data']
+        # accession_number = self.aspace_client.next_accession_number()
+        # defaults = {
+        #     "publish": False, "linked_events": [], "jsonmodel_type": "accession",
+        #     "external_documents": [], "instances": [], "subjects": [],
+        #     "classifications": [], "related_accessions": [], "deaccessions": [],
+        # }
+        # try:
+        #     consumer_data = {
+        #         **defaults,
+        #         "title": data['title'],
+        #         "external_ids": self.transform_external_ids(data['url']),
+        #         "extents": self.transform_extents(
+        #             {"bytes": str(data['extent_size']),
+        #              "files": str(data['extent_files'])}),
+        #         "dates": self.transform_dates(data['start_date'], data['end_date']),
+        #         "rights_statements": self.transform_rights(data['rights_statements']),
+        #         "linked_agents": self.transform_linked_agents(
+        #             data['creators'] + [{"name": data['organization'], "type": "organization"}]),
+        #         "related_resources": [{'ref': data['resource']}],
+        #         "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
+        #         "accession_date": data['accession_date'],
+        #         "access_restrictions_note": data['access_restrictions'],
+        #         "use_restrictions_note": data['use_restrictions'],
+        #         "acquisition_type": data['acquisition_type'],
+        #         "content_description": data['description']}
+        #
+        #     for n, segment in enumerate(accession_number):
+        #         consumer_data = {
+        #             **consumer_data,
+        #             "id_{}".format(n): accession_number[n]}
+        #     return {**consumer_data, "general_note": data['appraisal_note']} if \
+        #         ('appraisal_note' in data) else consumer_data
+        # except Exception as e:
+        #     raise TransformError('Error transforming accession: {}'.format(e))
 
     def transform_agent(self, data):
-        try:
-            if data['type'] == 'person':
-                # Name in inverted order
-                if ', ' in data['name']:
-                    name = data['name'].rsplit(', ', 1)
-                # Name in direct order
-                elif ' ' in data['name']:
-                    name = data['name'].rsplit(' ', 1)[::-1]
-                # Name is a single string
-                else:
-                    name = [data['name'], '']
-                consumer_data = {
-                    "agent_type": "agent_person",
-                    "names": [{"primary_name": name[0], "rest_of_name": name[1],
-                               "name_order": "inverted", "sort_name_auto_generate": True,
-                               "source": "local", "rules": "dacs"}]}
-            elif data['type'] == 'organization':
-                consumer_data = {
-                    "agent_type": "agent_corporate_entity",
-                    "names": [{"primary_name": data["name"], "sort_name_auto_generate": True,
-                               "source": "local", "rules": "dacs"}]}
-            elif data['type'] == 'family':
-                consumer_data = {
-                    "agent_type": "agent_family",
-                    "names": [{"family_name": data["name"], "sort_name_auto_generate": True,
-                               "source": "local", "rules": "dacs"}]}
-            return consumer_data
-        except Exception as e:
-            raise TransformError('Error transforming agent: {}'.format(e))
+        MAPPINGS = {
+            "person": SourceAgentToArchivesSpaceAgentPerson,
+            "organization": SourceAgentToArchivesSpaceAgentCorporateEntity,
+            "family": SourceAgentToArchivesSpaceAgentFamily,
+        }
+        mapping = MAPPINGS[data["type"]]
+        from_obj = json_codec.loads(json.dumps(data), resource=SourceAgent)
+        return json.loads(json_codec.dumps(mapping.apply(from_obj)))
