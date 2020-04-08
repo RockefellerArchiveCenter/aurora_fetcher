@@ -10,6 +10,7 @@ from .resources.archivesspace import (ArchivesSpaceAccession,
                                       ArchivesSpaceNameCorporateEntity,
                                       ArchivesSpaceNameFamily,
                                       ArchivesSpaceNamePerson,
+                                      ArchivesSpaceRef,
                                       ArchivesSpaceRightsStatement)
 from .resources.source import (SourceAccession, SourceAgent,
                                SourceRightsStatement)
@@ -120,8 +121,13 @@ class SourceAccessionToArchivesSpaceAccession(odin.Mapping):
             data.append(ArchivesSpaceLinkedAgent(role="creator", ref=agent_ref))
         return data
 
-    #         "related_resources": [{'ref': data['resource']}],
-    #         "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
+    @odin.map_field(from_field="resource", to_field="related_resources", to_list=True)
+    def resource(self, value):
+        return [ArchivesSpaceRef(ref=value)]
+    #
+    # @odin.map_field(to_field="repository")
+    # def repository(self):
+    #     return ArchivesSpaceRef(ref="/repositories/{}".format(settings.ARCHIVESSPACE['repo_id']))
     #
     #     for n, segment in enumerate(accession_number):
     #         consumer_data = {
