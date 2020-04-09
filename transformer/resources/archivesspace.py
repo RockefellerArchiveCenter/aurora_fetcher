@@ -32,7 +32,7 @@ class ArchivesSpaceExtent(odin.Resource):
     """Indicates the fields included in an AS extent resource."""
     number = odin.StringField()
     container_summary = odin.StringField(null=True)
-    portion = odin.StringField(choices=(('whole', 'Whole'), ('part', 'Part'))),
+    portion = odin.StringField(choices=(('whole', 'Whole'), ('part', 'Part')))
     extent_type = odin.StringField(
         choices=resource_configs.EXTENT_TYPE_CHOICES)
 

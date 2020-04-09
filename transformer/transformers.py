@@ -7,12 +7,12 @@ from odin.codecs import json_codec
 from .clients import ArchivesSpaceClient
 from .mappings import (SourceAccessionToArchivesSpaceAccession,
                        SourceAccessionToGroupingComponent,
-                       SourceAgentToArchivesSpaceAgentCorporateEntity,
-                       SourceAgentToArchivesSpaceAgentFamily,
-                       SourceAgentToArchivesSpaceAgentPerson,
+                       SourceCreatorToArchivesSpaceAgentCorporateEntity,
+                       SourceCreatorToArchivesSpaceAgentFamily,
+                       SourceCreatorToArchivesSpaceAgentPerson,
                        SourcePackageToDigitalObject,
                        SourceTransferToTransferComponent)
-from .resources.source import (SourceAccession, SourceAgent, SourcePackage,
+from .resources.source import (SourceAccession, SourceCreator, SourcePackage,
                                SourceTransfer)
 
 
@@ -65,10 +65,10 @@ class DataTransformer:
 
     def transform_agent(self, data):
         MAPPINGS = {
-            "person": SourceAgentToArchivesSpaceAgentPerson,
-            "organization": SourceAgentToArchivesSpaceAgentCorporateEntity,
-            "family": SourceAgentToArchivesSpaceAgentFamily,
+            "person": SourceCreatorToArchivesSpaceAgentPerson,
+            "organization": SourceCreatorToArchivesSpaceAgentCorporateEntity,
+            "family": SourceCreatorToArchivesSpaceAgentFamily,
         }
         mapping = MAPPINGS[data["type"]]
-        from_obj = json_codec.loads(json.dumps(data), resource=SourceAgent)
+        from_obj = json_codec.loads(json.dumps(data), resource=SourceCreator)
         return json.loads(json_codec.dumps(mapping.apply(from_obj)))

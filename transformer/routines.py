@@ -73,7 +73,7 @@ class AccessionRoutine(Routine):
         if not package.accession_data['data'].get('archivesspace_identifier'):
             # self.transformer.package = package
             transformed_data = self.transformer.transform_accession(package.accession_data['data'])
-            self.save_new_accession(transformed_data)
+            self.save_new_accession(transformed_data, package)
 
     def discover_sibling_data(self, package):
         if Package.objects.filter(data__accession=package.data['accession'], accession_data__isnull=False).exists():
@@ -90,14 +90,14 @@ class AccessionRoutine(Routine):
                 break
         return number
 
-    def save_new_accession(self, data):
+    def save_new_accession(self, data, package):
         try:
             accession_uri = self.aspace_client.create(data, 'accession').get('uri')
-            self.transformer.package.accession_data['data']['archivesspace_identifier'] = accession_uri
-            self.transformer.package.accession_data['data']['accession_number'] = self.parse_accession_number(data)
-            for p in self.transformer.package.accession_data['data']['transfers']:
+            package.accession_data['data']['archivesspace_identifier'] = accession_uri
+            package.accession_data['data']['accession_number'] = self.parse_accession_number(data)
+            for p in package.accession_data['data']['transfers']:
                 for sibling in Package.objects.filter(bag_identifier=p['identifier']):
-                    sibling.accession_data = self.transformer.package.accession_data
+                    sibling.accession_data = package.accession_data
                     sibling.save()
         except ArchivesSpaceClientAccessionNumberError:
             """Account for indexing delays by bumping up to the next accession number."""
@@ -106,7 +106,9 @@ class AccessionRoutine(Routine):
             data['id_1'] = str(id_1).zfill(3)
             self.save_new_accession(data)
         except Exception as e:
-            raise RoutineError("Error saving data in ArchivesSpace: {}".format(e), self.transformer.package.bag_identifier)
+            raise RoutineError(
+                "Error saving data in ArchivesSpace: {}".format(e),
+                package.bag_identifier)
 
 
 class GroupingComponentRoutine(Routine):

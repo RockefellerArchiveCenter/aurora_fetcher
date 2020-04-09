@@ -1,6 +1,16 @@
 import odin
 
 
+class SourceCreator(odin.Resource):
+    CREATOR_TYPE_CHOICES = (
+        ("person", "Person"),
+        ("organization", "Organization"),
+        ("family", "Family")
+    )
+    name = odin.StringField()
+    type = odin.StringField(choices=CREATOR_TYPE_CHOICES)
+
+
 class SourceRightsActs(odin.Resource):
     act = odin.StringField()
     restriction = odin.StringField()
@@ -26,34 +36,23 @@ class SourceRightsStatement(odin.Resource):
 
 
 class SourceMetadata(odin.Resource):
-    date_end = odin.DateField()
-    date_start = odin.DateField()
+    date_end = odin.DateTimeField()
+    date_start = odin.DateTimeField()
     internal_sender_description = odin.StringField()
     language = odin.StringField()
     payload_oxum = odin.StringField()
-    record_creators = odin.ArrayField()
+    record_creators = odin.ArrayOf(SourceCreator)
     source_organization = odin.StringField()
     title = odin.StringField()
 
-
-class SourceCreator(odin.Resource):
-    CREATOR_TYPE_CHOICES = (
-        ("person", "Person"),
-        ("organization", "Organization"),
-        ("family", "Family")
-    )
-    name = odin.StringField()
-    type = odin.StringField(choices=CREATOR_TYPE_CHOICES)
-
-
-class SourceAgent(odin.Resource):
-    AGENT_TYPE_CHOICES = (
-        ("person", "Person"),
-        ("organization", "Organization"),
-        ("family", "Family")
-    )
-    type = odin.StringField(choices=AGENT_TYPE_CHOICES)
-    name = odin.StringField()
+# class SourceAgent(odin.Resource):
+#     AGENT_TYPE_CHOICES = (
+#         ("person", "Person"),
+#         ("organization", "Organization"),
+#         ("family", "Family")
+#     )
+#     type = odin.StringField(choices=AGENT_TYPE_CHOICES)
+#     name = odin.StringField()
 
 
 class SourceAccession(odin.Resource):
@@ -61,8 +60,8 @@ class SourceAccession(odin.Resource):
     url = odin.StringField()
     extent_size = odin.IntegerField()
     extent_files = odin.IntegerField()
-    start_date = odin.DateField()
-    end_date = odin.DateField()
+    start_date = odin.DateTimeField()
+    end_date = odin.DateTimeField()
     organization = odin.StringField()
     rights_statements = odin.ArrayOf(SourceRightsStatement)
     creators = odin.ArrayOf(SourceCreator)
@@ -73,7 +72,8 @@ class SourceAccession(odin.Resource):
     acquisition_type = odin.StringField()
     description = odin.StringField()
     appraisal_note = odin.StringField(null=True)
-    accession_number = odin.ArrayField(null=True)
+    accession_number = odin.StringField(null=True)
+    language = odin.StringField()
 
 
 class SourceTransfer(odin.Resource):
