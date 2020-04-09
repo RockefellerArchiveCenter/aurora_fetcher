@@ -151,6 +151,7 @@ class ArchivesSpaceArchivalObject(ArchivesSpaceComponentBase):
     language = odin.StringField(null=True)
     level = odin.StringField(choices=resource_configs.LEVEL_CHOICES)
     resource = odin.DictAs(ArchivesSpaceRef)
+    parent = odin.DictField(null=True)
 
 
 class ArchivesSpaceAccession(ArchivesSpaceComponentBase):
@@ -187,5 +188,15 @@ class ArchivesSpaceAgentPerson(odin.Resource):
     names = odin.ArrayOf(ArchivesSpaceNamePerson)
 
 
+class ArchivesSpaceFileVersion(odin.Resource):
+    file_uri = odin.StringField()
+    use_statement = odin.StringField()
+
+
 class ArchivesSpaceDigitalObject(odin.Resource):
-    pass
+    jsonmodel_type = odin.StringField(default="digital_object")
+    publish = odin.BooleanField(default=False)
+    title = odin.StringField()
+    digital_object_id = odin.IntegerField()
+    file_versions = odin.ArrayOf(ArchivesSpaceFileVersion)
+    repository = odin.DictField(default={"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])})

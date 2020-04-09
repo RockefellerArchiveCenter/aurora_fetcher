@@ -10,6 +10,7 @@ from .resources.archivesspace import (ArchivesSpaceAccession,
                                       ArchivesSpaceDigitalObject,
                                       ArchivesSpaceExtent,
                                       ArchivesSpaceExternalId,
+                                      ArchivesSpaceFileVersion,
                                       ArchivesSpaceNameCorporateEntity,
                                       ArchivesSpaceNameFamily,
                                       ArchivesSpaceNamePerson,
@@ -179,8 +180,8 @@ class SourceAccessionToGroupingComponent(odin.Mapping):
     @odin.map_list_field(from_field=("creators", "organization"), to_field="linked_agents", to_list=True)
     def linked_agents(self, creators, organization):
         data = []
-        creators = [SourceAgentToArchivesSpaceAgent.apply(c) for c in creators]
-        organization = [SourceAgentToArchivesSpaceAgentCorporateEntity.apply(organization)]
+        data += [SourceAgentToArchivesSpaceAgent.apply(c) for c in creators]
+        data += [SourceAgentToArchivesSpaceAgentCorporateEntity.apply(organization)]
         # TODO: sort this out
         # for agent in creators + organization:
         #     agent_ref = self.aspace_client.get_or_create(
@@ -216,7 +217,82 @@ class SourceTransferToTransferComponent(odin.Mapping):
     from_obj = SourceTransfer
     to_obj = ArchivesSpaceArchivalObject
 
+    mappings = (
+        ("title", None, "title"),
+    )
+
+    @odin.map_field(from_field="url", to_field="external_ids", to_list=True)
+    def url(self, value):
+        return [ArchivesSpaceExternalId(external_id=value, source="aurora")]
+
+    @odin.map_field(from_field="metadata", to_field="language")
+    def language(self, value):
+        return 'mul' if len(value.language) > 1 else value[0]
+
+    @odin.map_field(from_field="metadata", to_field="extents", to_list=True)
+    def extents(self, value):
+        extent_size, extent_files = value.payload_oxum.split(".")
+        return map_extents(extent_size, extent_files)
+
+    @odin.map_field(from_field="metadata", to_field="dates")
+    def dates(self, value):
+        return map_dates(value.date_start, value.date_end)
+
+    @odin.map_list_field(from_field="rights_statements", to_field="rights_statements", to_list=True)
+    def rights_statements(self, value):
+        return [SourceRightsStatementToArchivesSpaceRightsStatement.apply(v) for v in value]
+
+    @odin.map_list_field(from_field="metadata", to_field="linked_agents", to_list=True)
+    def linked_agents(self, value):
+        data = []
+        data += [SourceAgentToArchivesSpaceAgent.apply(c) for c in value.record_creators]
+        data += [SourceAgentToArchivesSpaceAgentCorporateEntity.apply(value.source_organization)]
+        # TODO: sort this out
+        # for agent in creators + organization:
+        #     agent_ref = self.aspace_client.get_or_create(
+        #         agent['type'], 'title', agent['name'],
+        #         self.transform_start_time, agent)
+        #     data.append(ArchivesSpaceLinkedAgent(role="creator", ref=agent_ref))
+        return data
+
+    @odin.map_field(from_field="resource", to_field="resource")
+    def resource(self, value):
+        return {"ref": value}
+
+    @odin.map_list_field(
+        from_field="metadata",
+        to_field="notes", to_list=True)
+    def notes(self, value):
+        data = []
+        language = "multiple languages" if (len(value.language) > 1) else langz.get(part2b=value.language[0]).name
+        data.append(ArchivesSpaceNote(
+            jsonmodel_type="note_singlepart", type="langmaterial", publish=False,
+            content=["Materials are in {}".format(language)]))
+        if value.internal_sender_description:
+            data.append(map_note_multipart(value.internal_sender_description, "scopecontent"))
+        return data
+
+    @odin.map_field(from_field="archivesspace_parent_identifier", to_field="parent")
+    def parent(self, value):
+        if value:
+            return {"ref": value}
+
 
 class SourcePackageToDigitalObject(odin.Mapping):
     from_obj = SourcePackage
     to_obj = ArchivesSpaceDigitalObject
+
+    def extract_id(self, uri):
+        return uri.split("/")[-1]
+
+    @odin.map_field(from_field="fedora_uri", to_field="title")
+    def title(self, value):
+        return self.extract_id(value)
+
+    @odin.map_field(from_field="fedora_uri", to_field="digital_object_id")
+    def digital_object_id(self, value):
+        return self.extract_id(value)
+
+    @odin.map_field(from_field=("fedora_uri", "use_statement"), to_field="file_versions", to_list=True)
+    def file_versions(self, fedora_uri, use_statement):
+        return [ArchivesSpaceFileVersion(file_uri=fedora_uri, use_statement=use_statement)]

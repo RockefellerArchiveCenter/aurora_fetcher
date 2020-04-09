@@ -45,6 +45,7 @@ class Routine:
         for package in Package.objects.filter(process_status=self.start_status):
             try:
                 package.refresh_from_db()
+                # get additional data?
                 self.apply_transformations(package)
                 package.process_status = self.end_status
                 package.save()
@@ -81,6 +82,7 @@ class AccessionRoutine(Routine):
             package.data['data']['archivesspace_parent_identifier'] = sibling.data['data'].get('archivesspace_parent_identifier')
 
     def parse_accession_number(self, data):
+        # TODO: this can be more concise
         number = "{}".format(data['id_0'])
         if data.get('id_1'):
             number += ":{}".format(data['id_1'])
@@ -118,19 +120,19 @@ class GroupingComponentRoutine(Routine):
 
     def apply_transformations(self, package):
         if not package.data['data'].get('archivesspace_parent_identifier'):
-            self.transformer.package = package
-            self.parent = self.save_new_grouping_component()
-            package.data['data']['archivesspace_parent_identifier'] = self.parent
-            self.update_siblings(package)
+            # self.transformer.package = package
+            parent_ref = self.save_new_grouping_component(package.accession_data['data'])
+            package.data['data']['archivesspace_parent_identifier'] = parent_ref
+            self.update_siblings(package, parent_ref)
 
-    def save_new_grouping_component(self):
-        transformed_data = self.transformer.transform_grouping_component(self.package.accession_data['data'])
+    def save_new_grouping_component(self, data):
+        transformed_data = self.transformer.transform_grouping_component(data)
         return self.aspace_client.create(transformed_data, 'component').get('uri')
 
-    def update_siblings(self, package):
+    def update_siblings(self, package, parent_ref):
         for p in package.accession_data['data']['transfers']:
             for sibling in Package.objects.filter(bag_identifier=p['identifier']):
-                sibling.data['data']['archivesspace_parent_identifier'] = self.parent
+                sibling.data['data']['archivesspace_parent_identifier'] = parent_ref
                 sibling.save()
 
 
@@ -144,18 +146,19 @@ class TransferComponentRoutine(Routine):
 
     def apply_transformations(self, package):
         if not package.data['data'].get('archivesspace_identifier'):
-            self.transformer.package = package
-            self.transfer_identifier = self.save_new_transfer_component()
-            package.data['data']['archivesspace_identifier'] = self.transfer_identifier
-            self.update_siblings(package)
+            # self.transformer.package = package
+            transfer_identifier = self.save_new_transfer_component(
+                package.data["data"], package.accession_data['data']['resource'])
+            package.data['data']['archivesspace_identifier'] = transfer_identifier
+            self.update_siblings(package, transfer_identifier)
 
-    def save_new_transfer_component(self):
-        transformed_data = self.transformer.transform_component()
+    def save_new_transfer_component(self, data, resource):
+        transformed_data = self.transformer.transform_component(data, resource)
         return self.aspace_client.create(transformed_data, 'component').get('uri')
 
-    def update_siblings(self, package):
+    def update_siblings(self, package, transfer_identifier):
         for sibling in Package.objects.filter(bag_identifier=package.bag_identifier):
-            sibling.data['data']['archivesspace_identifier'] = self.transfer_identifier
+            sibling.data['data']['archivesspace_identifier'] = transfer_identifier
             sibling.save()
 
 
@@ -168,12 +171,14 @@ class DigitalObjectRoutine(Routine):
     object_type = "Digital object"
 
     def apply_transformations(self, package):
-        self.transformer.package = package
-        self.do_identifier = self.save_new_digital_object()
+        # self.transformer.package = package
+        self.do_identifier = self.save_new_digital_object(package)
         self.update_instance(package)
 
-    def save_new_digital_object(self):
-        transformed_data = self.transformer.transform_digital_object()
+    def save_new_digital_object(self, package):
+        transformed_data = self.transformer.transform_digital_object(
+            {"fedora_uri": package.fedora_uri,
+             "use_statement": package.use_statement})
         return self.aspace_client.create(transformed_data, 'digital object').get('uri')
 
     def update_instance(self, package):
