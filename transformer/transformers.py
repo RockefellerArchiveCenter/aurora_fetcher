@@ -1,13 +1,12 @@
 import json
 import time
 
-import iso8601
 from aquarius import settings
-from iso639 import languages as langz
 from odin.codecs import json_codec
 
 from .clients import ArchivesSpaceClient
 from .mappings import (SourceAccessionToArchivesSpaceAccession,
+                       SourceAccessionToGroupingComponent,
                        SourceAgentToArchivesSpaceAgentCorporateEntity,
                        SourceAgentToArchivesSpaceAgentFamily,
                        SourceAgentToArchivesSpaceAgentPerson)
@@ -32,56 +31,19 @@ class DataTransformer:
     # Helper functions
     ####################################
 
-    def transform_dates(self, start, end):
-        date_start = iso8601.parse_date(start)
-        date_end = iso8601.parse_date(end)
-        if date_end > date_start:
-            expression = '{} - {}'.format(
-                date_start.strftime("%Y %B %e"),
-                date_end.strftime("%Y %B %e"))
-            return [{"expression": expression,
-                     "begin": date_start.strftime("%Y-%m-%d"),
-                     "end": date_end.strftime("%Y-%m-%d"),
-                     "date_type": "inclusive",
-                     "label": "creation"}]
-        else:
-            expression = date_start.strftime("%Y %B %e")
-            return [{"expression": expression,
-                     "begin": date_start.strftime("%Y-%m-%d"),
-                     "date_type": "single",
-                     "label": "creation"}]
-
-    def transform_extents(self, extent_values):
-        return [{"number": v, "portion": "whole", "extent_type": k} for k, v in extent_values.items()]
-
-    def transform_external_ids(self, identifier):
-        return [{"external_id": identifier, "source": "aurora", "jsonmodel_type": "external_id"}]
-
     def transform_langcode(self, languages):
         return 'mul' if len(languages) > 1 else languages[0]
-
-    def transform_langnote(self, languages):
-        language = "multiple languages" if (len(languages) > 1) else langz.get(part2b=languages[0]).name
-        return {"jsonmodel_type": "note_singlepart", "type": "langmaterial",
-                "publish": False, "content": ["Materials are in {}".format(language)]}
 
     def transform_linked_agents(self, agents):
         linked_agents = []
         for agent in agents:
+            # TODO: call transform here
             consumer_data = self.transform_agent(agent)
             agent_ref = self.aspace_client.get_or_create(
                 agent['type'], 'title', agent['name'],
                 self.transform_start_time, consumer_data)
             linked_agents.append({"role": "creator", "terms": [], "ref": agent_ref})
         return linked_agents
-
-    def transform_note_multipart(self, text, type):
-        if len(text) > 0:
-            return {"jsonmodel_type": "note_multipart", "type": type,
-                    "publish": False, "subnotes": [
-                        {"content": text, "publish": True,
-                         "jsonmodel_type": "note_text"}]}
-        return ""
 
     def transform_rights_acts(self, rights_granted):
         acts = []
@@ -180,81 +142,17 @@ class DataTransformer:
         except Exception as e:
             raise TransformError('Error transforming component: {}'.format(e))
 
-    def transform_grouping_component(self):
-        data = self.package.accession_data['data']
-        defaults = {
-            "publish": False, "level": "recordgrp", "linked_events": [],
-            "external_documents": [], "instances": [], "subjects": []
-        }
-        try:
-            consumer_data = {
-                **defaults,
-                "title": data['title'],
-                "language": data['language'],
-                "external_ids": self.transform_external_ids(data['url']),
-                "extents": self.transform_extents(
-                    {"bytes": str(data['extent_size']),
-                     "files": str(data['extent_files'])}),
-                "dates": self.transform_dates(data['start_date'], data['end_date']),
-                "rights_statements": self.transform_rights(data['rights_statements']),
-                "linked_agents": self.transform_linked_agents(
-                    data['creators'] + [{"name": data['organization'], "type": "organization"}]),
-                "resource": {'ref': data['resource']},
-                "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
-                "notes": [
-                    self.transform_note_multipart(data['access_restrictions'], "accessrestrict"),
-                    self.transform_note_multipart(data['use_restrictions'], "userestrict"),
-                    self.transform_langnote([data['language']])
-                ]}
-            if 'description' in data:
-                consumer_data['notes'].append(
-                    self.transform_note_multipart(data['description'], "scopecontent"))
-            if 'appraisal_note' in data:
-                consumer_data['notes'].append(
-                    self.transform_note_multipart(data['appraisal_note'], "appraisal"))
-            return consumer_data
-        except Exception as e:
-            raise TransformError('Error transforming grouping component: {}'.format(e))
+    def transform_grouping_component(self, data):
+        data["level"] = "recordgrp"
+        # TODO: some handling of linked agents here
+        from_obj = json_codec.loads(json.dumps(data), resource=SourceAccession)
+        return json.loads(json_codec.dumps(SourceAccessionToGroupingComponent.apply(from_obj)))
 
     def transform_accession(self, data):
+        data["accession_number"] = self.aspace_client.next_accession_number()
+        # TODO: some handling of linked agents here
         from_obj = json_codec.loads(json.dumps(data), resource=SourceAccession)
         return json.loads(json_codec.dumps(SourceAccessionToArchivesSpaceAccession.apply(from_obj)))
-
-        # data = self.package.accession_data['data']
-        # accession_number = self.aspace_client.next_accession_number()
-        # defaults = {
-        #     "publish": False, "linked_events": [], "jsonmodel_type": "accession",
-        #     "external_documents": [], "instances": [], "subjects": [],
-        #     "classifications": [], "related_accessions": [], "deaccessions": [],
-        # }
-        # try:
-        #     consumer_data = {
-        #         **defaults,
-        #         "title": data['title'],
-        #         "external_ids": self.transform_external_ids(data['url']),
-        #         "extents": self.transform_extents(
-        #             {"bytes": str(data['extent_size']),
-        #              "files": str(data['extent_files'])}),
-        #         "dates": self.transform_dates(data['start_date'], data['end_date']),
-        #         "rights_statements": self.transform_rights(data['rights_statements']),
-        #         "linked_agents": self.transform_linked_agents(
-        #             data['creators'] + [{"name": data['organization'], "type": "organization"}]),
-        #         "related_resources": [{'ref': data['resource']}],
-        #         "repository": {"ref": "/repositories/{}".format(settings.ARCHIVESSPACE['repo_id'])},
-        #         "accession_date": data['accession_date'],
-        #         "access_restrictions_note": data['access_restrictions'],
-        #         "use_restrictions_note": data['use_restrictions'],
-        #         "acquisition_type": data['acquisition_type'],
-        #         "content_description": data['description']}
-        #
-        #     for n, segment in enumerate(accession_number):
-        #         consumer_data = {
-        #             **consumer_data,
-        #             "id_{}".format(n): accession_number[n]}
-        #     return {**consumer_data, "general_note": data['appraisal_note']} if \
-        #         ('appraisal_note' in data) else consumer_data
-        # except Exception as e:
-        #     raise TransformError('Error transforming accession: {}'.format(e))
 
     def transform_agent(self, data):
         MAPPINGS = {

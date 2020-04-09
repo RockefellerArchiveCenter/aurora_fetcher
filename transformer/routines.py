@@ -124,7 +124,7 @@ class GroupingComponentRoutine(Routine):
             self.update_siblings(package)
 
     def save_new_grouping_component(self):
-        transformed_data = self.transformer.transform_grouping_component()
+        transformed_data = self.transformer.transform_grouping_component(self.package.accession_data['data'])
         return self.aspace_client.create(transformed_data, 'component').get('uri')
 
     def update_siblings(self, package):
