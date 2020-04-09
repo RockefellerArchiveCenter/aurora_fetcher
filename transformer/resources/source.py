@@ -45,15 +45,6 @@ class SourceMetadata(odin.Resource):
     source_organization = odin.StringField()
     title = odin.StringField()
 
-# class SourceAgent(odin.Resource):
-#     AGENT_TYPE_CHOICES = (
-#         ("person", "Person"),
-#         ("organization", "Organization"),
-#         ("family", "Family")
-#     )
-#     type = odin.StringField(choices=AGENT_TYPE_CHOICES)
-#     name = odin.StringField()
-
 
 class SourceAccession(odin.Resource):
     title = odin.StringField()

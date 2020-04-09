@@ -45,7 +45,12 @@ class ArchivesSpaceClient(object):
             return r.json()
         else:
             if r.json()['error'].get('id_0'):
-                raise ArchivesSpaceClientAccessionNumberError(r.json()['error'])
+                """Account for indexing delays by bumping up to the next accession number."""
+                id_1 = int(data['id_1'])
+                id_1 += 1
+                data['id_1'] = str(id_1).zfill(3)
+                self.aspace_client.create(data, 'accession').get('uri')
+                return self.create(data, 'accession')
             raise ArchivesSpaceClientError('Error sending {} request to {}: {}'.format(method, url, r.json()['error']))
 
     def retrieve(self, url, **kwargs):
