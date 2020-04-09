@@ -82,12 +82,12 @@ class AccessionRoutine(Routine):
             package.data['data']['archivesspace_parent_identifier'] = sibling.data['data'].get('archivesspace_parent_identifier')
 
     def parse_accession_number(self, data):
-        # TODO: this can be more concise
         number = "{}".format(data['id_0'])
-        if data.get('id_1'):
-            number += ":{}".format(data['id_1'])
-        if data.get('id_2'):
-            number += ":{}".format(data['id_2'])
+        for i in range(1, 3):
+            if data.get("id_{}".format(i)):
+                number += ":{}".format(data['id_{}'.format(i)])
+            else:
+                break
         return number
 
     def save_new_accession(self, data):
