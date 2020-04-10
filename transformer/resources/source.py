@@ -11,7 +11,11 @@ class SourceCreator(odin.Resource):
     type = odin.StringField(choices=CREATOR_TYPE_CHOICES)
 
 
-class SourceRightsActs(odin.Resource):
+class SourceLinkedCreator(odin.Resource):
+    uri = odin.StringField()
+
+
+class SourceRightsStatementAct(odin.Resource):
     act = odin.StringField()
     restriction = odin.StringField()
     start_date = odin.DateField()
@@ -23,7 +27,7 @@ class SourceRightsStatement(odin.Resource):
     rights_basis = odin.StringField()
     start_date = odin.DateField()
     end_date = odin.DateField()
-    rights_granted = odin.ArrayOf(SourceRightsActs)
+    rights_granted = odin.ArrayOf(SourceRightsStatementAct)
     external_documents = odin.ArrayField(null=True)
     linked_agents = odin.ArrayField(null=True)
     note = odin.StringField(null=True)
@@ -65,6 +69,8 @@ class SourceAccession(odin.Resource):
     appraisal_note = odin.StringField(null=True)
     accession_number = odin.StringField(null=True)
     language = odin.StringField()
+    linked_agents = odin.ArrayOf(SourceLinkedCreator, null=True)
+    level = odin.StringField(null=True)
 
 
 class SourceTransfer(odin.Resource):
@@ -73,6 +79,8 @@ class SourceTransfer(odin.Resource):
     rights_statements = odin.ArrayOf(SourceRightsStatement)
     resource = odin.StringField()
     archivesspace_parent_identifier = odin.StringField(null=True)
+    linked_agents = odin.ArrayOf(SourceLinkedCreator, null=True)
+    level = odin.StringField()
 
 
 class SourcePackage(odin.Resource):
