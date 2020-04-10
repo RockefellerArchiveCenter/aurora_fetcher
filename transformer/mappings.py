@@ -11,14 +11,18 @@ from .resources.archivesspace import (ArchivesSpaceAccession,
                                       ArchivesSpaceExtent,
                                       ArchivesSpaceExternalId,
                                       ArchivesSpaceFileVersion,
+                                      ArchivesSpaceLinkedAgent,
                                       ArchivesSpaceNameCorporateEntity,
                                       ArchivesSpaceNameFamily,
                                       ArchivesSpaceNamePerson,
                                       ArchivesSpaceNote, ArchivesSpaceRef,
                                       ArchivesSpaceRightsStatement,
+                                      ArchivesSpaceRightsStatementAct,
                                       ArchivesSpaceSubnote)
-from .resources.source import (SourceAccession, SourceCreator, SourcePackage,
-                               SourceRightsStatement, SourceTransfer)
+from .resources.source import (SourceAccession, SourceCreator,
+                               SourceLinkedCreator, SourcePackage,
+                               SourceRightsStatement, SourceRightsStatementAct,
+                               SourceTransfer)
 
 
 def map_dates(date_start, date_end):
@@ -38,8 +42,8 @@ def map_dates(date_start, date_end):
 
 def map_extents(extent_size, extent_files):
     return [
-        ArchivesSpaceExtent(number=extent_size, extent_type="bytes", portion="whole"),
-        ArchivesSpaceExtent(number=extent_files, extent_type="files", portion="whole")
+        ArchivesSpaceExtent(number=str(extent_size), extent_type="bytes", portion="whole"),
+        ArchivesSpaceExtent(number=str(extent_files), extent_type="files", portion="whole")
     ]
 
 
@@ -48,6 +52,15 @@ def map_note_multipart(text, type):
         return ArchivesSpaceNote(
             jsonmodel_type="note_multipart", type=type,
             subnotes=[ArchivesSpaceSubnote(content=text, jsonmodel_type="note_text")])
+
+
+class SourceLinkedCreatorToArchivesSpaceLinkedAgent(odin.Mapping):
+    from_obj = SourceLinkedCreator
+    to_obj = ArchivesSpaceLinkedAgent
+
+    mappings = (
+        ("uri", None, "ref"),
+    )
 
 
 class SourceCreatorToArchivesSpaceAgentFamily(odin.Mapping):
@@ -71,7 +84,8 @@ class SourceCreatorToArchivesSpaceAgentPerson(odin.Mapping):
             name = value.rsplit(' ', 1)[::-1]
         else:
             name = [value, '']
-        return [ArchivesSpaceNamePerson(primary_name=name[0], rest_of_name=name[1], name_order="inverted")]
+        return [ArchivesSpaceNamePerson(
+            primary_name=name[0], rest_of_name=name[1], name_order="inverted")]
 
 
 class SourceCreatorToArchivesSpaceAgentCorporateEntity(odin.Mapping):
@@ -92,10 +106,58 @@ def map_agents(agent):
     return MAPPINGS[agent.type].apply(agent)
 
 
+class SourceRightsStatementActToArchivesSpaceRightsStatementAct(odin.Mapping):
+    from_obj = SourceRightsStatementAct
+    to_obj = ArchivesSpaceRightsStatementAct
+
+    mappings = (
+        ("act", None, "act_type"),
+        ("restriction", None, "restriction"),
+        ("start_date", None, "start_date"),
+        ("end_date", None, "end_date"),
+    )
+
+    @odin.map_field(from_field="note", to_field="notes", to_list=True)
+    def notes(self, value):
+        return [ArchivesSpaceNote(
+            jsonmodel_type="note_rights_statement_act",
+            type="additional_information", content=[value])]
+
+
 class SourceRightsStatementToArchivesSpaceRightsStatement(odin.Mapping):
     from_obj = SourceRightsStatement
     to_obj = ArchivesSpaceRightsStatement
-    # TODO: finish
+
+    mappings = (
+        ("start_date", None, "start_date"),
+        ("end_date", None, "end_date"),
+        ("status", None, "status"),
+        ("determination_date", None, "determination_date"),
+        ("license_terms", None, "license_terms"),
+        ("citation", None, "statute_citation"),
+    )
+
+    @odin.map_field(from_field="other_rights_basis", to_field="other_rights_basis")
+    def other_rights_basis(self, value):
+        return value.lower() if value else None
+
+    @odin.map_field(from_field="rights_basis", to_field="rights_type")
+    def rights_type(self, value):
+        return value.lower() if value else None
+
+    @odin.map_field(from_field="jurisdiction", to_field="jurisdiction")
+    def jurisdiction(self, value):
+        return value.upper() if value else None
+
+    @odin.map_list_field(from_field="rights_granted", to_field="acts")
+    def acts(self, value):
+        return [SourceRightsStatementActToArchivesSpaceRightsStatementAct.apply(a) for a in value]
+
+    @odin.map_field(from_field="note", to_field="notes", to_list=True)
+    def notes(self, value):
+        return [ArchivesSpaceNote(
+                jsonmodel_type="note_rights_statement",
+                type="type_note", content=[value])]
 
 
 class SourceAccessionToArchivesSpaceAccession(odin.Mapping):
@@ -126,19 +188,6 @@ class SourceAccessionToArchivesSpaceAccession(odin.Mapping):
     @odin.map_list_field(from_field="rights_statements", to_field="rights_statements", to_list=True)
     def rights_statements(self, value):
         return [SourceRightsStatementToArchivesSpaceRightsStatement.apply(v) for v in value]
-
-    @odin.map_list_field(from_field=("creators", "organization"), to_field="linked_agents", to_list=True)
-    def linked_agents(self, creators, organization):
-        data = []
-        creators = [map_agents(c) for c in creators]
-        organization = [SourceCreatorToArchivesSpaceAgentCorporateEntity.apply(organization)]
-        # TODO: sort this out
-        # for agent in creators + organization:
-        #     agent_ref = self.aspace_client.get_or_create(
-        #         agent['type'], 'title', agent['name'],
-        #         self.transform_start_time, agent)
-        #     data.append(ArchivesSpaceLinkedAgent(role="creator", ref=agent_ref))
-        return data
 
     @odin.map_field(from_field="resource", to_field="related_resources", to_list=True)
     def resource(self, value):
@@ -175,19 +224,6 @@ class SourceAccessionToGroupingComponent(odin.Mapping):
     def rights_statements(self, value):
         return [SourceRightsStatementToArchivesSpaceRightsStatement.apply(v) for v in value]
 
-    @odin.map_list_field(from_field=("creators", "organization"), to_field="linked_agents", to_list=True)
-    def linked_agents(self, creators, organization):
-        data = []
-        data += [map_agents(c) for c in creators]
-        data.append(map_agents(SourceCreator(type="organization", name=organization)))
-        # TODO: sort this out
-        # for agent in creators + organization:
-        #     agent_ref = self.aspace_client.get_or_create(
-        #         agent['type'], 'title', agent['name'],
-        #         self.transform_start_time, agent)
-        #     data.append(ArchivesSpaceLinkedAgent(role="creator", ref=agent_ref))
-        return data
-
     @odin.map_field(from_field="resource", to_field="resource")
     def resource(self, value):
         return ArchivesSpaceRef(ref=value)
@@ -217,7 +253,6 @@ class SourceTransferToTransferComponent(odin.Mapping):
 
     @odin.map_field(from_field="metadata", to_field="title")
     def title(self, value):
-        print(value)
         return value.title
 
     @odin.map_field(from_field="url", to_field="external_ids", to_list=True)
@@ -233,26 +268,13 @@ class SourceTransferToTransferComponent(odin.Mapping):
         extent_size, extent_files = value.payload_oxum.split(".")
         return map_extents(extent_size, extent_files)
 
-    @odin.map_field(from_field="metadata", to_field="dates")
+    @odin.map_field(from_field="metadata", to_field="dates", to_list=True)
     def dates(self, value):
         return map_dates(value.date_start, value.date_end)
 
     @odin.map_list_field(from_field="rights_statements", to_field="rights_statements", to_list=True)
     def rights_statements(self, value):
         return [SourceRightsStatementToArchivesSpaceRightsStatement.apply(v) for v in value]
-
-    @odin.map_list_field(from_field="metadata", to_field="linked_agents", to_list=True)
-    def linked_agents(self, value):
-        data = []
-        data += [map_agents(c) for c in value.record_creators]
-        data.append(map_agents(SourceCreator(type="organization", name=value.source_organization)))
-        # TODO: sort this out
-        # for agent in creators + organization:
-        #     agent_ref = self.aspace_client.get_or_create(
-        #         agent['type'], 'title', agent['name'],
-        #         self.transform_start_time, agent)
-        #     data.append(ArchivesSpaceLinkedAgent(role="creator", ref=agent_ref))
-        return data
 
     @odin.map_field(from_field="resource", to_field="resource")
     def resource(self, value):
