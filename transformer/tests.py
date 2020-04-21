@@ -72,9 +72,9 @@ class TransformTest(TestCase):
         self.assertEqual(len(self.transfer_data), len(Package.objects.all()))
 
     def process_transfers(self):
-        for r in ROUTINES:
-            with transformer_vcr.use_cassette(r[0]):
-                transfers = r[1]().run()
+        for cassette, routine, end_status in ROUTINES:
+            with transformer_vcr.use_cassette(cassette):
+                transfers = routine().run()
                 self.assertNotEqual(False, transfers)
         self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
