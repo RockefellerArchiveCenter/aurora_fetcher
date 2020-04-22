@@ -43,7 +43,7 @@ class SourceMetadata(odin.Resource):
     date_end = odin.DateTimeField()
     date_start = odin.DateTimeField()
     internal_sender_description = odin.StringField()
-    language = odin.StringField()
+    language = odin.ArrayField()
     payload_oxum = odin.StringField()
     record_creators = odin.ArrayOf(SourceCreator)
     source_organization = odin.StringField()
