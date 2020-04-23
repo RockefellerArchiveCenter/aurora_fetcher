@@ -56,6 +56,7 @@ class Routine:
                 package.refresh_from_db()
                 initial_data = self.get_data(package)
                 transformed = self.get_transformed_object(initial_data, self.from_resource, self.mapping)
+                print(json.dumps(transformed))
                 obj_uri = self.save_transformed_object(transformed)
                 if obj_uri:
                     self.post_save_actions(package, initial_data, transformed, obj_uri)

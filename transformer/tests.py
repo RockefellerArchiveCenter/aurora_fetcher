@@ -59,7 +59,6 @@ class TransformTest(TestCase):
         self.updated_time = int(time.time()) - (24 * 3600)  # this is the current time minus 24 hours
 
     def create_transfers(self):
-        print('*** Creating Packages ***')
         for transfer in self.transfer_data:
             request = self.factory.post(reverse('package-list'), transfer, format='json')
             response = PackageViewSet.as_view(actions={"post": "create"})(request)
@@ -79,14 +78,12 @@ class TransformTest(TestCase):
         self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
     def search_objects(self):
-        print('*** Searching for objects ***')
         request = self.factory.get(reverse('package-list'), {'updated_since': self.updated_time})
         response = PackageViewSet.as_view(actions={"get": "list"})(request)
         self.assertEqual(response.status_code, 200, "Wrong HTTP code")
         self.assertTrue(len(response.data) >= 1, "No search results")
 
     def process_views(self):
-        print('*** Test ProcessAccessionsView ***')
         for v in VIEWS:
             with transformer_vcr.use_cassette(v[0]):
                 request = self.factory.post(reverse(v[1]))
@@ -94,12 +91,10 @@ class TransformTest(TestCase):
                 self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):
-        print('*** Getting schema view ***')
         schema = self.client.get(reverse('schema'))
         self.assertEqual(schema.status_code, 200, "Wrong HTTP code")
 
     def health_check(self):
-        print('*** Getting status view ***')
         status = self.client.get(reverse('api_health_ping'))
         self.assertEqual(status.status_code, 200, "Wrong HTTP code")
 
