@@ -45,6 +45,22 @@ class ArchivesSpaceLinkedAgent(odin.Resource):
     ref = odin.StringField()
 
 
+class ArchivesSpaceLanguageAndScript(odin.Resource):
+    """Records the language and scripts of archival records.
+
+    Applies to resources post-ArchivesSpace v2.7 only.
+    """
+    language = odin.StringField(null=True)
+
+
+class ArchivesSpaceLangMaterial(odin.Resource):
+    """Records information about the languages of archival records.
+
+    Applies to resources post-ArchivesSpace v2.7 only.
+    """
+    language_and_script = odin.DictAs(ArchivesSpaceLanguageAndScript, null=True)
+
+
 class ArchivesSpaceNameBase(odin.Resource):
     """Base class for names.
 
@@ -130,6 +146,7 @@ class ArchivesSpaceComponentBase(odin.Resource):
     external_ids = odin.ArrayOf(ArchivesSpaceExternalId)
     instances = odin.ArrayField(null=True)
     jsonmodel_type = odin.StringField(choices=COMPONENT_TYPES)
+    lang_materials = odin.ArrayOf(ArchivesSpaceLangMaterial, null=True)
     linked_agents = odin.ArrayOf(ArchivesSpaceLinkedAgent)
     notes = odin.ArrayOf(ArchivesSpaceNote)
     publish = odin.BooleanField(default=False)
