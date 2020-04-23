@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='package',
             name='bag_identifier',
-            field=models.CharField(default=1, max_length=255, unique=True),
+            field=models.CharField(default=1, max_length=255, unique=False),
             preserve_default=False,
         ),
         migrations.AddField(
