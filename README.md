@@ -45,9 +45,6 @@ aquarius has seven services, all of which are exposed via HTTP endpoints (see [R
 * Update Accession Status - sends updated accession data to Aurora.
 * Update Transfer Status - sends updated transfer data to Aurora.
 
-![TransferRoutine diagram](aquarius-services.png)
-
-
 ### Routes
 
 | Method | URL | Parameters | Response  | Behavior  |
