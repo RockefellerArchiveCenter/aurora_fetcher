@@ -67,12 +67,12 @@ class ArchivesSpaceNameBase(odin.Resource):
     Subclassed by names specific to an agent type."""
     rules = odin.StringField(default="dacs")
     source = odin.StringField(default="local")
+    sort_name_auto_generate = odin.BooleanField(default=True)
 
 
 class ArchivesSpaceNameCorporateEntity(ArchivesSpaceNameBase):
     """Names of organizations."""
     primary_name = odin.StringField()
-    sort_name_auto_generate = odin.BooleanField(default=True)
 
 
 class ArchivesSpaceNameFamily(ArchivesSpaceNameBase):
