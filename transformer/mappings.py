@@ -128,7 +128,7 @@ class SourceRightsStatementActToArchivesSpaceRightsStatementAct(odin.Mapping):
     def notes(self, value):
         return [ArchivesSpaceNote(
             jsonmodel_type="note_rights_statement_act",
-            type="additional_information", content=[value])]
+            type="additional_information", content=[value])] if value else []
 
 
 class SourceRightsStatementToArchivesSpaceRightsStatement(odin.Mapping):
