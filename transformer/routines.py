@@ -79,7 +79,7 @@ class Routine:
             agent_data = map_agents(SourceCreator(type=agent["type"], name=agent["name"]))
             agent_ref = self.aspace_client.get_or_create(
                 agent["type"], "title", agent["name"],
-                self.start_time, agent_data)
+                self.start_time, json.loads(json_codec.dumps(agent_data)))
             linked_agents.append({"uri": agent_ref})
         return linked_agents
 

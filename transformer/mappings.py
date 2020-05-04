@@ -27,7 +27,7 @@ from .resources.source import (SourceAccession, SourceCreator,
 
 
 def map_dates(date_start, date_end):
-    if date_start > date_end:
+    if date_end > date_start:
         expression = '{} - {}'.format(
             date_start.strftime("%Y %B %e"),
             date_end.strftime("%Y %B %e"))
