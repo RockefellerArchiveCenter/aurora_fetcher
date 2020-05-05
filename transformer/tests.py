@@ -2,16 +2,21 @@ import json
 import time
 from os import listdir
 from os.path import join
-import vcr
 
+import vcr
+from aquarius import settings
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIRequestFactory
 
-from aquarius import settings
 from .models import Package
-from .routines import *
-from .views import *
+from .routines import (AccessionRoutine, AccessionUpdateRequester,
+                       DigitalObjectRoutine, GroupingComponentRoutine,
+                       TransferComponentRoutine, TransferUpdateRequester)
+from .views import (AccessionUpdateRequestView, PackageViewSet,
+                    ProcessAccessionsView, ProcessDigitalObjectsView,
+                    ProcessGroupingComponentsView,
+                    ProcessTransferComponentsView, TransferUpdateRequestView)
 
 transformer_vcr = vcr.VCR(
     serializer='json',
@@ -51,10 +56,9 @@ class TransformTest(TestCase):
                 data = json.load(json_file)
                 self.transfer_data.append(data)
                 self.transfer_count += 1
-        self.updated_time = int(time.time())-(24*3600) # this is the current time minus 24 hours
+        self.updated_time = int(time.time()) - (24 * 3600)  # this is the current time minus 24 hours
 
     def create_transfers(self):
-        print('*** Creating Packages ***')
         for transfer in self.transfer_data:
             request = self.factory.post(reverse('package-list'), transfer, format='json')
             response = PackageViewSet.as_view(actions={"post": "create"})(request)
@@ -63,25 +67,23 @@ class TransformTest(TestCase):
             process_status = Package.SAVED if new_obj.origin == 'aurora' else Package.TRANSFER_COMPONENT_CREATED
             self.assertEqual(int(new_obj.process_status), process_status, "Package was created with the incorrect process status.")
             if new_obj.origin in ['digitization', 'legacy_digital']:
-                self.assertEqual(new_obj.transfer_data['data']['archivesspace_identifier'], transfer.get('archivesspace_uri'), "ArchivesSpace Identifier was not created correctly")
+                self.assertEqual(new_obj.data['data']['archivesspace_identifier'], transfer.get('archivesspace_uri'), "ArchivesSpace Identifier was not created correctly")
         self.assertEqual(len(self.transfer_data), len(Package.objects.all()))
 
     def process_transfers(self):
-        for r in ROUTINES:
-            with transformer_vcr.use_cassette(r[0]):
-                transfers = r[1]().run()
+        for cassette, routine, end_status in ROUTINES:
+            with transformer_vcr.use_cassette(cassette):
+                transfers = routine().run()
                 self.assertNotEqual(False, transfers)
         self.assertEqual(len(Package.objects.all()), self.transfer_count)
 
     def search_objects(self):
-        print('*** Searching for objects ***')
         request = self.factory.get(reverse('package-list'), {'updated_since': self.updated_time})
         response = PackageViewSet.as_view(actions={"get": "list"})(request)
         self.assertEqual(response.status_code, 200, "Wrong HTTP code")
         self.assertTrue(len(response.data) >= 1, "No search results")
 
     def process_views(self):
-        print('*** Test ProcessAccessionsView ***')
         for v in VIEWS:
             with transformer_vcr.use_cassette(v[0]):
                 request = self.factory.post(reverse(v[1]))
@@ -89,12 +91,10 @@ class TransformTest(TestCase):
                 self.assertEqual(response.status_code, 200, "Wrong HTTP code")
 
     def schema(self):
-        print('*** Getting schema view ***')
         schema = self.client.get(reverse('schema'))
         self.assertEqual(schema.status_code, 200, "Wrong HTTP code")
 
     def health_check(self):
-        print('*** Getting status view ***')
         status = self.client.get(reverse('api_health_ping'))
         self.assertEqual(status.status_code, 200, "Wrong HTTP code")
 

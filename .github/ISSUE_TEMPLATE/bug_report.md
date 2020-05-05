@@ -24,7 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, copy the error message or add screenshots to help explain your problem.
 
 ## Impact on your work
-How is this bug affecting your work? Are there alternatives you can use to getting your job done, or does this bug block your work completely? What deadlines are you up against? 
+How is this bug affecting your work? Are there alternatives you can use to getting your job done, or does this bug block your work completely? What deadlines are you up against?
 
 ## Additional context
 Add any other context about the problem here.

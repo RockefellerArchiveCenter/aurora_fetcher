@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+
 import aquarius.config as CF
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'health_check',
     'transformer',
+    'asterism',
 ]
 
 MIDDLEWARE = [

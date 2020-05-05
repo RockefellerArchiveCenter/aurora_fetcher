@@ -1,17 +1,11 @@
+from asterism.models import BasePackage
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 
-class Package(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+class Package(BasePackage):
+    BasePackage._meta.get_field("bag_identifier")._unique = False
     fedora_uri = models.CharField(max_length=512)
-    identifier = models.CharField(max_length=256)
-    PACKAGE_TYPE_CHOICES = (
-        ('aip', 'AIP'),
-        ('dip', 'DIP')
-    )
-    package_type = models.CharField(max_length=10, choices=PACKAGE_TYPE_CHOICES)
     SAVED = 10
     ACCESSION_CREATED = 20
     GROUPING_COMPONENT_CREATED = 30
@@ -28,18 +22,11 @@ class Package(models.Model):
         (UPDATE_SENT, 'Updated transfer data sent to Aurora'),
         (ACCESSION_UPDATE_SENT, 'Updated Accession data sent to Aurora')
     )
-    process_status = models.CharField(max_length=50, choices=PROCESS_STATUS_CHOICES)
-    ORIGIN_CHOICES = (
-        ('aurora', 'Aurora'),
-        ('legacy_digital', 'Legacy Digital Processing'),
-        ('digitization', 'Digitization')
-    )
-    origin = models.CharField(max_length=20, choices=ORIGIN_CHOICES, default='aurora')
-    transfer_data = JSONField(null=True, blank=True)
     accession_data = JSONField(null=True, blank=True)
 
     def __str__(self):
-        return '{} {}'.format(self.package_type, self.identifier)
+        return '{} {}'.format(self.type, self.bag_identifier)
 
-    def get_use_statement(self):
-        return 'master' if (self.package_type == 'aip') else 'service-edited'
+    @property
+    def use_statement(self):
+        return 'master' if (self.type == 'aip') else 'service-edited'
