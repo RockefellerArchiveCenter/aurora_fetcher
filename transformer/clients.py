@@ -66,7 +66,7 @@ class ArchivesSpaceClient(object):
         endpoint = self.TYPE_LIST[type][1]
         query = json.dumps({"query": {"field": field, "value": value, "jsonmodel_type": "field_query"}})
         try:
-            r = self.client.get("search", params={"page": 1, "type[]": model_type, "aq": query}).json()
+            r = self.client.get("repositories/{}/search".format(self.repo_id), params={"page": 1, "type[]": model_type, "aq": query}).json()
             if len(r["results"]) == 0:
                 r = self.client.get(endpoint, params={"all_ids": True, "modified_since": last_updated - 120}).json()
                 for ref in r:
@@ -89,7 +89,7 @@ class ArchivesSpaceClient(object):
         current_year = str(date.today().year)
         try:
             query = json.dumps({"query": {"field": "four_part_id", "value": current_year, "jsonmodel_type": "field_query"}})
-            r = self.client.get("search", params={"page": 1, "type[]": "accession", "sort": "identifier desc", "aq": query}).json()
+            r = self.client.get("repositories/{}/search".format(self.repo_id), params={"page": 1, "type[]": "accession", "sort": "identifier desc", "aq": query}).json()
             number = "1"
             if r.get("total_hits") >= 1:
                 if r["results"][0]["identifier"].split("-")[0] == current_year:
